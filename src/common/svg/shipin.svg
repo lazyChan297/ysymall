@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="26px" viewBox="0 0 30 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51 (57462) - http://www.bohemiancoding.com/sketch -->
+    <title>Group Copy 2</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="首页" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-Copy-2" fill="#29CEA6">
+            <path d="M10,4 L10,2.5 C10,1.11928813 11.1192881,2.53632657e-16 12.5,0 L18.5,0 C19.8807119,-2.53632657e-16 21,1.11928813 21,2.5 L21,4 L27.5,4 C28.8807119,4 30,5.11928813 30,6.5 L30,23.5 C30,24.8807119 28.8807119,26 27.5,26 L2.5,26 C1.11928813,26 1.69088438e-16,24.8807119 0,23.5 L0,6.5 C-1.69088438e-16,5.11928813 1.11928813,4 2.5,4 L10,4 Z M15,22 C18.8659932,22 22,18.8659932 22,15 C22,11.1340068 18.8659932,8 15,8 C11.1340068,8 8,11.1340068 8,15 C8,18.8659932 11.1340068,22 15,22 Z M15,20 C12.2385763,20 10,17.7614237 10,15 C10,12.2385763 12.2385763,10 15,10 C17.7614237,10 20,12.2385763 20,15 C20,17.7614237 17.7614237,20 15,20 Z" id="Combined-Shape"></path>
+        </g>
+    </g>
+</svg>

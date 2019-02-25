@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="28px" height="28px" viewBox="0 0 28 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51 (57462) - http://www.bohemiancoding.com/sketch -->
+    <title>发现 copy 2</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#64E5C6" offset="0%"></stop>
+            <stop stop-color="#29CEA6" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="发现-copy-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M14,26 C7.372583,26 2,20.627417 2,14 C2,7.372583 7.372583,2 14,2 C20.627417,2 26,7.372583 26,14 C26,20.627417 20.627417,26 14,26 Z M17.7138175,8.74529247 L11.4886708,10.8636968 C11.1948623,10.9636792 10.9641284,11.1944107 10.8641429,11.4882181 L8.74571331,17.7132234 C8.5677862,18.2360622 8.84739236,18.8041452 9.37023115,18.9820723 C9.57136988,19.0505218 9.78908248,19.0531286 9.9918025,18.9895148 L16.3424985,16.9966588 C16.6547115,16.898686 16.8992396,16.6541603 16.9972156,16.3419482 L18.990096,9.99139451 C19.1554584,9.46444699 18.8623359,8.90321884 18.3353883,8.73785634 C18.1326692,8.67424062 17.9149568,8.67684521 17.7138175,8.74529247 Z" id="Combined-Shape" fill="url(#linearGradient-1)"></path>
+    </g>
+</svg>

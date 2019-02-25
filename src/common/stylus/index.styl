@@ -1,0 +1,45 @@
+@import "./reset.styl"
+@import "./variable.styl"
+@import "./icon.styl"
+
+html,
+body,
+#app
+    height 100%
+    color $text-l
+#app,
+#app>div
+    &:first-child
+        background $bgcolor
+
+input,textarea
+    outline none
+    resize none
+
+input::-webkit-input-placeholder,    
+textarea::-webkit-input-placeholder       
+        color $text-lll
+        font-size 14px
+// public class
+.bold
+    font-weight bold
+.yellow
+    background $yellow
+.red
+    background $red
+.large-green-button
+    line-height 50px
+    background linear-gradient(180deg,rgba(100,229,198,1) 0%,rgba(41,206,166,1) 100%)
+    box-shadow 0px 4px 7px 0px rgba(41,206,166,0.47)
+    border-radius 5px
+    color #fff
+    font-weight bold
+    text-align center
+    margin 10px 15px
+
+// 进度条
+#nprogress .bar
+    background $green
+#nprogress .spinner-icon
+    border-top-color $green
+    border-left-color $green

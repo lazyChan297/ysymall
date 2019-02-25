@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="28px" height="28px" viewBox="0 0 28 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51 (57462) - http://www.bohemiancoding.com/sketch -->
+    <title>首页-1</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#64E5C6" offset="0%"></stop>
+            <stop stop-color="#29CEA6" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="首页-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M16.6086957,25.7510951 L16.6086957,19.6668016 C16.6086957,18.2260588 15.4407428,17.058106 14,17.058106 C12.5592572,17.058106 11.3913043,18.2260588 11.3913043,19.6668016 L11.3913043,25.7510951 L5,25.7510951 C3.34314575,25.7510951 2,24.4079493 2,22.7510951 L2,11.652761 C2,10.701148 2.45148445,9.8059703 3.21672505,9.24030776 L12.2167251,2.5875468 C13.2765199,1.80415107 14.7234801,1.80415107 15.7832749,2.5875468 L24.7832749,9.24030776 C25.5485155,9.8059703 26,10.701148 26,11.652761 L26,22.7510951 C26,24.4079493 24.6568542,25.7510951 23,25.7510951 L16.6086957,25.7510951 Z" id="Combined-Shape-Copy-2" fill="url(#linearGradient-1)"></path>
+    </g>
+</svg>

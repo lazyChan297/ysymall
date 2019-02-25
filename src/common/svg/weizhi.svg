@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="20px" viewBox="0 0 16 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51 (57462) - http://www.bohemiancoding.com/sketch -->
+    <title>Shape Copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="首页" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M8,0 C3.58235623,0 0,3.57900899 0,7.99252505 C0,12.4060411 6.26912339,19.1624247 6.26912339,19.1624247 C7.22501396,20.2780758 8.78838638,20.2825385 9.73534338,19.1557308 C9.73534338,19.1557308 16,12.4060411 16,7.99252505 C16,3.57677768 12.4198772,2.06106639e-15 8,0 Z M8,11.4331933 C5.95644891,11.4331933 4.29927415,9.77756694 4.29927415,7.73592528 C4.29927415,5.69428362 5.95644891,4.03865727 8,4.03865727 C10.0435511,4.03865727 11.7007259,5.69428362 11.7007259,7.73592528 C11.7007259,9.77756694 10.0435511,11.4331933 8,11.4331933 Z" id="Shape-Copy" fill="#29CEA6" fill-rule="nonzero"></path>
+    </g>
+</svg>
