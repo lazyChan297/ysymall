@@ -47,7 +47,9 @@
                         <span class="gray">(请选择{{attr}})</span>
                     </div>
                     <ul class="value">
-                        <li v-for="(c_item,index) in item">{{c_item.label}}</li>
+                        <li v-for="(c_item,index) in item" 
+                            :class="c_item.class"
+                            @click="selectCustomOption(attr,c_item.key)">{{c_item.label}}</li>
                     </ul>
                 </div>
                 </div>
@@ -117,6 +119,116 @@ export default {
             if (this.submitText === '购买') {
                 this.$router.push('/payment')
             }
+        },
+        // 判断是否可选
+        isActiveSelectCustomOption(selectAttr,selectVal) {
+            // 已选选项
+            let select_attr = Object.assign({}, this.custom_option_selected_attr)
+            select_attr[selectAttr] = selectVal;
+            if (this.custom_option) {
+                for(let x in this.custom_option) {
+                    if(x){
+                      let active = 1,
+                          option = this.custom_option[x]
+                          for(let attr in select_attr) {
+                              let val = select_attr[attr]
+                              if(option[attr] != val) {
+                                active = 0
+                                  break;
+                              }
+                          }
+                          if (active == 1) {
+                             return true
+                          }
+                    }
+                }
+            }
+            return false;
+        },
+        selectCustomOption(selectAttr,selectVal) {
+            // 选项名selectAttr,选项值selectVal
+            if (!this.isActiveSelectCustomOption(selectAttr,selectVal)) {
+                return;
+            }
+            if (this.custom_option_selected_attr[selectAttr] == selectVal) {
+                // 如果已选则取消选择
+                delete this.custom_option_selected_attr[selectAttr]
+            } else {
+                this.custom_option_selected_attr[selectAttr] = selectVal
+            }
+            var active_attr = {};
+            var other_tj = {};
+            var select_attr = [];
+            for(var attr1 in this.custom_option_selected_attr){
+                var tj = {};
+                //把已选选项名放入数组
+                select_attr.push(attr1); 
+                // 已选选项值
+                var val1 = this.custom_option_selected_attr[attr1];
+                other_tj[attr1] = val1;
+                for(var attr2 in this.custom_option_selected_attr){
+                    var val2 = this.custom_option_selected_attr[attr2];
+                    if(val1 != val2){
+                        // 获取同一个选项,其他的值
+                        tj[attr2] = val2;
+                    }
+                }
+                // tj 就是除去本元素，其他选中的属性的 k v 对象。
+                // 下面 得到本属性中active的值有哪些
+                console.log("attr1:"+attr1);
+                console.log('other_tj:',other_tj)
+                console.log('tj:',tj);
+                // tj 其他已选， otder_tj 目前选择的
+                active_attr[attr1] = this.getActiveCustomOption(tj,attr1);
+            }
+            for(var attr in this.custom_option_attr){
+                if(select_attr.indexOf(attr) == -1){
+                    active_attr[attr] = this.getActiveCustomOption(other_tj,attr);
+                }
+            }
+            this.custom_option_active_attr = active_attr;
+            this.reflushCustomOption();
+        },
+        reflushCustomOption() {
+            this.getCustomOptionAttr()
+        },
+        // 获取可选选项
+        getActiveCustomOption: function(tj,attr1){
+            var activeArr = [];
+            var custom_option = this.custom_option;
+            // 判断tj 是否为空对象
+            if(JSON.stringify(tj) != '{}'){
+                for(var x in custom_option){
+                    if(x){
+                        var option = custom_option[x];
+                        var c = 1;
+                        for(var tj_attr in tj){
+                            var tj_val = tj[tj_attr];
+                            if(option[tj_attr] != tj_val){
+                                c = 0;
+                                break;
+                            }
+                        }
+                        if(c){
+                            if(activeArr.indexOf(option[attr1]) == -1){
+                                activeArr.push(option[attr1]);
+                            }
+                        }
+                    }
+                }
+            }else{
+                // tj is empty
+                for(var x in custom_option){
+                    if(x){
+                        var option = custom_option[x];
+                       
+                        if(activeArr.indexOf(option[attr1]) == -1){
+                            activeArr.push(option[attr1]);
+                        }
+                    }
+                }
+            }
+            return activeArr;
         },
         getCustomOptionAttr() {
             var noAttrArr = ['price','qty','sku','image'];
@@ -210,6 +322,23 @@ export default {
                                     key:value,
                                     label: value
                                 }
+                                kv.status = ""
+                                kv.class = ""
+                                // class current: 当前点击的选项 active_v 可选选项
+                                if (this.custom_option_selected_attr[attr] == value) {
+                                    kv.status = "current"
+                                    kv.class = " current "
+                                }
+                                var co_active = this.custom_option_active_attr[attr];
+                                if (!co_active) {
+                                    kv.class += "active_v"
+                                } else {
+                                    if (co_active.indexOf(value) > -1) {
+                                        kv.class += "active_v"
+                                    } else {
+                                        kv.class += " no_active "
+                                    }
+                                }
                                 //判断选项是否已存在co_arr
                                     if (co_arr[attr]) {
                                         var hasIt = 0;
@@ -239,6 +368,11 @@ export default {
 
 }
 </script>
+<!-- 
+        1格式化数据
+            将  颜色-尺寸: {颜色:颜色}
+
+ -->
 <style lang="stylus" scoped>
     @import "../../common/stylus/variable.styl";
     @import "../../common/stylus/transition.styl";
@@ -346,6 +480,13 @@ export default {
                     font-size 14px
                     margin-right 10px
                     margin-bottom 10px
+                    border 1px solid transparent
+                    box-sizing border-box
+                    &.no_active
+                        color #ADAFB6
+                    &.current
+                        border 1px solid $red
+                        color $red
         .cell
             display flex
             justify-content space-between
