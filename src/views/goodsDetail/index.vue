@@ -40,14 +40,16 @@
                     </div>
                     <div class="icon icon-close" @click="isShow = false"></div>
                 </div>
-                <div class="goods_options" >
+                <div class="goods_options_container">
+                <div class="goods_options" v-for="(item,attr) in custom_option_attr">
                     <div class="label">
-                        <span class="black">颜色</span>
-                        <span class="gray">(请选择颜色)</span>
+                        <span class="black">{{attr}}</span>
+                        <span class="gray">(请选择{{attr}})</span>
                     </div>
                     <ul class="value">
-                        <li>红色款</li>
+                        <li v-for="(c_item,index) in item">{{c_item.label}}</li>
                     </ul>
+                </div>
                 </div>
                 <div class="cell">
                     <span>购买数量</span>
@@ -120,76 +122,117 @@ export default {
             var noAttrArr = ['price','qty','sku','image'];
             var co_arr = {};
             var custom_option = this.custom_option;
-            if(custom_option){
-                for(var x in custom_option){
-                    if(x){
-                        var option = custom_option[x];
-                        if(option){
-                            for(var attr in option){
-                                // 筛选出'price','qty','sku','image' 以外的值
-                                if(attr && (noAttrArr.indexOf(attr) <= -1)){
-                                    // 某个属性下可选择的值
-                                    var value = option[attr];
-                                    var kv = {
-                                        key:value,
-                                        label:value
-                                    };
-                                    // 状态
-                                    kv.status = "";  //no_active
-                                    kv.class = "";
-                                    if(this.custom_option_selected_attr[attr] == value ){
-                                        kv.status = " current ";
-                                        kv.class += " current ";
-                                    }
-                                    var co_active = this.custom_option_active_attr[attr];
-                                    if(!co_active){
-                                        kv.class += " active_v ";
-                                    }else{
-                                        if(co_active.indexOf(value) > -1  ){
-                                            kv.class += " active_v ";
-                                        }else{
-                                            kv.class += " no_active ";
-                                        }
-                                    }
-                                    //this.custom_option_selected_attr:{},       // 选中的属性，以及对应的值
-                                    //this.custom_option_active_attr:{},   
+            // =======源码实现
+            // if(custom_option){
+            //     for(var x in custom_option){
+            //         if(x){
+            //             var option = custom_option[x];
+            //             if(option){
+            //                 for(var attr in option){
+            //                     // 筛选出'price','qty','sku','image' 以外的值
+            //                     if(attr && (noAttrArr.indexOf(attr) <= -1)){
+            //                         // 某个属性下可选择的值
+            //                         var value = option[attr];
+            //                         console.log('value:-------',value)
+            //                         var kv = {
+            //                             key:value,
+            //                             label:value
+            //                         };
+            //                         // 状态
+            //                         kv.status = "";  //no_active
+            //                         kv.class = "";
+            //                         if(this.custom_option_selected_attr[attr] == value ){
+            //                             kv.status = " current ";
+            //                             kv.class += " current ";
+            //                         }
+            //                         var co_active = this.custom_option_active_attr[attr];
+            //                         if(!co_active){
+            //                             kv.class += " active_v ";
+            //                         }else{
+            //                             if(co_active.indexOf(value) > -1  ){
+            //                                 kv.class += " active_v ";
+            //                             }else{
+            //                                 kv.class += " no_active ";
+            //                             }
+            //                         }
+            //                         //this.custom_option_selected_attr:{},       // 选中的属性，以及对应的值
+            //                         //this.custom_option_active_attr:{},   
                                     
-                                    if(attr == this.custom_option_show_as_img){
-                                        kv.image = option.image;
-                                    }
-                                    if(co_arr[attr]){
+            //                         if(attr == this.custom_option_show_as_img){
+            //                             kv.image = option.image;
+            //                         }
+            //                         if(co_arr[attr]){
+            //                             var hasIt = 0;
+            //                             for(var y in co_arr[attr]){
+            //                                 var one = co_arr[attr][y];
+            //                                 var key = one.key;
+            //                                 console.log('key---------',key)
+            //                                 if(key == value){
+            //                                     hasIt = 1;
+            //                                     break;
+            //                                 }
+            //                             }
+            //                             if(hasIt == 0){
+            //                                 co_arr[attr].push(kv);
+            //                             }
+            //                         }else{
+            //                             co_arr[attr] = [kv];
+            //                         }
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     }
+            //     var all_select = 1;
+            //     console.log(attr)
+            //     for(attr in co_arr){
+            //         if(!this.custom_option_selected_attr[attr]){
+            //             all_select = 0;
+            //             break;
+            //         }
+            //     }
+            //     this.custom_option_all_select = all_select;
+            //     console.log('^^^^^^^^^^^^^^:'+all_select);
+            //     this.custom_option_attr = co_arr;
+            //     console.log(this.custom_option_attr);
+            //     console.log('66666666');
+            // }
+
+            // my
+            if(custom_option) {
+                for(let x in custom_option) {
+                    if (x) {
+                        let option = custom_option[x]
+                        for (var attr in option) {
+                            if (attr&&(noAttrArr.indexOf(attr) <= -1)) {
+                                let value = option[attr] //选项N中的可选值M
+                                let kv = {
+                                    key:value,
+                                    label: value
+                                }
+                                //判断选项是否已存在co_arr
+                                    if (co_arr[attr]) {
                                         var hasIt = 0;
-                                        for(var y in co_arr[attr]){
-                                            var one = co_arr[attr][y];
-                                            var key = one.key;
-                                            if(key == value){
-                                                hasIt = 1;
+                                        for (let alreadyOption in co_arr[attr]) {
+                                            let one = co_arr[attr][alreadyOption]
+                                            let key = one.key
+                                            if (key == value) {
+                                                hasIt = 1
                                                 break;
                                             }
                                         }
-                                        if(hasIt == 0){
-                                            co_arr[attr].push(kv);
+                                        if (hasIt == 0) {
+                                            co_arr[attr].push(kv)
                                         }
-                                    }else{
-                                        co_arr[attr] = [kv];
+                                    } else {
+                                        co_arr[attr] = [kv]
                                     }
-                                }
                             }
+                            
                         }
                     }
                 }
-                var all_select = 1;
-                for(attr in co_arr){
-                    if(!this.custom_option_selected_attr[attr]){
-                        all_select = 0;
-                        break;
-                    }
-                }
-                this.custom_option_all_select = all_select;
-                console.log('^^^^^^^^^^^^^^:'+all_select);
                 this.custom_option_attr = co_arr;
-                console.log(this.custom_option_attr);
-                console.log('66666666');
             }
         }
     }
@@ -279,6 +322,9 @@ export default {
                     margin-bottom 5px
                 .reset
                     color $text-lll
+        .goods_options_container
+            max-height 300px
+            overflow scroll
         .goods_options
             .label
                 line-height 50px
@@ -298,6 +344,8 @@ export default {
                     line-height 28px
                     border-radius 5px
                     font-size 14px
+                    margin-right 10px
+                    margin-bottom 10px
         .cell
             display flex
             justify-content space-between
