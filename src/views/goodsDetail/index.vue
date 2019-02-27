@@ -49,13 +49,13 @@
                     <ul class="value">
                         <li v-for="(c_item,index) in item" 
                             :class="c_item.class"
-                            @click="selectCustomOption(attr,c_item.key)">{{c_item.label}}</li>
+                            @click="selectCustomOption(attr,c_item.key)">{{c_item.key}}</li>
                     </ul>
                 </div>
                 </div>
                 <div class="cell">
                     <span>购买数量</span>
-                    <cart-control></cart-control>
+                    <!-- <cart-control></cart-control> -->
                 </div>
                 <div class="submit bold" @click="submit">{{submitText}}</div>
             </div>
@@ -93,7 +93,8 @@ export default {
             ustom_option_all_select:0,         // 当把所有的custom option选择完成后(譬如颜色尺码都选择完成)，这个值将会被设置成1。
             custom_option_add_price:0,          // 当把所有的custom option选择完成后，这个custom option 附加或减少的价格值，这个值用来计算这个custom option对应的最终价格
             custom_option_selected_sku:'',      // 当把所有的custom option选择完成后，这个将会设置当前选择的custom option sku。
-            custom_option_show_as_img: ''
+            custom_option_show_as_img: '',
+            custom_option_checkAttr: [] // 保存所有应该提交的key
         }
     },
     components: {
@@ -116,46 +117,64 @@ export default {
             this.isShow = true
         },
         submit() {
+            let selected_attr = []
+            for (let i in this.custom_option_selected_attr) {
+                selected_attr.push(i)
+            }
+            for (let i in this.custom_option_attr) {
+                if(selected_attr.indexOf(i) <= -1) {
+                    // alert(`请选择${i}`)
+                    this.$vux.toast.show({
+                        text:`请选择${i}`,
+                        type: 'warn'
+                    })
+                    return false;
+                }
+            }
             if (this.submitText === '购买') {
-                this.$router.push('/payment')
+                // this.$router.push('/payment')
             }
         },
         // 判断是否可选
         isActiveSelectCustomOption(selectAttr,selectVal) {
-            // 已选选项
-            let select_attr = Object.assign({}, this.custom_option_selected_attr)
-            select_attr[selectAttr] = selectVal;
-            if (this.custom_option) {
-                for(let x in this.custom_option) {
-                    if(x){
-                      let active = 1,
-                          option = this.custom_option[x]
-                          for(let attr in select_attr) {
-                              let val = select_attr[attr]
-                              if(option[attr] != val) {
-                                active = 0
-                                  break;
-                              }
-                          }
-                          if (active == 1) {
-                             return true
-                          }
+            // 获取已选选项
+            let select_attr = Object.assign({},this.custom_option_selected_attr)
+            // 添加当前点击选项
+            select_attr[selectAttr] = selectVal
+            // 可选组合
+            let custom_option = this.custom_option;
+            for(let c in custom_option) {
+                if(c) {
+                    let flag = true
+                    let option = custom_option[c]
+                    for (let attr in select_attr) {
+                        // 如果可选组合中相同选项的值和已选选项中的值相同,则可以点击
+                        if (option[attr] != select_attr[attr]) {
+                            flag = false
+                            break;
+                        }
+                    }
+                    if(flag) {
+                        return true
                     }
                 }
             }
-            return false;
+            return false
         },
         selectCustomOption(selectAttr,selectVal) {
-            // 选项名selectAttr,选项值selectVal
+            // 判断该选项是否可选
             if (!this.isActiveSelectCustomOption(selectAttr,selectVal)) {
                 return;
             }
+            // 如果已经存在勾选则取消选择
             if (this.custom_option_selected_attr[selectAttr] == selectVal) {
                 // 如果已选则取消选择
                 delete this.custom_option_selected_attr[selectAttr]
             } else {
+                // 不存在则添加选择
                 this.custom_option_selected_attr[selectAttr] = selectVal
             }
+            // 可以选择的选项
             var active_attr = {};
             var other_tj = {};
             var select_attr = [];
@@ -175,9 +194,9 @@ export default {
                 }
                 // tj 就是除去本元素，其他选中的属性的 k v 对象。
                 // 下面 得到本属性中active的值有哪些
-                console.log("attr1:"+attr1);
-                console.log('other_tj:',other_tj)
-                console.log('tj:',tj);
+                // console.log("attr1:"+attr1);
+                // console.log('other_tj:',other_tj)
+                // console.log('tj:',tj);
                 // tj 其他已选， otder_tj 目前选择的
                 active_attr[attr1] = this.getActiveCustomOption(tj,attr1);
             }
@@ -189,6 +208,7 @@ export default {
             this.custom_option_active_attr = active_attr;
             this.reflushCustomOption();
         },
+        // 更新视图选项
         reflushCustomOption() {
             this.getCustomOptionAttr()
         },
@@ -221,7 +241,6 @@ export default {
                 for(var x in custom_option){
                     if(x){
                         var option = custom_option[x];
-                       
                         if(activeArr.indexOf(option[attr1]) == -1){
                             activeArr.push(option[attr1]);
                         }
@@ -230,139 +249,57 @@ export default {
             }
             return activeArr;
         },
+        // 处理视图显示
         getCustomOptionAttr() {
             var noAttrArr = ['price','qty','sku','image'];
-            var co_arr = {};
-            var custom_option = this.custom_option;
-            // =======源码实现
-            // if(custom_option){
-            //     for(var x in custom_option){
-            //         if(x){
-            //             var option = custom_option[x];
-            //             if(option){
-            //                 for(var attr in option){
-            //                     // 筛选出'price','qty','sku','image' 以外的值
-            //                     if(attr && (noAttrArr.indexOf(attr) <= -1)){
-            //                         // 某个属性下可选择的值
-            //                         var value = option[attr];
-            //                         console.log('value:-------',value)
-            //                         var kv = {
-            //                             key:value,
-            //                             label:value
-            //                         };
-            //                         // 状态
-            //                         kv.status = "";  //no_active
-            //                         kv.class = "";
-            //                         if(this.custom_option_selected_attr[attr] == value ){
-            //                             kv.status = " current ";
-            //                             kv.class += " current ";
-            //                         }
-            //                         var co_active = this.custom_option_active_attr[attr];
-            //                         if(!co_active){
-            //                             kv.class += " active_v ";
-            //                         }else{
-            //                             if(co_active.indexOf(value) > -1  ){
-            //                                 kv.class += " active_v ";
-            //                             }else{
-            //                                 kv.class += " no_active ";
-            //                             }
-            //                         }
-            //                         //this.custom_option_selected_attr:{},       // 选中的属性，以及对应的值
-            //                         //this.custom_option_active_attr:{},   
-                                    
-            //                         if(attr == this.custom_option_show_as_img){
-            //                             kv.image = option.image;
-            //                         }
-            //                         if(co_arr[attr]){
-            //                             var hasIt = 0;
-            //                             for(var y in co_arr[attr]){
-            //                                 var one = co_arr[attr][y];
-            //                                 var key = one.key;
-            //                                 console.log('key---------',key)
-            //                                 if(key == value){
-            //                                     hasIt = 1;
-            //                                     break;
-            //                                 }
-            //                             }
-            //                             if(hasIt == 0){
-            //                                 co_arr[attr].push(kv);
-            //                             }
-            //                         }else{
-            //                             co_arr[attr] = [kv];
-            //                         }
-            //                     }
-            //                 }
-            //             }
-            //         }
-            //     }
-            //     var all_select = 1;
-            //     console.log(attr)
-            //     for(attr in co_arr){
-            //         if(!this.custom_option_selected_attr[attr]){
-            //             all_select = 0;
-            //             break;
-            //         }
-            //     }
-            //     this.custom_option_all_select = all_select;
-            //     console.log('^^^^^^^^^^^^^^:'+all_select);
-            //     this.custom_option_attr = co_arr;
-            //     console.log(this.custom_option_attr);
-            //     console.log('66666666');
-            // }
-
-            // my
-            if(custom_option) {
-                for(let x in custom_option) {
-                    if (x) {
-                        let option = custom_option[x]
-                        for (var attr in option) {
-                            if (attr&&(noAttrArr.indexOf(attr) <= -1)) {
-                                let value = option[attr] //选项N中的可选值M
-                                let kv = {
-                                    key:value,
-                                    label: value
-                                }
-                                kv.status = ""
-                                kv.class = ""
-                                // class current: 当前点击的选项 active_v 可选选项
-                                if (this.custom_option_selected_attr[attr] == value) {
-                                    kv.status = "current"
-                                    kv.class = " current "
-                                }
-                                var co_active = this.custom_option_active_attr[attr];
-                                if (!co_active) {
-                                    kv.class += "active_v"
-                                } else {
-                                    if (co_active.indexOf(value) > -1) {
-                                        kv.class += "active_v"
-                                    } else {
-                                        kv.class += " no_active "
-                                    }
-                                }
-                                //判断选项是否已存在co_arr
-                                    if (co_arr[attr]) {
-                                        var hasIt = 0;
-                                        for (let alreadyOption in co_arr[attr]) {
-                                            let one = co_arr[attr][alreadyOption]
-                                            let key = one.key
-                                            if (key == value) {
-                                                hasIt = 1
-                                                break;
-                                            }
-                                        }
-                                        if (hasIt == 0) {
-                                            co_arr[attr].push(kv)
-                                        }
-                                    } else {
-                                        co_arr[attr] = [kv]
-                                    }
+            let custom_option_attr = {};
+            let custom_option = this.custom_option;
+            for (let o in custom_option) {
+                if(o) {
+                    let option = custom_option[o]
+                    for(let attr in option) {
+                        if (attr && (noAttrArr.indexOf(attr) <= -1)) {
+                            let value = option[attr]
+                            let obj = {
+                                key: value
                             }
-                            
+                            obj.class = "" // current被选中 able可选 disable不可选
+                            let option_able = this.custom_option_active_attr[attr]
+                            // 是否被选中
+                            if (this.custom_option_selected_attr[attr] == value) {
+                                obj.class += " current "
+                            }
+                            if (!option_able) {
+                                obj.class += " active_v "
+                            } else {
+                                if (option_able.indexOf(value) > -1) {
+                                    obj.class += " active_v "
+                                } else {
+                                    obj.class += " no_active "
+                                }
+                            }
+                            // 
+                            if(custom_option_attr[attr]) {
+                                let flag = true
+                                for(let other_option in custom_option_attr[attr]) {
+                                    // 如果已经添加过该选项相同的选择
+                                    let other = custom_option_attr[attr][other_option]
+                                    if(other.key == value) {
+                                        flag = false
+                                        break;
+                                    }
+                                }
+                                if(flag) {
+                                    custom_option_attr[attr].push(obj)
+                                }
+                            } else {
+                                custom_option_attr[attr] = [obj]
+                            }
                         }
                     }
                 }
-                this.custom_option_attr = co_arr;
             }
+            this.custom_option_attr = custom_option_attr
         }
     }
 
