@@ -1,10 +1,10 @@
 <template>
     <div class="my-wrapper">
         <div class="header">
-            <img src="../../common/images/df_user.jpg" alt="" width="70" height="70px">
+            <img :src="userInfo.avatar" alt="" width="70" height="70px">
             <div class="text">
-                <p class="name bold">用户名</p>
-                <p class="mobile">18677185541</p>
+                <p class="name bold">{{userInfo.nickname}}</p>
+                <p class="mobile">{{userInfo.mobile}}</p>
             </div>
             <router-link class="icon icon-setting" to="/setting"></router-link>
         </div>
@@ -50,9 +50,15 @@
 </template>
 <script>
 import TabBar from '@/components/tabBar/index';
+import {mapGetters} from 'vuex'
 export default {
     components: {
         TabBar
+    },
+    computed:{
+        ...mapGetters([
+            'userInfo'
+        ])
     }
 }
 </script>

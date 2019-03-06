@@ -59,7 +59,8 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-@import "../../common/stylus/variable.styl"
+@import "../../common/stylus/variable.styl";
+@import "../../common/stylus/dialog.styl";
 .login-wrapper
     background #ffffff !important
     height 100%
@@ -93,13 +94,5 @@ export default {
     font-weight bold
     line-height 50px
     margin 0 15px
-.dialog-container
-    background #fff
-    border-radius 5px
-    .content 
-        height 100px
-        line-height 100px
-    .buttonGroup
-        line-height 50px
-        border-top 1px solid #efefef
+
 </style>

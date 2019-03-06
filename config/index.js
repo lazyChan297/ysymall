@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/': {
-        target: env == 'production' ? 'https://caomeng.me' : 'https://ceshi100.caomeng.me',
+        target: env == 'production' ? 'https://caomeng.me' : 'http://fappserver.caomeng.me/',
         changeOrigin: true,
         pathRewrite: {
           '^/': ''

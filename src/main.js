@@ -8,6 +8,7 @@ import VueAwesomeSwiper from 'vue-awesome-swiper'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import fastClick from 'fastclick'
+import store from './store/index'
 import Qs from 'qs'
 import { AlertPlugin, AjaxPlugin, ConfirmPlugin, ToastPlugin, LoadingPlugin } from 'vux'
 import 'swiper/dist/css/swiper.css'
@@ -83,6 +84,7 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

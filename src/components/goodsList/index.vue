@@ -1,12 +1,13 @@
 <template>
     <div class="goodsList-wrapper">
-        <router-link to="/goodsDetail/1" class="goodsItem" tag="div">
-            <img src="../../common/images/1812.png" alt="">
-            <p class="name bold">姜汁洗发露</p>
-            <p class="desc">生姜艾叶萃取润发护发精华发根护理、净爽控油</p>
+        <router-link to="/goodsDetail/1" class="goodsItem" tag="div" v-for="(g,index) in productList">
+            <!-- <img :src="g.image" alt=""> -->
+            <p class="name bold">{{g.name}}</p>
+            <p class="desc">{{g.desc}}</p>
             <div>
-                <span class="price bold">$39.80</span>
-                <span class="oldprice">原价：#398.00</span>
+                <span class="price bold">¥{{g.special_price.value?g.special_price.value:g.price.value}}</span>
+                <span class="oldprice" v-if="g.special_price.value">原价：#{{g.price.value}}</span>
+                <span class="oldprice" v-else></span>
                 <span class="cart bold">加入购物车</span>
             </div>
         </router-link>
@@ -18,23 +19,30 @@ export default {
         tab: {
             type: Number,
             default: 0
-        }
-    },
-    watch: {
-        tab(newVal){
-            console.log(newVal)
+        },
+        productList: {
+            type: Array,
+            default: []
         }
     }
+    // watch: {
+    //     tab(newVal){
+            
+    //     }
+    // }
 }
 </script>
 <style lang="stylus" scoped>
     @import '../../common/stylus/variable.styl'
+    .goodsList-wrapper
+        padding-bottom 50px
     .goodsItem
         background #fff
         margin 0 15px
         padding-bottom 10px
         box-shadow 0px 2px 2px -1px rgba(129,131,140,0.1)
         border-radius 8px
+        margin-bottom 15px
         img
             width 100%
         .name

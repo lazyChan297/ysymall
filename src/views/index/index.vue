@@ -1,33 +1,18 @@
 <template>
     <div class="index-wrapper">
-        <div class="header">
+        <div class="header" :style="bgImg">
             <div class="mask"></div>
-            <img src="../../common/images/df_user.jpg" alt="" width="50" height="50">
-            <p class="name bold">用户名</p>
-            <p class="mobile">18744512547</p>
+            <img :src="userInfo.avatar" alt="" width="50" height="50">
+            <p class="name bold">{{userInfo.nickname}}</p>
+            <p class="mobile">{{userInfo.mobile}}</p>
         </div>
         <ul class="category" >
-            <li @click="switchTab(0)" :class="{'active':currentTab==0}">
-                <span>全部</span>
-            </li>
-            <li @click="switchTab(1)" :class="{'active':currentTab==1}">
-                <span>食品</span>
-            </li>
-            <li @click="switchTab(2)" :class="{'active':currentTab==2}">
-                <span>洗护</span>
-            </li>
-            <li @click="switchTab(3)" :class="{'active':currentTab==3}">
-                <span>日化</span>
-            </li>
-            <li @click="switchTab(4)" :class="{'active':currentTab==4}">
-                <span>保健品</span>
-            </li>
-            <li @click="switchTab(5)" :class="{'active':currentTab==5}">
-                <span>药品</span>
+            <li @click="switchTab(c,index)" :class="{'active':currentTab==index}" v-for="(c,index) in topCategories">
+                <span>{{c.name}}</span>
             </li>
         </ul>
         <!-- 商品 -->
-        <goods-list :tab="currentTab"/>
+        <goods-list :tab="currentTab" :productList="productList"/>
         <!-- tabbar -->
         <tab-bar/>
     </div>
@@ -35,20 +20,80 @@
 <script>
 import TabBar from '@/components/tabBar/index'
 import GoodsList from '@/components/goodsList/index'
+import {mapMutations, mapGetters} from 'vuex'
 export default {
     data(){
         return {
-            currentTab: 0
+            currentTab: 0,
+            topCategories:[{id:0,name:'全部'}],
+            allProdList:[],//全部商品
+            productList: [], // 当前显示商品
+            categoryList:[] // 分类好的商品
         }
     },
     components: {
         TabBar,
         GoodsList
     },
+    created() {
+        this.getIndex()
+    },
+    mounted() {
+        
+    },
+    computed:{
+        bgImg() {
+            return `background-image:url(${this.userInfo.avatar})`
+        },
+        ...mapGetters([
+            'userInfo'
+        ])
+    },
     methods: {
-        switchTab(e){
-            this.currentTab = Number(e)
-        }
+        switchTab(c,num){
+            this.currentTab = Number(num)
+            if(!c._id) {
+                this.productList = this.allProdList
+            } else {
+                this.productList = this.categoryList[c._id]
+            }
+        },
+        getIndex() {
+            this.$axios.get('/cms/index/index').then((res)=>{
+                if(res.code === 200) {
+                    // this.userInfo = res.data.customerInfo
+                    // 保存到store
+                    this.saveUserInfo(res.data.customerInfo)
+                    console.log('userinfo',this.userInfo)
+                    this.topCategories = this.topCategories.concat(res.data.topCategories)
+                    this.formatProdList(this.topCategories,res.data.productList)
+                    this.productList = res.data.productList
+                    this.allProdList = res.data.productList
+                }
+            })
+        },
+        formatProdList(category,plist) {
+            let categoryList = {}
+            category.forEach((item,index)=>{
+                if(item._id) {
+                    categoryList[item._id] = []
+                }
+            })
+            plist.forEach((item,index)=>{
+                let clist = item.category
+                clist.forEach((c)=>{
+                    for(let k in categoryList) {
+                        if(c===k) {
+                            categoryList[k].push(item)
+                        } 
+                    }
+                })
+            })
+            this.categoryList = categoryList
+        },
+        ...mapMutations({
+            saveUserInfo: 'SAVE_USERINFO'
+        })
     }
 }
 </script>
@@ -59,7 +104,7 @@ export default {
         .header
             position relative
             padding-top 15px
-            background-image url("../../common/images/df_user.jpg")
+            /* background-image url("../../common/images/df_user.jpg") */
             background-size 100%
             background-position-y center
             height 140px
@@ -93,12 +138,16 @@ export default {
                 line-height 22px
         /* 商品分类栏 */
         .category
-            display flex
+            text-align left
+            min-width 100%
+            overflow scroll
+            white-space nowrap
             margin-bottom 15px
             li
                 line-height 50px
                 color $text-l
-                flex 1
+                margin 0 10px
+                display inline-block
                 text-align center
                 &.active
                     span
