@@ -10,6 +10,7 @@
         </router-link>
         <router-link to="/cart" tag="div">
             <div class="icon icon-cart"></div>
+            <span class="cartNum">{{cartLen}}</span>
             <p class="bold">购物车</p>
         </router-link>
         <router-link to="/my" tag="div">
@@ -18,6 +19,26 @@
         </router-link>
     </div>
 </template>
+<script>
+import {mapGetters} from 'vuex'
+export default {
+    data(){
+        return {
+            cartLen:null
+        }
+    },
+    mounted(){
+        if(this.cartInfo.cart_id) {
+            this.cartLen = this.cartInfo.products.length
+        }
+    },
+    computed:{
+        ...mapGetters([
+            'cartInfo'
+        ])
+    }
+}
+</script>
 <style lang="stylus" scoped>
     @import '../../common/stylus/variable.styl'
     .tabBar-wrapper
@@ -29,6 +50,7 @@
         height 50px
         box-shadow 0px -1px 2px 0px rgba(0,0,0,0.1)
         &>div
+            position relative
             flex 1
             text-align center
             p
@@ -42,5 +64,16 @@
             &.router-link-exact-active
                 p
                     color $green
-
+        .cartNum
+            color #fff
+            background $red
+            display block
+            position absolute
+            border-radius 50%
+            width 20px
+            height 20px
+            text-align center
+            line-height 20px
+            left 50%
+            top 0px
 </style>

@@ -13,6 +13,7 @@ import Qs from 'qs'
 import { AlertPlugin, AjaxPlugin, ConfirmPlugin, ToastPlugin, LoadingPlugin } from 'vux'
 import 'swiper/dist/css/swiper.css'
 import "./common/stylus/index.styl"
+import {checkToken} from '@/common/js/util'
 
 // 调用微信jssdk
 import { WechatPlugin } from 'vux'
@@ -22,6 +23,9 @@ Vue.use(LoadingPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(AlertPlugin)
 Vue.use(AjaxPlugin)
+
+// 是否登陆
+let islogin = checkToken()
 
 // 服务器地址
 if (process.env.NODE_ENV === 'development') {
@@ -44,35 +48,61 @@ axios.interceptors.request.use(config => {
   Vue.$vux.loading.show({
     text: '加载中'
   })
-  // console.log(Vue.$vux)
   return config
 }, err => {
   return Promise.reject(err)
 })
 axios.interceptors.response.use( response => {
   Vue.$vux.loading.hide()
-  return response.data
+  return {data:response.data,headers:response.headers}
 })
+if(islogin){
+  axios.defaults.headers.common['fecshop-uuid'] = global.uuid
+  axios.defaults.headers.common['access-token'] = global.token
+}
 
 // router
 router.beforeEach((to, from, next) => {
-  // 获取微信jssdk配置项
-  let params = Qs.stringify({url: encodeURI(location.href.split('#')[0])})
-  Vue.prototype.$axios.post('/jsconfig', params).then(res => {
-    if (res.status == 1) {
-      Vue.wechat.config(res.data.jsConfig)
-    }
-  })
-  NProgress.start()
   if (to.meta.title) {
     document.title = to.meta.title
   }
-  next()
+  
+  let path = to.path
+  if(path === '/login') {
+    next()
+    return
+  }
+  if(islogin){
+    NProgress.start()
+    next()
+  } else {
+    next({
+      path: '/login'
+    })
+  }
+  // // 获取微信jssdk配置项
+  // let params = Qs.stringify({url: encodeURI(location.href.split('#')[0])})
+  // // Vue.prototype.$axios.post('/jsconfig', params).then(res => {
+  // //   if (res.status == 1) {
+  // //     Vue.wechat.config(res.data.jsConfig)
+  // //   }
+  // // })
 })
 
 router.afterEach(() => {
   NProgress.done()
 })
+
+if(islogin) {
+  // 获取购物车信息
+  // store.dispatch('SAVE_USERINFO',)
+  Vue.prototype.$axios.get('/checkout/cart/index').then((res)=>{
+    if(res.data.code === 200) {
+      // console.log(res.data.data.cart_info.products.length)
+      store.dispatch('saveCartInfo',res.data.data.cart_info)
+    }
+})
+}
 
 Vue.use(VueAwesomeSwiper)
 fastClick.attach(document.body)

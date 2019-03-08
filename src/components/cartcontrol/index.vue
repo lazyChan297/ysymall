@@ -1,7 +1,7 @@
 <template>
     <div class="cartcontrol-wrapper">
         <div class="icon icon-minus" @click.stop="minus"></div>
-        <div class="num">{{good.quantity}}</div>
+        <div class="num">{{good.qty}}</div>
         <div class="icon icon-add" @click.stop="add"></div>
     </div>
 </template>

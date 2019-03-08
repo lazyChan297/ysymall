@@ -1,6 +1,6 @@
 <template>
     <div class="goodsList-wrapper">
-        <router-link to="/goodsDetail/1" class="goodsItem" tag="div" v-for="(g,index) in productList">
+        <router-link :to="{path:`/goodsDetail/${g.product_id}`}" class="goodsItem" tag="div" v-for="(g,index) in productList">
             <!-- <img :src="g.image" alt=""> -->
             <p class="name bold">{{g.name}}</p>
             <p class="desc">{{g.desc}}</p>

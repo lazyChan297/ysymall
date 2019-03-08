@@ -1,21 +1,20 @@
 <template>
     <div class="goodsDetail-wrapper">
-        <section>
-            <swiper :options="swiperOption">
-                <swiper-slide>
-                    <img src="../../common/images/1812.png" alt="" class="slideImg">
-                </swiper-slide>
-                <swiper-slide>
-                    <img src="../../common/images/1812.png" alt="" class="slideImg">
+        <section v-if="goodsDetail">
+            <swiper :options="swiperOption" v-if="goodsDetail.image_detail">
+                <swiper-slide  v-for="(img,index) in goodsDetail.image_detail" :key="index">
+                    <img :src="img" alt="" class="slideImg">
                 </swiper-slide>
             </swiper>
-            <div class="price-container">
-                <span class="price bold">¥39.80</span>
-                <span class="oldprice">原价：￥398.00</span>
+            <div class="price-container" v-if="goodsDetail.price_info">
+                <span class="price bold">
+                    ¥{{goodsDetail.price_info.special_price?goodsDetail.price_info.special_price.value:goodsDetail.price_info.price.value}}
+                </span>
+                <span class="oldprice" v-show="goodsDetail.price_info.special_price">原价：￥{{goodsDetail.price_info.price.value}}</span>
             </div>
             <div class="desc-container">
-                <p class="name bold">姜汁洗发露</p>
-                <p class="desc">生姜艾叶萃取润发护发精华发根护理、净爽控油</p>
+                <p class="name bold">{{goodsDetail.name}}</p>
+                <!-- <p class="desc">{{goodsDetail.desc}}</p> -->
             </div>
             <div class="title bold">详情页</div>
             <div class="tabbar">
@@ -32,8 +31,8 @@
                 <div class="goods-content">
                     <img src="../../common/images/1812.png" alt="" width="100" height="100">
                     <div class="text">
-                        <p class="name">洗发露</p>
-                        <p class="price">¥39.80</p>
+                        <p class="name">{{goodsDetail.name}}</p>
+                        <p class="price" v-if="goodsDetail.price_info">¥{{goodsDetail.price_info.special_price?goodsDetail.price_info.special_price.value:goodsDetail.price_info.price.value}}</p>
                         <p class="reset">
                             库存（2435件）
                         </p>
@@ -43,8 +42,8 @@
                 <div class="goods_options_container">
                 <div class="goods_options" v-for="(item,attr) in custom_option_attr">
                     <div class="label">
-                        <span class="black">{{attr}}</span>
-                        <span class="gray">(请选择{{attr}})</span>
+                        <span class="black">{{attr=='my_color'?'颜色':'尺寸'}}</span>
+                        <span class="gray">(请选择{{attr=='my_color'?'颜色':'尺寸'}})</span>
                     </div>
                     <ul class="value">
                         <li v-for="(c_item,index) in item" 
@@ -55,23 +54,23 @@
                 </div>
                 <div class="cell">
                     <span>购买数量</span>
-                    <!-- <cart-control></cart-control> -->
+                    <cart-control :good="goodsDetail" @minus="minus" @add="add"></cart-control>
                 </div>
-                <div class="submit bold" @click="submit">{{submitText}}</div>
+                <div class="submit bold" @click="addGoodsToCart">{{submitText}}</div>
             </div>
         </transition>
         <div class="mask" v-show="isShow"></div>
     </div>
 </template>
 <script>
-import {detail} from '@/views/goodsDetail/json'
-console.log(detail)
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import CartControl from '@/components/cartcontrol/index'
-// console.log(custom_option)
+import Qs from 'qs'
 export default {
     data() {
         return {
+            product_id:null,
+            goodsDetail:{},
             // 幻灯片的配置项
             swiperOption: {
                 notNextTick: true,
@@ -102,12 +101,19 @@ export default {
         swiperSlide,
         CartControl
     },
-    mounted() {
-        this.custom_option = detail.custom_option
-        this.custom_option_show_as_img = detail.custom_option_showImg_attr
-        this.getCustomOptionAttr()
+    created(){
+        // this.product_id = this.$route.params.id
+        this.product_id = '57bac5c6f656f2940a3bf570'
+        this.getGoodsDetail(this.product_id)
     },
     methods: {
+        getGoodsDetail(id){
+            this.$axios.get('/catalog/product/index',{params:{product_id:id}}).then((res)=>{
+                this.goodsDetail = Object.assign({qty:1},res.data.data.product) 
+                this.custom_option = res.data.data.product.custom_option
+                this.getCustomOptionAttr()
+            })
+        },
         showSlide(flag) {
             if(flag) {
                 this.submitText = '加入购物车'
@@ -116,11 +122,21 @@ export default {
             }
             this.isShow = true
         },
-        submit() {
+        // 减少
+        minus(){
+            if(this.goodsDetail.qty>0){
+                this.goodsDetail.qty = this.goodsDetail.qty -1
+            }
+        },
+        add(){
+            this.goodsDetail.qty = this.goodsDetail.qty +1
+        },
+        isSubmit() {
             let selected_attr = []
             for (let i in this.custom_option_selected_attr) {
                 selected_attr.push(i)
             }
+            this.selected_attr = selected_attr
             for (let i in this.custom_option_attr) {
                 if(selected_attr.indexOf(i) <= -1) {
                     // alert(`请选择${i}`)
@@ -131,9 +147,7 @@ export default {
                     return false;
                 }
             }
-            if (this.submitText === '购买') {
-                // this.$router.push('/payment')
-            }
+            return true
         },
         // 判断是否可选
         isActiveSelectCustomOption(selectAttr,selectVal) {
@@ -278,7 +292,6 @@ export default {
                                     obj.class += " no_active "
                                 }
                             }
-                            // 
                             if(custom_option_attr[attr]) {
                                 let flag = true
                                 for(let other_option in custom_option_attr[attr]) {
@@ -300,16 +313,34 @@ export default {
                 }
             }
             this.custom_option_attr = custom_option_attr
+        },
+        addGoodsToCart(){
+            let valid = this.isSubmit()
+            if(!valid) return
+            let custom_option = Qs.stringify(this.custom_option_selected_attr)
+            let params = Qs.stringify({
+                product_id: this.product_id,
+                custom_option: custom_option,
+                qty:this.goodsDetail.qty
+            })
+            this.$axios.post('/checkout/cart/add',params).then((res)=>{
+                if(res.data.code === 200) {
+                    if(this.submitText === '加入购物车') {
+                        this.$vux.toast.show({
+                            text:'成功加入购物车'
+                        })
+                        return
+                    } else {
+                        this.$router.push('/payment')
+                    }
+                }
+            })
+            
         }
     }
 
 }
 </script>
-<!-- 
-        1格式化数据
-            将  颜色-尺寸: {颜色:颜色}
-
- -->
 <style lang="stylus" scoped>
     @import "../../common/stylus/variable.styl";
     @import "../../common/stylus/transition.styl";
@@ -350,6 +381,7 @@ export default {
         text-align left
     .slideImg
         width 100%
+        max-height 375px
     .tabbar
         position fixed
         display flex

@@ -6,15 +6,15 @@
         <div class="article">
             <div>
                 <div class="icon icon-mobile"></div>
-                <input type="text" placeholder="请输入手机号码">
+                <input type="text" placeholder="请输入手机号码" v-model="mobile">
             </div>
             <div>
                 <div class="icon icon-passwd"></div>
-                <input type="text" placeholder="请输入验证码">
+                <input type="text" placeholder="请输入验证码" v-model="captcha">
                 <div class="getcode" @click="getcode">{{getCodeTxt}}</div>
             </div>
         </div>
-        <div class="submit" @click="showDialog = true">登陆</div>
+        <div class="submit" @click="submit">登陆</div>
         <x-dialog v-model="showDialog">
             <div class="dialog-container">
                 <div class="content">验证码无效</div>
@@ -25,13 +25,19 @@
 </template>
 <script>
 import {XDialog} from 'vux'
+import {validPhone} from '@/common/js/validated'
+import {saveToken,saveUUID} from '@/common/js/util'
+import Qs from 'qs'
 // const WAIT_TIME = 10
+const TYPE = 8
 export default {
     data() {
         return {
             canSendCode: true,
             getCodeTxt: '发送验证码',
-            showDialog: false
+            showDialog: false,
+            mobile:null,
+            captcha:null
         }
     },
     components: {
@@ -39,21 +45,56 @@ export default {
     },
     methods: {
         getcode() {
-            if(!this.canSendCode) {
+            if(!this.canSendCode) return false 
+            if(!validPhone(this.mobile)) return false
+            let params = Qs.stringify({mobile:this.mobile,type:TYPE})
+            this.$axios.post('/customer/service/send-sms',params).then((res)=>{
+                if(res.code == 200) {
+                    let wait_time = 10
+                    let timer = setInterval(()=>{
+                        if(wait_time>0) {
+                            wait_time--
+                            this.getCodeTxt = `${wait_time}s`
+                            this.canSendCode = false
+                        } else {
+                            clearTimeout(timer)
+                            this.canSendCode = true
+                            this.getCodeTxt = `重新发送验证码`
+                        }
+                    },1000)
+                }
+            })
+        },
+        valid(){
+            if(!validPhone(this.mobile)){
                 return false
             }
-            let wait_time = 10
-            let timer = setInterval(()=>{
-                if(wait_time>0) {
-                    wait_time--
-                    this.getCodeTxt = `${wait_time}s`
-                    this.canSendCode = false
-                } else {
-                    clearTimeout(timer)
-                    this.canSendCode = true
-                    this.getCodeTxt = `重新发送验证码`
+            if(!this.captcha) {
+                this.$vux.toast.show({
+                    text:`请输入验证码`,
+                    type: 'warn'
+                })
+                return false
+            }
+            return true
+        },
+        submit(){
+            let valid = this.valid()
+            if(!valid) return
+            let params = Qs.stringify({
+                mobile:this.mobile,
+                captcha:this.captcha,
+                type:TYPE
+            })
+            this.$axios.post('/customer/login/mobile-captcha',params).then((res)=>{
+                console.log(res)
+                if(res.headers) {
+                    // console.log(res.headers['access-token'])
+                    saveToken(res.headers['access-token'])
+                    saveUUID(res.headers['fecshop-uuid'])
+                    location.reload()
                 }
-            },1000)
+            })
         }
     }
 }

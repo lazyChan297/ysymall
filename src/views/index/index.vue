@@ -60,15 +60,15 @@ export default {
         },
         getIndex() {
             this.$axios.get('/cms/index/index').then((res)=>{
-                if(res.code === 200) {
+                let data = res.data.data
+                if(res.data.code === 200) {
                     // this.userInfo = res.data.customerInfo
                     // 保存到store
-                    this.saveUserInfo(res.data.customerInfo)
-                    console.log('userinfo',this.userInfo)
-                    this.topCategories = this.topCategories.concat(res.data.topCategories)
-                    this.formatProdList(this.topCategories,res.data.productList)
-                    this.productList = res.data.productList
-                    this.allProdList = res.data.productList
+                    this.saveUserInfo(data.customerInfo)
+                    this.topCategories = this.topCategories.concat(data.topCategories)
+                    this.formatProdList(this.topCategories,data.productList)
+                    this.productList = data.productList
+                    this.allProdList = data.productList
                 }
             })
         },

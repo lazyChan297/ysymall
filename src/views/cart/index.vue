@@ -4,12 +4,12 @@
         <div class="goodsItem" v-for="(good,index) in goodslist" @click="selectGood(good)">
             <div class="icon" :class="good.checked?'icon-check':'icon-uncheck'"></div>
             <div class="goods">
-                <img src="../../common/images/1812.png" alt="" width="100" height="100">
+                <img :src="good.img_url" alt="" width="100" height="100">
                 <div class="info">
                     <p class="name bold">{{good.name}}</p>
                     <p class="desc">{{good.desc}}</p>
                     <div>
-                        <div class="price bold">¥{{good.price}}</div>
+                        <div class="price bold">¥{{good.product_price}}</div>
                         <cart-control :good="good" @minus="minusgoods(good)" @add="addgoods(good)"></cart-control>
                     </div>
                 </div>
@@ -31,30 +31,27 @@
 </template>
 <script>
 import CartControl from '@/components/cartcontrol/index'
+import {mapGetters} from 'vuex'
 export default {
     data(){
         return {
             isSelectAll: true,
-            goodslist:[
-                {
-                    name: '姜汁洗发露',
-                    quantity:1,
-                    price:39.80,
-                    desc:'生姜艾叶萃取润发护发精华发根护理、净爽控油',
-                    checked: true
-                },
-                {
-                    name: '姜汁洗发露',
-                    quantity:1,
-                    price:39.80,
-                    desc:'生姜艾叶萃取润发护发精华发根护理、净爽控油',
-                    checked:true
-                }
-            ]
+            goodslist:[],
+            cart_info:{}
         }
     },
     components: {
         CartControl
+    },
+    created(){
+        if(this.cartInfo) {
+            let goodslist = this.cartInfo.products
+            console.log('cartInfo',this.cartInfo)
+            goodslist.forEach((item)=>{
+                item.checked = true
+            })
+            this.goodslist = goodslist
+        }
     },
     methods: {
         selectGood(good) {
@@ -71,12 +68,25 @@ export default {
             }
         },
         minusgoods(good) {
-            if (good.quantity >= 1) {
-                good.quantity--
+            if (good.qty >= 1) {
+                good.qty--
             }
         },
         addgoods(good) {
-            good.quantity++
+            good.qty++
+        },
+        getCart() {
+            this.$axios.get('/checkout/cart/index').then((res)=>{
+                if(res.data.code === 200) {
+                    let data = res.data.data
+                    let goodslist = data.cart_info.products
+                    goodslist.forEach((item)=>{
+                        item.checked = true
+                    })
+                    this.goodslist = goodslist
+                    this.cart_info = data.cart_info
+                }
+            })
         }
     },
     computed:{
@@ -84,12 +94,15 @@ export default {
             let goodslist = this.goodslist
             let total = 0
             goodslist.forEach(item => {
-                if (item.checked>=1) {
-                    total += item.quantity*item.price
+                if (item.checked) {
+                    total += item.qty*item.product_price
                 }
             });
             return total.toFixed(2)
-        }
+        },
+        ...mapGetters([
+            'cartInfo'
+        ])
     }
 }
 </script>

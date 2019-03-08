@@ -18,3 +18,22 @@ export function validAccount (account) {
     }
     return true
 }
+
+export function validPhone(phone) {
+    let reg = /^1[345789][0-9]{9}$/
+    if(!phone) {
+      Vue.$vux.toast.show({
+        text: '请输入手机号码',
+        type: 'warn'
+      })
+      return false
+    }
+    if (!reg.test(phone)) {
+      Vue.$vux.toast.show({
+        text: '请输入正确的手机号码',
+        type: 'warn'
+      })
+      return false
+    }
+    return true
+}

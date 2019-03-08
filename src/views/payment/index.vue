@@ -2,7 +2,7 @@
     <div class="payment-wrapper">
         <div class="userInfo" @click="chooseAddr">
             <div class="icon icon-location"></div>
-            <div class="text">
+            <div class="text" v-if="addr.length">
                 <p class="user">
                     收货人,18677185478
                 </p>
@@ -10,36 +10,37 @@
                     广西壮族自治区 南宁市 青秀区 民族大道131号会展中心航洋城
                 </p>
             </div>
+            <div v-else class="text">请选择地址</div>
             <div class="icon icon-link"></div>
         </div>
         <section>
             <div class="cell"><label>商城</label></div>
             <div class="goods-container">
-                <div class="goods">
-                    <img src="../../common/images/1812.png" width="80" height="80" alt="">
+                <div class="goods" v-for="(item,index) in goodslist" :key="index">
+                    <img :src="item.imgUrl" width="80" height="80" alt="">
                     <div class="text">
                         <p>
-                            <span class="name bold">姜汁洗发露</span>
-                            <span class="price">¥39.80</span>
+                            <span class="name bold">{{item.name}}</span>
+                            <span class="price">¥{{item.product_price}}</span>
                         </p>
                         <p>
-                            <span class="desc">生姜艾叶萃取润发护发精华发根护理、净爽控油</span>
-                            <span class="quantity bold">x1</span>
+                            <span class="desc"></span>
+                            <span class="quantity bold">x{{item.qty}}</span>
                         </p>
                     </div>
                 </div>
             </div>
             <div class="cell">
                 <label for="">总计</label>
-                <span>¥39.80</span>
+                <span>¥{{cart_info.product_total}}</span>
             </div>
-            <div class="cell">
+            <!-- <div class="cell">
                 <label for="">运费</label>
                 <span>¥0</span>
-            </div>
+            </div> -->
             <div class="cell">
                 <label for="">实付款</label>
-                <span>¥39.80</span>
+                <span>¥{{cart_info.product_total}}</span>
             </div>
         </section>
         <textarea name="" placeholder="选填：订单备注信息（50字以内）" id="" cols="30" rows="10"></textarea>
@@ -48,7 +49,27 @@
 </template>
 <script>
 export default {
+    data(){
+        return {
+            addr:[],
+            goodslist:[],
+            cart_info:{}
+        }
+    },
+    created(){
+        this.getOrder()
+    },
     methods: {
+        getOrder(){
+            this.$axios.get('/checkout/onepage/index ').then((res)=>{
+                if(res.data.code===200){
+                    let data = res.data.data
+                    this.addr = data.addr
+                    this.goodslist = data.cart_info.products
+                    this.cart_info = data.cart_info
+                }
+            })
+        },
         chooseAddr() {
             this.$wechat.openAddress({
                 success: res => {

@@ -8,14 +8,14 @@ import cashList from '@/views/cashList/index'
 import userList from '@/views/userList/index'
 export default new Router({
   routes: [
-    // {
-    //   path: '/',
-    //   name: 'login',
-    //   component: () => import('@/views/login/index'),
-    //   meta: {
-    //     title: '登陆'
-    //   }
-    // },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/views/login/index'),
+      meta: {
+        title: '登陆'
+      }
+    },
     {
       path: '/',
       name: 'index',
