@@ -1,5 +1,6 @@
 <template>
     <div class="goodsList-wrapper">
+        <div>
         <router-link :to="{path:`/goodsDetail/${g.product_id}`}" class="goodsItem" tag="div" v-for="(g,index) in productList">
             <!-- <img :src="g.image" alt=""> -->
             <p class="name bold">{{g.name}}</p>
@@ -11,6 +12,7 @@
                 <span class="cart bold">加入购物车</span>
             </div>
         </router-link>
+        </div>
     </div>
 </template>
 <script>
@@ -24,12 +26,10 @@ export default {
             type: Array,
             default: []
         }
+    },
+    methods:{
+        
     }
-    // watch: {
-    //     tab(newVal){
-            
-    //     }
-    // }
 }
 </script>
 <style lang="stylus" scoped>

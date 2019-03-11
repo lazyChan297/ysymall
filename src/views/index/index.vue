@@ -1,19 +1,31 @@
 <template>
-    <div class="index-wrapper">
+    <div class="wrapper">
+    <scroll class="index-wrapper" @scroll="scrollList">
+        <div>
         <div class="header" :style="bgImg">
             <div class="mask"></div>
             <img :src="userInfo.avatar" alt="" width="50" height="50">
             <p class="name bold">{{userInfo.nickname}}</p>
             <p class="mobile">{{userInfo.mobile}}</p>
         </div>
-        <ul class="category" >
-            <li @click="switchTab(c,index)" :class="{'active':currentTab==index}" v-for="(c,index) in topCategories">
-                <span>{{c.name}}</span>
-            </li>
-        </ul>
+        <scroll :listenScroll="ulNoListenScroll">
+            <ul class="category">
+                <li 
+                    @click="switchTab(c,index)" 
+                    :class="{'active':currentTab==index}" 
+                    v-for="(c,index) in topCategories"
+                    :key="index"
+                    ref="categoryItem">
+                    <span>{{c.name}}</span>
+                </li>
+            </ul>
+        </scroll>
         <!-- 商品 -->
         <goods-list :tab="currentTab" :productList="productList"/>
-        <!-- tabbar -->
+        
+        </div>
+    </scroll>
+    <!-- tabbar -->
         <tab-bar/>
     </div>
 </template>
@@ -21,6 +33,7 @@
 import TabBar from '@/components/tabBar/index'
 import GoodsList from '@/components/goodsList/index'
 import {mapMutations, mapGetters} from 'vuex'
+import Scroll from '@/base/scroll/index'
 export default {
     data(){
         return {
@@ -28,18 +41,21 @@ export default {
             topCategories:[{id:0,name:'全部'}],
             allProdList:[],//全部商品
             productList: [], // 当前显示商品
-            categoryList:[] // 分类好的商品
+            categoryList:[], // 分类好的商品
+            isFixed: false,
+            ulNoListenScroll: false
         }
     },
     components: {
         TabBar,
-        GoodsList
+        GoodsList,
+        Scroll
     },
     created() {
         this.getIndex()
     },
     mounted() {
-        
+       
     },
     computed:{
         bgImg() {
@@ -69,6 +85,7 @@ export default {
                     this.formatProdList(this.topCategories,data.productList)
                     this.productList = data.productList
                     this.allProdList = data.productList
+                    this.getUlWidth()
                 }
             })
         },
@@ -91,6 +108,12 @@ export default {
             })
             this.categoryList = categoryList
         },
+        scrollList(pos){
+            // 超过头像
+            if (-pos.y > 140 ) {
+                this.isFixed = true
+            }
+        },
         ...mapMutations({
             saveUserInfo: 'SAVE_USERINFO'
         })
@@ -99,7 +122,12 @@ export default {
 </script>
 <style lang="stylus" scoped>
     @import '../../common/stylus/variable.styl';
+    .wrapper
+        height 100%
+        overflow hidden
     .index-wrapper
+        height 100%
+        overflow-y hidden
         /* 头像 */
         .header
             position relative
@@ -139,16 +167,16 @@ export default {
         /* 商品分类栏 */
         .category
             text-align left
-            min-width 100%
-            overflow scroll
             white-space nowrap
             margin-bottom 15px
+            width 500px
             li
                 line-height 50px
                 color $text-l
                 margin 0 10px
                 display inline-block
                 text-align center
+                min-width 40px
                 &.active
                     span
                         display inline-block

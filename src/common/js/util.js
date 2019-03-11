@@ -4,8 +4,11 @@ export function checkToken () {
     global.token = wsCache.get('token')
     global.uuid = wsCache.get('uuid')
     if(!global.token&&!global.uuid) {
+        console.log(global.token)
+        console.log(global.uuid)
         return false
-    } return true
+    } 
+    return true
 }
 
 export function saveToken(token){

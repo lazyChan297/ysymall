@@ -68,17 +68,26 @@ router.beforeEach((to, from, next) => {
   }
   
   let path = to.path
-  if(path === '/login') {
-    next()
-    return
-  }
-  if(islogin){
-    NProgress.start()
-    next()
+  // 前往登录页且没登录
+  if(path==='/login'){
+    // 判断是否登录
+    console.log('前往登录页')
+    if (!islogin) {
+      console.log('没登录')
+      next()
+      return
+    } else {
+      console.log('登陆了')
+      next({path:'/'})
+    }
+  } 
+  if(!islogin) {
+    console.log(islogin)
+    console.log('不是去登录页,让她去登陆')
+    next({path:'/login'})
   } else {
-    next({
-      path: '/login'
-    })
+    console.log('//////')
+    next()
   }
   // // 获取微信jssdk配置项
   // let params = Qs.stringify({url: encodeURI(location.href.split('#')[0])})
@@ -92,17 +101,6 @@ router.beforeEach((to, from, next) => {
 router.afterEach(() => {
   NProgress.done()
 })
-
-if(islogin) {
-  // 获取购物车信息
-  // store.dispatch('SAVE_USERINFO',)
-  Vue.prototype.$axios.get('/checkout/cart/index').then((res)=>{
-    if(res.data.code === 200) {
-      // console.log(res.data.data.cart_info.products.length)
-      store.dispatch('saveCartInfo',res.data.data.cart_info)
-    }
-})
-}
 
 Vue.use(VueAwesomeSwiper)
 fastClick.attach(document.body)

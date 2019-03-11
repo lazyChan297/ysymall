@@ -49,7 +49,7 @@ export default {
             if(!validPhone(this.mobile)) return false
             let params = Qs.stringify({mobile:this.mobile,type:TYPE})
             this.$axios.post('/customer/service/send-sms',params).then((res)=>{
-                if(res.code == 200) {
+                if(res.data.code == 200) {
                     let wait_time = 10
                     let timer = setInterval(()=>{
                         if(wait_time>0) {
@@ -86,13 +86,12 @@ export default {
                 captcha:this.captcha,
                 type:TYPE
             })
+            // this.$router.push('/')
             this.$axios.post('/customer/login/mobile-captcha',params).then((res)=>{
-                console.log(res)
                 if(res.headers) {
-                    // console.log(res.headers['access-token'])
                     saveToken(res.headers['access-token'])
                     saveUUID(res.headers['fecshop-uuid'])
-                    location.reload()
+                    location.href = '/'
                 }
             })
         }

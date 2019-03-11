@@ -1,21 +1,27 @@
 <template>
     <div class="cart-wrapper">
         <section>
-        <div class="goodsItem" v-for="(good,index) in goodslist" @click="selectGood(good)">
-            <div class="icon" :class="good.checked?'icon-check':'icon-uncheck'"></div>
-            <div class="goods">
-                <img :src="good.img_url" alt="" width="100" height="100">
-                <div class="info">
-                    <p class="name bold">{{good.name}}</p>
-                    <p class="desc">{{good.desc}}</p>
-                    <div>
-                        <div class="price bold">¥{{good.product_price}}</div>
-                        <cart-control :good="good" @minus="minusgoods(good)" @add="addgoods(good)"></cart-control>
+            <div class="goodsItem" v-for="(good,index) in goodslist" @click="selectGood(good)">
+                <div class="icon" :class="good.checked?'icon-check':'icon-uncheck'"></div>
+                <div class="goods">
+                    <img :src="good.img_url" alt="" width="100" height="100">
+                    <div class="info">
+                        <p class="name bold">{{good.name}}</p>
+                        <p class="desc">{{good.desc}}</p>
+                        <div>
+                            <div class="price bold">¥{{good.product_price}}</div>
+                            <cart-control :good="good" @minus="minusgoods(good)" @add="addgoods(good)"></cart-control>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         </section>
+         <!-- <x-dialog v-model="showDialog">
+            <div class="dialog-container">
+                <div class="content">验证码无效</div>
+                <div class="buttonGroup" @click="showDialog = false">确认</div>
+            </div>
+        </x-dialog> -->
         <div class="control">
             <div class="icon" :class="isSelectAll?'icon-checkall':'icon-uncheckall'"></div>
             <span class="checkAll">全选</span>
@@ -31,27 +37,25 @@
 </template>
 <script>
 import CartControl from '@/components/cartcontrol/index'
-import {mapGetters} from 'vuex'
+import {mapGetters, mapActions} from 'vuex'
+import Qs from 'qs'
 export default {
     data(){
         return {
             isSelectAll: true,
             goodslist:[],
-            cart_info:{}
+            cart_info:{},
+            showDialog:false
         }
     },
     components: {
         CartControl
     },
     created(){
-        if(this.cartInfo) {
-            let goodslist = this.cartInfo.products
-            console.log('cartInfo',this.cartInfo)
-            goodslist.forEach((item)=>{
-                item.checked = true
-            })
-            this.goodslist = goodslist
-        }
+        
+    },
+    mounted(){
+        this.getCart()
     },
     methods: {
         selectGood(good) {
@@ -68,26 +72,62 @@ export default {
             }
         },
         minusgoods(good) {
-            if (good.qty >= 1) {
+            let _this = this
+            if (good.qty > 1) {
                 good.qty--
+            } else if(good.qty === 1){
+                this.$vux.confirm.show({
+                    content:'是否从购物车删除该商品',
+                    onCancel () {
+                       
+                    },
+                    onConfirm () {
+                        _this.addGoodsToCart(good)
+                    }
+                })
             }
         },
         addgoods(good) {
             good.qty++
+        },
+        addGoodsToCart(goods){
+            // let params = Qs.stringify({
+            //     product_id: goods.product_id,
+            //     custom_option: custom_option,
+            //     qty:this.goodsDetail.qty
+            // })
+            // this.$axios.post('/checkout/cart/add',params).then((res)=>{
+            //     if(res.data.code === 200) {
+            //         if(this.submitText === '加入购物车') {
+            //             this.$vux.toast.show({
+            //                 text:'成功加入购物车'
+            //             })
+            //             return
+            //         } else {
+            //             this.$router.push('/payment')
+            //         }
+            //     }
+            // })
+            console.log(goods)
         },
         getCart() {
             this.$axios.get('/checkout/cart/index').then((res)=>{
                 if(res.data.code === 200) {
                     let data = res.data.data
                     let goodslist = data.cart_info.products
+                    if(!data.cart_info) return
                     goodslist.forEach((item)=>{
                         item.checked = true
                     })
                     this.goodslist = goodslist
                     this.cart_info = data.cart_info
+                    this.saveCartInfo(data.cart_info)
                 }
             })
-        }
+        },
+        ...mapActions([
+            'saveCartInfo'
+        ])
     },
     computed:{
         total() {

@@ -10,7 +10,7 @@
         </router-link>
         <router-link to="/cart" tag="div">
             <div class="icon icon-cart"></div>
-            <span class="cartNum">{{cartLen}}</span>
+            <span class="cartNum" v-if="cartLen">{{cartLen}}</span>
             <p class="bold">购物车</p>
         </router-link>
         <router-link to="/my" tag="div">
@@ -20,7 +20,7 @@
     </div>
 </template>
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapActions} from 'vuex'
 export default {
     data(){
         return {
@@ -28,14 +28,30 @@ export default {
         }
     },
     mounted(){
-        if(this.cartInfo.cart_id) {
-            this.cartLen = this.cartInfo.products.length
-        }
+        this.getCartLen()
     },
     computed:{
         ...mapGetters([
             'cartInfo'
         ])
+    },
+    methods:{
+        getCartLen(){
+            this.$axios.get('/checkout/cart/index').then((res)=>{
+              if(res.data.code === 200) {
+                  console.log('....')
+                  console.log(res)
+                  let data = res.data.data
+                  if(data.cart_info){
+                      this.cartLen = data.cart_info.products.length
+                  }
+                //   this.saveCartInfo(data.cart_info)    
+              }
+            })
+        },
+        ...mapActions({
+            saveCartInfo:'SAVE_CARTINFO'
+        })
     }
 }
 </script>

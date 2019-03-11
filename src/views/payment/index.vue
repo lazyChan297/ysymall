@@ -62,6 +62,7 @@ export default {
     methods: {
         getOrder(){
             this.$axios.get('/checkout/onepage/index ').then((res)=>{
+                console.log(res)
                 if(res.data.code===200){
                     let data = res.data.data
                     this.addr = data.addr
