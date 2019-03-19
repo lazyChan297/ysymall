@@ -44,6 +44,28 @@
                 </div>
                 <div class="icon icon-link"></div>
             </router-link>
+            <router-link class="cell" to="/openList" tag="div">
+                <div>
+                    <span class="icon icon-vip"></span>
+                    <span class="bold">开通vip</span>
+                </div>
+                <div class="icon icon-link"></div>
+            </router-link>
+            <router-link class="cell" to="/vipLevel" tag="div">
+                <div>
+                    <span class="icon icon-vip"></span>
+                    <span class="bold">开通vip</span>
+                </div>
+                <div class="icon icon-link"></div>
+            </router-link>
+            <!-- 仅限公司人员操作 -->
+            <router-link class="cell" to="/customLevel" tag="div">
+                <div>
+                    <span class="icon icon-vip"></span>
+                    <span class="bold">设置级别</span>
+                </div>
+                <div class="icon icon-link"></div>
+            </router-link>
         </section>
         <tab-bar/>
     </div>
@@ -94,7 +116,7 @@ export default {
                 line-height 20px
                 text-align left
     section
-        padding 0 15px
+        padding 0 15px 50px
         background #fff
     .cell
         display flex

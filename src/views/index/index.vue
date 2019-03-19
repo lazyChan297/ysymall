@@ -8,7 +8,7 @@
             <p class="name bold">{{userInfo.nickname}}</p>
             <p class="mobile">{{userInfo.mobile}}</p>
         </div>
-        <scroll :listenScroll="ulNoListenScroll">
+        <scroll :listenScroll="ulNoListenScroll" :scrollX="isScrollX" class="scrollTab" :data="topCategories">
             <ul class="category">
                 <li 
                     @click="switchTab(c,index)" 
@@ -34,6 +34,8 @@ import TabBar from '@/components/tabBar/index'
 import GoodsList from '@/components/goodsList/index'
 import {mapMutations, mapGetters} from 'vuex'
 import Scroll from '@/base/scroll/index'
+import webStorageCache from 'web-storage-cache'
+const wsCache = new webStorageCache()
 export default {
     data(){
         return {
@@ -43,7 +45,8 @@ export default {
             productList: [], // 当前显示商品
             categoryList:[], // 分类好的商品
             isFixed: false,
-            ulNoListenScroll: false
+            ulNoListenScroll: false,
+            isScrollX: true
         }
     },
     components: {
@@ -78,14 +81,12 @@ export default {
             this.$axios.get('/cms/index/index').then((res)=>{
                 let data = res.data.data
                 if(res.data.code === 200) {
-                    // this.userInfo = res.data.customerInfo
                     // 保存到store
                     this.saveUserInfo(data.customerInfo)
                     this.topCategories = this.topCategories.concat(data.topCategories)
                     this.formatProdList(this.topCategories,data.productList)
                     this.productList = data.productList
                     this.allProdList = data.productList
-                    this.getUlWidth()
                 }
             })
         },
@@ -169,7 +170,9 @@ export default {
             text-align left
             white-space nowrap
             margin-bottom 15px
-            width 500px
+            /* width 500px */
+            min-width 550px
+            /* padding-right 50px */
             li
                 line-height 50px
                 color $text-l

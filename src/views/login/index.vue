@@ -4,14 +4,14 @@
             <img src="../../common/images/logo.png" alt="" width="140">
         </div>
         <div class="article">
-            <div>
-                <div class="icon icon-mobile"></div>
+            <div class="row">
+                <div class="iconbox"><div class="icon icon-mobile"></div></div>
                 <input type="text" placeholder="请输入手机号码" v-model="mobile">
             </div>
-            <div>
-                <div class="icon icon-passwd"></div>
+            <div class="row">
+                <div class="iconbox"><div class="icon icon-passwd"></div></div>
                 <input type="text" placeholder="请输入验证码" v-model="captcha">
-                <div class="getcode" @click="getcode">{{getCodeTxt}}</div>
+                <div class="getcode" @click="getcode" :class="{'disable':!canSendCode}">{{getCodeTxt}}</div>
             </div>
         </div>
         <div class="submit" @click="submit">登陆</div>
@@ -30,6 +30,7 @@ import {saveToken,saveUUID} from '@/common/js/util'
 import Qs from 'qs'
 // const WAIT_TIME = 10
 const TYPE = 8
+let afterLogin = undefined
 export default {
     data() {
         return {
@@ -42,6 +43,10 @@ export default {
     },
     components: {
         XDialog
+    },
+    beforeRouteEnter(to, from, next){
+        if(from) {afterLogin = from.path}
+        next()
     },
     methods: {
         getcode() {
@@ -59,7 +64,7 @@ export default {
                         } else {
                             clearTimeout(timer)
                             this.canSendCode = true
-                            this.getCodeTxt = `重新发送验证码`
+                            this.getCodeTxt = `发送验证码`
                         }
                     },1000)
                 }
@@ -86,12 +91,21 @@ export default {
                 captcha:this.captcha,
                 type:TYPE
             })
-            // this.$router.push('/')
-            this.$axios.post('/customer/login/mobile-captcha',params).then((res)=>{
-                if(res.headers) {
+            this.$axios.post('/customer/login/mobile-captcha',params,{
+                headers:{
+                    'fecshop-uuid':'',
+                    'access-token':''
+                }
+            }).then((res)=>{
+                if(res.headers && res.data.code === 200) {
                     saveToken(res.headers['access-token'])
                     saveUUID(res.headers['fecshop-uuid'])
                     location.href = '/'
+                } else if (res.data.code === 1100103) {
+                    this.$vux.toast.show({
+                        text: '验证码已过期',
+                        type: 'warn'
+                    })
                 }
             })
         }
@@ -111,21 +125,32 @@ export default {
 .article
     padding 0 30px
     background #fff
-    &>div
+    box-sizing border-box
+    width 100%
+    .row
         display flex
         align-items center
+        width 100%
         height 40px
         border-bottom 1px solid $line
         margin-bottom 28px
+        .iconbox
+            flex 0 0 20px
         input
-            flex 1
             margin-left 10px
-        .getcode 
+            flex 1
+            max-width 180px
+        .getcode
             border-radius 8px
             background $green
-            width 120px
             color #fff
+            font-size 14px
+            flex: 0 0 70px
+            line-height 20px
             line-height 40px
+            padding 0 10px
+        .disable
+            background $text-lll
 .submit
     background:linear-gradient(180deg,rgba(100,229,198,1) 0%,rgba(41,206,166,1) 100%);
     box-shadow:0px 4px 7px 0px rgba(41,206,166,0.47);

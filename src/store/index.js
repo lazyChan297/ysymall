@@ -1,40 +1,42 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+// 状态每次改变都会在控制台打印
+import createLogger from 'vuex/dist/logger'
 
+const debug = process.env.NODE_ENV !== 'production'
 Vue.use(Vuex)
 
 const state = {
     userInfo:{},
-    cartInfo:{}
+    cartInfo:{},
+    cartLen:''
 }
 
 const SAVE_USERINFO = 'SAVE_USERINFO'
 const SAVE_CARTINFO = 'SAVE_CARTINFO'
-const CART_LEN = 'CART_LEN'
+const SAVE_CARTLEN = 'SAVE_CARTLEN'
 
 const mutations = {
     [SAVE_USERINFO](state,userInfo) {
         state.userInfo = userInfo
     },
-    [SAVE_CARTINFO] (state, cart) {
-        state.cartInfo = cart
+    [SAVE_CARTLEN](state,len) {
+        state.cartLen = len
     }
 }
 
 const getters = {
     userInfo: (state) => state.userInfo,
-    cartInfo: (state) => state.cartInfo
+    cartInfo: (state) => state.cartInfo,
+    cartLen: (state) => state.cartLen
 }
 
-const actions = {
-    saveCartInfo({commit},cartInfo){
-        commit('SAVE_CARTINFO',cartInfo)
-    }
-}
+
 
 export default new Vuex.Store({
     state,
     mutations,
     getters,
-    actions
+    strict: debug,
+    plugins: debug ? [createLogger()] : []
 })

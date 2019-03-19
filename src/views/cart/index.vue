@@ -1,80 +1,92 @@
 <template>
-    <div class="cart-wrapper">
-        <section>
-            <div class="goodsItem" v-for="(good,index) in goodslist" @click="selectGood(good)">
-                <div class="icon" :class="good.checked?'icon-check':'icon-uncheck'"></div>
-                <div class="goods">
-                    <img :src="good.img_url" alt="" width="100" height="100">
-                    <div class="info">
-                        <p class="name bold">{{good.name}}</p>
-                        <p class="desc">{{good.desc}}</p>
-                        <div>
-                            <div class="price bold">¥{{good.product_price}}</div>
-                            <cart-control :good="good" @minus="minusgoods(good)" @add="addgoods(good)"></cart-control>
+    <div class="cart-wrapper" v-if="ready">
+        <div v-if="goodslist.length" style="padding-bottom:50px">
+            <section>
+                <div class="goodsItem" v-for="(item,index) in goodslist" :key="item.item_id">
+                    <div class="icon icon-check" :class="{'icon-uncheck':!item.checked}" @click="selectGood(index)"></div>
+                    <div class="goods">
+                        <img :src="item.img_url" alt="" width="100" height="100">
+                        <div class="info">
+                            <p class="name bold">{{item.name}}</p>
+                            <p class="desc">{{item.desc}}</p>
+                            <div>
+                                <div class="price bold">¥{{item.product_price}}</div>
+                                <cart-control :good="item" @minus="minusgoods(item)" @add="addgoods(item)"></cart-control>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </section>
+            <div class="control">
+                <div class="icon" :class="isSelectAll?'icon-checkall':'icon-uncheckall'" @click="selectAll"></div>
+                <span class="checkAll">全选</span>
+                <div>
+                    <span>合计：</span>
+                    <span class="red">¥{{total}}</span>
+                </div>
+                <div class="submit bold" @click="submit">
+                    结算
+                </div>
             </div>
-        </section>
-         <!-- <x-dialog v-model="showDialog">
-            <div class="dialog-container">
-                <div class="content">验证码无效</div>
-                <div class="buttonGroup" @click="showDialog = false">确认</div>
-            </div>
-        </x-dialog> -->
-        <div class="control">
-            <div class="icon" :class="isSelectAll?'icon-checkall':'icon-uncheckall'"></div>
-            <span class="checkAll">全选</span>
-            <div>
-                <span>合计：</span>
-                <span class="red">¥{{total}}</span>
-            </div>
-            <div class="submit bold">
-                结算
-            </div>
+        </div>
+        <!-- 购物车为空 -->
+        <div v-else>
+            <p class="title">购物车是空的，赶紧去购物吧</p>
+            <router-link to="/" tag="div" class="button">去购物</router-link>
         </div>
     </div>
 </template>
 <script>
 import CartControl from '@/components/cartcontrol/index'
-import {mapGetters, mapActions} from 'vuex'
+import {mapGetters, mapMutations} from 'vuex'
 import Qs from 'qs'
 export default {
     data(){
         return {
             isSelectAll: true,
             goodslist:[],
-            cart_info:{},
-            showDialog:false
+            ready:false
         }
     },
     components: {
         CartControl
     },
     created(){
-        
-    },
-    mounted(){
         this.getCart()
     },
     methods: {
-        selectGood(good) {
-            good.checked = !good.checked
-            let checkAll_flag = true
-            for(let i in this.goodslist) {
-                if (this.goodslist[i].checked === false) {
-                    this.isSelectAll = false
-                    checkAll_flag = false
+        selectGood(index) {
+            let goodslist = this.goodslist
+            goodslist[index].checked = !goodslist[index].checked
+            if(!goodslist[index].checked) {
+                this.isSelectAll = false
+            }
+            this.goodslist = goodslist
+        },
+        getCart(){
+            this.$axios.get('/checkout/cart/index').then((res)=>{
+                if(res.data.code === 200) {
+                    let cart_info = res.data.data.cart_info
+                    let goodslist = cart_info.products
+                    if(goodslist) {
+                        goodslist.forEach((item,index)=>{
+                            item.checked = true
+                        })
+                        this.goodslist = goodslist
+                    } else {
+                        this.goodslist = []
+                    }
+                    this.ready = true
+                    let len = goodslist === undefined?0:goodslist.length
+                    this.saveCartLen(len)
                 }
-            }
-            if (checkAll_flag) {
-                this.isSelectAll = true
-            }
+            })
         },
         minusgoods(good) {
             let _this = this
             if (good.qty > 1) {
                 good.qty--
+                this.updateCart(good,"less_one")
             } else if(good.qty === 1){
                 this.$vux.confirm.show({
                     content:'是否从购物车删除该商品',
@@ -82,72 +94,89 @@ export default {
                        
                     },
                     onConfirm () {
-                        _this.addGoodsToCart(good)
+                        _this.updateCart(good,"remove")
                     }
                 })
             }
         },
         addgoods(good) {
             good.qty++
+            this.updateCart(good,"add_one")
         },
-        addGoodsToCart(goods){
-            // let params = Qs.stringify({
-            //     product_id: goods.product_id,
-            //     custom_option: custom_option,
-            //     qty:this.goodsDetail.qty
-            // })
-            // this.$axios.post('/checkout/cart/add',params).then((res)=>{
-            //     if(res.data.code === 200) {
-            //         if(this.submitText === '加入购物车') {
-            //             this.$vux.toast.show({
-            //                 text:'成功加入购物车'
-            //             })
-            //             return
-            //         } else {
-            //             this.$router.push('/payment')
-            //         }
-            //     }
-            // })
-            console.log(goods)
-        },
-        getCart() {
-            this.$axios.get('/checkout/cart/index').then((res)=>{
+        updateCart(goods,up_type){
+            let params = Qs.stringify({
+                up_type:up_type,
+                item_id:String(goods.item_id)
+            })
+            
+            this.$axios.post('/checkout/cart/updateinfo',params).then((res)=>{
                 if(res.data.code === 200) {
-                    let data = res.data.data
-                    let goodslist = data.cart_info.products
-                    if(!data.cart_info) return
-                    goodslist.forEach((item)=>{
-                        item.checked = true
-                    })
-                    this.goodslist = goodslist
-                    this.cart_info = data.cart_info
-                    this.saveCartInfo(data.cart_info)
+                    this.getCart()
                 }
             })
         },
-        ...mapActions([
-            'saveCartInfo'
-        ])
+        formatCart(){
+            let goodslist = this.cartInfo.products
+            if(!goodslist) return
+            goodslist.forEach((item)=>{
+                item.checked = true
+            })
+            this.goodslist = goodslist
+        },
+        selectAll(){
+            this.isSelectAll = !this.isSelectAll
+            let goodslist = this.goodslist
+            goodslist.forEach((item,index)=>{
+                item.checked = this.isSelectAll
+            })
+        },
+        // 结算
+        submit(){
+            let goodslist = this.goodslist
+            let ret = []
+            goodslist.forEach((item)=>{
+                if(!item.checked) {
+                    this.updateCart(item,"remove")
+                }
+            })
+            // this.$router.push('/payment')
+            let turnPage = setTimeout(()=>{
+                this.$router.push('/payment')
+            },200)
+        },
+        ...mapMutations({
+            saveCartLen: 'SAVE_CARTLEN'
+        })
     },
     computed:{
         total() {
             let goodslist = this.goodslist
             let total = 0
+            if(!goodslist) return total
             goodslist.forEach(item => {
                 if (item.checked) {
                     total += item.qty*item.product_price
                 }
             });
             return total.toFixed(2)
-        },
-        ...mapGetters([
-            'cartInfo'
-        ])
+        }
     }
 }
 </script>
 <style lang="stylus" scoped>
     @import "../../common/stylus/variable.styl";
+    /* 购物车为空 */
+    .title
+        margin-top 200px
+        color $text-ll
+    .button
+        width 120px
+        line-height 50px
+        background linear-gradient(180deg,rgba(100,229,198,1) 0%,rgba(41,206,166,1) 100%)
+        border-radius 5px
+        color #fff
+        font-weight bold
+        margin 20px auto 0
     .cart-wrapper
         padding-top 15px
         .goodsItem
@@ -162,6 +191,7 @@ export default {
             .goods
                 display flex
                 text-align left
+                flex 1
                 img
                     margin-left 10px
                     margin-bottom 2px
@@ -174,7 +204,12 @@ export default {
                     color $text-ll
                     font-size 12px
                     line-height 17.5px
+                    height 17.5px
                 .info
+                    display flex
+                    flex-direction column
+                    justify-content space-around
+                    flex 1
                     &>div
                         display flex
                         align-items center

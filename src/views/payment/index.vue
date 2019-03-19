@@ -2,12 +2,12 @@
     <div class="payment-wrapper">
         <div class="userInfo" @click="chooseAddr">
             <div class="icon icon-location"></div>
-            <div class="text" v-if="addr.length">
+            <div class="text" v-if="addr.id">
                 <p class="user">
-                    收货人,18677185478
+                    {{addr.reciever}},{{addr.mobile}}
                 </p>
                 <p class="addr">
-                    广西壮族自治区 南宁市 青秀区 民族大道131号会展中心航洋城
+                    {{addr.details}}
                 </p>
             </div>
             <div v-else class="text">请选择地址</div>
@@ -43,15 +43,16 @@
                 <span>¥{{cart_info.product_total}}</span>
             </div>
         </section>
-        <textarea name="" placeholder="选填：订单备注信息（50字以内）" id="" cols="30" rows="10"></textarea>
-        <div class="large-green-button">去支付</div>
+        <div class="textbox"><textarea name="" placeholder="选填：订单备注信息（50字以内）" id="" cols="30" rows="10"></textarea></div>
+        <div class="large-green-button" @click="prePayment">去支付</div>
     </div>
 </template>
 <script>
+import Qs from 'qs'
 export default {
     data(){
         return {
-            addr:[],
+            addr:{},
             goodslist:[],
             cart_info:{}
         }
@@ -62,7 +63,6 @@ export default {
     methods: {
         getOrder(){
             this.$axios.get('/checkout/onepage/index ').then((res)=>{
-                console.log(res)
                 if(res.data.code===200){
                     let data = res.data.data
                     this.addr = data.addr
@@ -72,6 +72,15 @@ export default {
             })
         },
         chooseAddr() {
+            // let addrInfo = JSON.stringify({ "userName": "张三","telNumber": "13899990000","provinceName": "广东省","cityName": "广州市","countyName": "海珠区","detail":"新港中路1号"})
+            // let params = Qs.stringify({addrInfo})
+            // this.$axios.post('/customer/service/save-addr', params).then(res => {
+            //     alert(res.data.code)
+            //     if (res.data.code == 200) {
+            //         that.addr = res.data.data
+            //     }
+            // })
+            let that = this
             this.$wechat.openAddress({
                 success: res => {
                     let addrInfo = JSON.stringify({
@@ -80,18 +89,46 @@ export default {
                         provinceName: res.provinceName,
                         cityName: res.cityName,
                         countyName: res.countryName,
-                        detail: res.detailInfo,
-                        postalCode: res.postalCode
+                        detail: res.detailInfo
                     })
-                    // let params = Qs.stringify({addrInfo})
-                    // that.$axios.post('/users/addAddr', params).then(res => {
-                    //     // alert(res)
-                    //     if (res.status == 1) {
-                    //         that.addressData = res.data.addr
-                    //     }
-                    // })
+                    let params = Qs.stringify({addrInfo})
+                    that.$axios.post('/customer/service/save-addr', params).then(res => {
+                        alert(res.data.code)
+                        if (res.data.code == 200) {
+                            that.addr = res.data.data
+                        }
+                    })
                 }
             })
+        },
+        prePayment(){
+          if(!this.addr.id) {
+              this.$vux.toast.show({
+                  text:'请选择地址',
+                  type:'warn'
+              })
+              return false
+          }
+          let params = Qs.stringify({shipping_method:'free_shipping',
+                                     payment_method:'wechatpay_standard',
+                                     address_id:12})
+          this.$axios.post('/checkout/onepage/submitorder',params).then((res)=>{
+              if(res.data.code === 200) {
+                  this.payment(res.data.data.payargs)
+              }
+          })
+        },
+        payment(arg) {
+            wx.chooseWXPay({
+                timestamp: arg.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+                nonceStr: arg.nonceStr, // 支付签名随机串，不长于 32 位
+                package: arg.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+                signType: arg.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+                paySign: arg.paySign, // 支付签名
+                success: function (res) {
+                    // 支付成功后的回调函数
+                }
+            });
         }
     }
 }
@@ -99,6 +136,7 @@ export default {
 <style lang="stylus" scoped>
 @import "../../common/stylus/variable.styl";
 .payment-wrapper
+    padding-bottom 10px
     .userInfo
         display flex
         align-items center
@@ -151,10 +189,16 @@ export default {
                     line-height 18px
                 .quantity
                     color $text-lll
+    .textbox
+        width 100%
     textarea
         height 80px
         width 100%
         margin-top 10px
         resize none
         padding 10px 15px
+        box-sizing border-box
+        -webkit-appearance none
+        outline none
+        border none
 </style>

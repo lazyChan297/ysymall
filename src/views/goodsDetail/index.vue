@@ -1,6 +1,6 @@
 <template>
     <div class="goodsDetail-wrapper">
-        <section v-if="goodsDetail">
+        <section v-if="goodsDetail" class="goodsDetail-container">
             <swiper :options="swiperOption" v-if="goodsDetail.image_detail">
                 <swiper-slide  v-for="(img,index) in goodsDetail.image_detail" :key="index">
                     <img :src="img" alt="" class="slideImg">
@@ -18,10 +18,11 @@
             </div>
             <div class="title bold">详情页</div>
             <div class="tabbar">
-                <div>
+                <router-link to="/cart" tag="div">
                     <div class="icon icon-shopcart"></div>
                     <div class="text">购物车</div>
-                </div>
+                    <span class="cartLen" v-if="cartLen">{{cartLen}}</span>
+                </router-link>
                 <div class="yellow bold" @click="showSlide(true)">加入购物车</div>
                 <div class="red bold" @click="showSlide(false)">购买</div>
             </div>
@@ -29,13 +30,13 @@
         <transition name="slide">
             <div class="slide-wrapper" v-show="isShow">
                 <div class="goods-content">
-                    <img src="../../common/images/1812.png" alt="" width="100" height="100">
+                    <div class="imgbox" v-if="goodsDetail.image_detail"><img :src="goodsDetail.image_detail[0]" alt="" width="100"></div>
                     <div class="text">
                         <p class="name">{{goodsDetail.name}}</p>
                         <p class="price" v-if="goodsDetail.price_info">¥{{goodsDetail.price_info.special_price?goodsDetail.price_info.special_price.value:goodsDetail.price_info.price.value}}</p>
-                        <p class="reset">
+                        <!-- <p class="reset">
                             库存（2435件）
-                        </p>
+                        </p> -->
                     </div>
                     <div class="icon icon-close" @click="isShow = false"></div>
                 </div>
@@ -65,6 +66,7 @@
 <script>
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import CartControl from '@/components/cartcontrol/index'
+import {mapGetters, mapMutations} from 'vuex'
 import Qs from 'qs'
 export default {
     data() {
@@ -102,9 +104,14 @@ export default {
         CartControl
     },
     created(){
-        // this.product_id = this.$route.params.id
-        this.product_id = '57bac5c6f656f2940a3bf570'
+        this.product_id = this.$route.params.id
+        // this.product_id = '57bac5c6f656f2940a3bf570'
         this.getGoodsDetail(this.product_id)
+    },
+    computed:{
+        ...mapGetters([
+            'cartLen'
+        ])
     },
     methods: {
         getGoodsDetail(id){
@@ -128,6 +135,17 @@ export default {
                 this.goodsDetail.qty = this.goodsDetail.qty -1
             }
         },
+        // 获取购物车信息
+        getCart(){
+            this.$axios.get('/checkout/cart/index').then((res)=>{
+                if(res.data.code === 200) {
+                    let cart_info = res.data.data.cart_info
+                    if (cart_info) {
+                        this.saveCartLen(cart_info.products.length)
+                    }
+                }
+            })
+        },
         add(){
             this.goodsDetail.qty = this.goodsDetail.qty +1
         },
@@ -139,7 +157,6 @@ export default {
             this.selected_attr = selected_attr
             for (let i in this.custom_option_attr) {
                 if(selected_attr.indexOf(i) <= -1) {
-                    // alert(`请选择${i}`)
                     this.$vux.toast.show({
                         text:`请选择${i}`,
                         type: 'warn'
@@ -317,26 +334,36 @@ export default {
         addGoodsToCart(){
             let valid = this.isSubmit()
             if(!valid) return
-            let custom_option = Qs.stringify(this.custom_option_selected_attr)
+            let custom_option = JSON.stringify(this.custom_option_selected_attr)
             let params = Qs.stringify({
                 product_id: this.product_id,
                 custom_option: custom_option,
                 qty:this.goodsDetail.qty
             })
-            this.$axios.post('/checkout/cart/add',params).then((res)=>{
+            
+            this.$axios.post('/checkout/cart/add',params,{
+                headers:{
+                    'fecshop-currency':'CNY',
+                    'fecshop-lang':'zh_CN'
+                }
+            }).then((res)=>{
                 if(res.data.code === 200) {
+                    this.getCart()
                     if(this.submitText === '加入购物车') {
                         this.$vux.toast.show({
                             text:'成功加入购物车'
                         })
+                        this.isShow = false
                         return
                     } else {
                         this.$router.push('/payment')
                     }
                 }
             })
-            
-        }
+        },
+        ...mapMutations({
+            saveCartLen:'SAVE_CARTLEN'
+        })
     }
 
 }
@@ -344,6 +371,8 @@ export default {
 <style lang="stylus" scoped>
     @import "../../common/stylus/variable.styl";
     @import "../../common/stylus/transition.styl";
+    .goodsDetail-container
+        padding-bottom 50px
     .price-container
         line-height 50px
         padding-left 15px
@@ -392,6 +421,7 @@ export default {
         bottom 0
         background #fff
         &>div
+            position relative
             flex 1
             text-align center
             color #fff
@@ -399,6 +429,18 @@ export default {
                 color $text-lll
                 font-size 12px
                 line-height 20px
+            .cartLen
+                position absolute
+                display block
+                color #fff
+                background $red
+                top 0
+                width 20px
+                height 20px
+                line-height 20px
+                border-radius 50%
+                left 50%
+                
     /* 弹窗 */
     .slide-wrapper
         position absolute
@@ -414,6 +456,10 @@ export default {
         .goods-content
             display flex
             border-bottom 1px solid $line
+            padding-bottom 10px
+            .imgbox
+                height 100px
+                overflow hidden
             .text
                 flex 1
                 margin-left 10px

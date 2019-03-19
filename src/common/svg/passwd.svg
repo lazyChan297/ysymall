@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="20px" height="26px" viewBox="0 0 20 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 51 (57462) - http://www.bohemiancoding.com/sketch -->
-    <title>Group 12</title>
+    <title>Slice Copy</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="首页" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="icon" transform="translate(-198.000000, -176.000000)">
-            <g id="Group-12" transform="translate(198.000000, 177.000000)">
-                <rect id="Rectangle-78" stroke="#3D404A" stroke-width="2" x="1" y="6.79310345" width="18" height="16.2068966" rx="3"></rect>
-                <path d="M16.6666667,6.62068966 C16.6666667,2.96418373 13.6818983,0 10,0 C6.31810167,0 3.33333333,2.96418373 3.33333333,6.62068966" id="Oval-17" stroke="#3D404A" stroke-width="2"></path>
-                <path d="M10.2107747,19.6208243 C11.7078942,19.6208243 12.9215494,18.4155391 12.9215494,16.9287446 C12.9215494,15.44195 11.7078942,12.4137931 10.2107747,12.4137931 C8.71365517,12.4137931 7.5,15.44195 7.5,16.9287446 C7.5,18.4155391 8.71365517,19.6208243 10.2107747,19.6208243 Z" id="Oval-18" fill="#3D404A"></path>
-            </g>
+        <g id="Group-12-Copy" transform="translate(10.000000, 8.000000)">
+            <rect id="Rectangle-78" stroke="#3D404A" stroke-width="2" x="1" y="6.83333333" width="18" height="16.3333333" rx="3"></rect>
+            <path d="M16.6666667,6.66666667 C16.6666667,2.98476833 13.6818983,0 10,0 C6.31810167,0 3.33333333,2.98476833 3.33333333,6.66666667" id="Oval-17" stroke="#3D404A" stroke-width="2"></path>
+            <path d="M10.2107747,19.75708 C11.7078942,19.75708 12.9215494,18.5434248 12.9215494,17.0463053 C12.9215494,15.5491858 11.7078942,12.5 10.2107747,12.5 C8.71365517,12.5 7.5,15.5491858 7.5,17.0463053 C7.5,18.5434248 8.71365517,19.75708 10.2107747,19.75708 Z" id="Oval-18" fill="#3D404A"></path>
         </g>
     </g>
 </svg>

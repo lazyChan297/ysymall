@@ -20,38 +20,12 @@
     </div>
 </template>
 <script>
-import {mapGetters, mapActions} from 'vuex'
+import {mapGetters} from 'vuex'
 export default {
-    data(){
-        return {
-            cartLen:null
-        }
-    },
-    mounted(){
-        this.getCartLen()
-    },
     computed:{
         ...mapGetters([
-            'cartInfo'
+            'cartLen'
         ])
-    },
-    methods:{
-        getCartLen(){
-            this.$axios.get('/checkout/cart/index').then((res)=>{
-              if(res.data.code === 200) {
-                  console.log('....')
-                  console.log(res)
-                  let data = res.data.data
-                  if(data.cart_info){
-                      this.cartLen = data.cart_info.products.length
-                  }
-                //   this.saveCartInfo(data.cart_info)    
-              }
-            })
-        },
-        ...mapActions({
-            saveCartInfo:'SAVE_CARTINFO'
-        })
     }
 }
 </script>

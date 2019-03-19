@@ -258,6 +258,46 @@ export default new Router({
       meta: {
         title: '客户订单'
       }
+    },
+    {
+      path:'/openList/:level',
+      name: 'openList',
+      component:()=>import('@/views/openList/index'),
+      meta:{
+        title: '开通VIP'
+      }
+    },
+    {
+      path:'/openRecord',
+      name:'openRecord',
+      component:()=>import('@/views/openListRecord/index'),
+      meta:{
+        title: '开通记录'
+      }
+    },
+    {
+      path: '/openDetail/:level',
+      name: 'openDetail',
+      component:()=>import('@/views/openDetail/index'),
+      meta:{
+        title:'开通VIP'
+      }
+    },
+    {
+      path:'/vipLevel',
+      name:'vipLevel',
+      component:()=>import('@/views/vipLevel/index'),
+      meta:{
+        title:"升级会员级别"
+      }
+    },
+    {
+      path:'/customLevel',
+      name:'customLevel',
+      component:()=>import('@/views/custom_level/index'),
+      meta:{
+        title:'设置级别'
+      }
     }
   ]
 })

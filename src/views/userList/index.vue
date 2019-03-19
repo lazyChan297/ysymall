@@ -48,6 +48,7 @@
 </template>
 <style lang="stylus" scoped>
 @import "../../common/stylus/variable.styl";
+
 .desc
     font-size 12px
     color $text-lll
