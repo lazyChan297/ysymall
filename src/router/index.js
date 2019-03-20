@@ -260,15 +260,23 @@ export default new Router({
       }
     },
     {
-      path:'/openList/:level',
-      name: 'openList',
-      component:()=>import('@/views/openList/index'),
+      path:'/vipList',
+      name: 'vipList',
+      component:()=>import('@/views/vipList/index'),
       meta:{
         title: '开通VIP'
       }
     },
     {
-      path:'/openRecord',
+      path:'/agentList',
+      name: 'agentList',
+      component:()=>import('@/views/agentList/index'),
+      meta:{
+        title: '开通总代'
+      }
+    },
+    {
+      path:'/openRecord/:type',
       name:'openRecord',
       component:()=>import('@/views/openListRecord/index'),
       meta:{
@@ -283,14 +291,24 @@ export default new Router({
         title:'开通VIP'
       }
     },
+    // 设置级别列表
     {
-      path:'/vipLevel',
-      name:'vipLevel',
-      component:()=>import('@/views/vipLevel/index'),
+      path:'/levelList',
+      name:'userLeve',
+      component:()=>import('@/views/levelList/index'),
+      meta:{
+        title:'设置级别'
+      }
+    },
+    {
+      path:'/chooseLevel',
+      name:'chooseLevel',
+      component:()=>import('@/views/chooseLevel/index'),
       meta:{
         title:"升级会员级别"
       }
     },
+    // 设置界别详情
     {
       path:'/customLevel',
       name:'customLevel',

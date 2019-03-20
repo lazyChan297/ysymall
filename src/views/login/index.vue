@@ -26,7 +26,7 @@
 <script>
 import {XDialog} from 'vux'
 import {validPhone} from '@/common/js/validated'
-import {saveToken,saveUUID} from '@/common/js/util'
+import {saveToken, saveUUID, wxLogin} from '@/common/js/util'
 import Qs from 'qs'
 // const WAIT_TIME = 10
 const TYPE = 8
@@ -100,10 +100,16 @@ export default {
                 if(res.headers && res.data.code === 200) {
                     saveToken(res.headers['access-token'])
                     saveUUID(res.headers['fecshop-uuid'])
+                    wxLogin(window.location.href)
                     location.href = '/'
                 } else if (res.data.code === 1100103) {
                     this.$vux.toast.show({
                         text: '验证码已过期',
+                        type: 'warn'
+                    })
+                } else if(res.data.code === 1100104) {
+                    this.$vux.toast.show({
+                        text: '验证码错误',
                         type: 'warn'
                     })
                 }
@@ -139,7 +145,7 @@ export default {
         input
             margin-left 10px
             flex 1
-            max-width 180px
+            min-width 0
         .getcode
             border-radius 8px
             background $green

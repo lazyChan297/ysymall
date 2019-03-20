@@ -14,8 +14,9 @@ import webStorageCache from 'web-storage-cache'
 import { AlertPlugin, AjaxPlugin, ConfirmPlugin, ToastPlugin, LoadingPlugin } from 'vux'
 import 'swiper/dist/css/swiper.css'
 import "./common/stylus/index.styl"
-import {checkToken,checkWxToken} from '@/common/js/util'
-
+import {checkToken} from '@/common/js/util'
+import VConsole from 'vconsole/dist/vconsole.min.js' //import vconsole
+let vConsole = new VConsole()
 // 调用微信jssdk
 import { WechatPlugin } from 'vux'
 Vue.use(WechatPlugin)
@@ -24,6 +25,7 @@ Vue.use(LoadingPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(AlertPlugin)
 Vue.use(AjaxPlugin)
+
 
 // 是否登陆
 let islogin = checkToken()
@@ -37,9 +39,6 @@ if (process.env.NODE_ENV === 'development') {
   // 测服务器
   //  global.serverHost = "https://ceshi100.caomeng.me"
 }
-
-let url = window.location.href
-checkWxToken(url)
 
 // axios
 Vue.prototype.$axios = axios
@@ -56,20 +55,20 @@ axios.interceptors.request.use(config => {
 }, err => {
   return Promise.reject(err)
 })
-axios.interceptors.response.use( response => {
+axios.interceptors.response.use(response => {
   Vue.$vux.loading.hide()
   // 登陆超时
   if(response.data.code === 1100003) {
-    islogin = false
+    // islogin = false
     router.push({path:'/login'})
+    // let url = window.location.href
+    // wxLogin(url)
   }
   return {data:response.data,headers:response.headers}
 })
-if(islogin){
+if(global.uuid&&global.token){
   axios.defaults.headers.common['Fecshop-Uuid'] = global.uuid
   axios.defaults.headers.common['Access-Token'] = global.token
-//   Access-Token:-zX7r-CI05b8PZIThYK1ap3A8B7ReEng
-// Fecshop-Uuid:5a2588fe-43a2-11e9-aae0-00163e08edb8
   // 获取购物车信息
   Vue.prototype.$axios.get('/checkout/cart/index').then((res)=>{
     if(res.data.code === 200) {
@@ -116,7 +115,6 @@ router.beforeEach((to, from, next) => {
   } else {
     next()
   }
-  
   next()
 })
 

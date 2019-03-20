@@ -93,7 +93,7 @@ export default {
                     })
                     let params = Qs.stringify({addrInfo})
                     that.$axios.post('/customer/service/save-addr', params).then(res => {
-                        alert(res.data.code)
+                        alert(res.data.data)
                         if (res.data.code == 200) {
                             that.addr = res.data.data
                         }
@@ -111,7 +111,7 @@ export default {
           }
           let params = Qs.stringify({shipping_method:'free_shipping',
                                      payment_method:'wechatpay_standard',
-                                     address_id:12})
+                                     address_id:this.addr.id})
           this.$axios.post('/checkout/onepage/submitorder',params).then((res)=>{
               if(res.data.code === 200) {
                   this.payment(res.data.data.payargs)
@@ -119,7 +119,7 @@ export default {
           })
         },
         payment(arg) {
-            wx.chooseWXPay({
+            this.$wechat.chooseWXPay({
                 timestamp: arg.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
                 nonceStr: arg.nonceStr, // 支付签名随机串，不长于 32 位
                 package: arg.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）

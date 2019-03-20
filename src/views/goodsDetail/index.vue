@@ -356,7 +356,8 @@ export default {
                         this.isShow = false
                         return
                     } else {
-                        this.$router.push('/payment')
+                        // this.$router.push('/payment')
+                        window.location.href = global.serverHost + '/checkout/onepage/pay/#/payment/'
                     }
                 }
             })

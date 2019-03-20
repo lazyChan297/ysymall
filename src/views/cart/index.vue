@@ -141,7 +141,8 @@ export default {
             })
             // this.$router.push('/payment')
             let turnPage = setTimeout(()=>{
-                this.$router.push('/payment')
+                // this.$router.push('/payment')
+                window.location.href = global.serverHost + '/checkout/onepage/pay/#/payment/'
             },200)
         },
         ...mapMutations({

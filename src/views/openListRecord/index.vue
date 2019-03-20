@@ -17,6 +17,13 @@
         <div class="nomore">暂无数据</div>
     </div>
 </template>
+<script> 
+export default {
+    created() {
+        console.log(this.$route.params)
+    }
+}
+</script>
 <style lang="stylus" scoped>
 @import "../../common/stylus/variable.styl";
 .openListRecord-wrapper

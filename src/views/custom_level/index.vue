@@ -26,8 +26,8 @@
             </div>
             <div>
                 <span class="label">级别有效期</span>
-                <div class="content">
-                    <span>2017</span>
+                <div class="content" @click="isShowCalendar = true">
+                    <span :class="{'selected':timeValue}">{{timeValue || '请选择级别有效期'}}</span>
                     <div class="icon icon-link"></div>
                 </div>
             </div>
@@ -67,32 +67,85 @@
             </div>
         </div>
         <div class="submit">开通级别</div>
-        
+        <!-- 选择级别 -->
         <popup-picker :data="levelList" v-show="isShowLevelPopup"  :show.sync="isShowLevelPopup" @on-change="levelChange"></popup-picker>
+        <!-- 选择有效期 -->
+        <popup :hide-on-blur="false" v-model="isShowCalendar">
+            <div class="popup-header">
+                <span @click="popupCancel" class="popup-cancel">取消</span>
+                <h4>选择日期</h4>
+            </div>
+            <inline-calendar
+                :render-function="buildSlotFn"
+                v-model="time"
+                :disable-past="disablePast"
+                @on-change="onCalendarChange"></inline-calendar>
+        </popup>
     </div>
 </template>
 <script>
-import {PopupPicker} from 'vux'
+import {Popup,PopupPicker,InlineCalendar} from 'vux'
 export default {
     data(){
         return {
             isShowLevelPopup:false,
+            isShowCalendar:false,
+            disablePast:true,
             levelList:[
                 ["省代",
                 "市代",
                 "区代"]
             ],
+            buildSlotFn:()=>'',
+            time:[],
             levelValue:[],
+            timeValue:'',
             currentLevel:null
         }
     },
     components:{
-        PopupPicker
+        Popup,
+        PopupPicker,
+        InlineCalendar
     },
     methods:{
         levelChange(e){
-            console.log(e)
             this.currentLevel = e[0]
+        },
+        onCalendarChange(val){
+            if(val.length >= 2) {
+                this.isShowCalendar = false
+                console.log(this.time)
+                this.timeValue = val[0] + '-' + val[1]
+            }
+        },
+        popupCancel(){
+            this.isShowCalendar = false
+        }
+    },
+    watch:{
+        time(val){
+            // if(val.length < 2) {
+            //     this.buildSlotFn = (line, index, date) => {
+			// 		if (val[0] == date.formatedDate) {
+			// 			if (date.weekDay == 0) {
+			// 				return '<div style="left: 0; margin: 0" class="date-tips">请选择使用后日期</div>'
+			// 			}else if (date.weekDay == 6) {
+			// 				return '<div style="right: 0; left: auto; margin: 0" class="date-tips">请选择使用后日期</div>'
+			// 			}else {
+			// 				return '<div class="date-tips">请选择使用后日期</div>'
+			// 			}
+			// 		}else {
+			// 			return ''
+			// 		}
+			// 	}
+            // }else {
+			// 	this.buildSlotFn = (line, index, date) => {
+			// 		if (val[0] == date.formatedDate) {
+			// 			return ''
+			// 		}
+			// 	}
+			// }
         }
     }
 }
@@ -105,6 +158,7 @@ export default {
         height 100px
         background #fff
         padding 0 15px
+        margin-bottom 10px
         img
             border-radius 50%
             margin-right 10px
@@ -118,6 +172,7 @@ export default {
     .article
         background #fff
         padding 0 15px
+        margin-bottom 10px
         &>div
             display flex
             justify-content space-between
@@ -134,4 +189,11 @@ export default {
                     color $text-l
             .label 
                 color $text-l
+    .submit
+        margin 10px 15px
+        line-height:50px
+        background linear-gradient(180deg,rgba(100,229,198,1) 0%,rgba(41,206,166,1) 100%)
+        box-shadow 0px 4px 7px 0px rgba(41,206,166,0.47)
+        border-radius 5px
+        color #fff
 </style>

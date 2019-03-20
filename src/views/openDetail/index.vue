@@ -63,14 +63,6 @@
 <script>
 import {XDialog} from 'vux'
 export default {
-    beforeRouteEnter(to,from,next){
-        if(from.params.level === 'vip') {
-            document.title = '开通VIP'
-        } else {
-            document.title = '开通总代'
-        }
-        next()
-    },
     data(){
         return {
             showDialog:false,
@@ -80,6 +72,12 @@ export default {
     },
     created(){
         this.level = this.$route.params.level
+        if(this.level === 'vip') {
+            document.title = '开通VIP'
+        } else {
+            document.title = '开通总代'
+        }
+        
     },
     components:{
         XDialog

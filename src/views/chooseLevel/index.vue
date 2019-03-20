@@ -5,11 +5,11 @@
             <p class="txt">您的级别为南宁市市代，可以为三度以内人脉开通VIP会员或开通总代，请选择要开通的会员级别。</p>
         </div>
         <div class="article">
-            <router-link tag="div" to="/openList/vip" class="green">
+            <router-link tag="div" to="/vipList" class="green">
                 <span>开通VIP</span>
                 <div class="icon icon-link"></div>
             </router-link>
-            <router-link tag="div" to="/openList/agent" class="red">
+            <router-link tag="div" to="/agentList" class="red">
                 <span>开通总代</span>
                 <div class="icon icon-link"></div>
             </router-link>
@@ -33,6 +33,10 @@
         width 50%
         text-align left
         line-height 24px
+.article
+    &>div:first-child
+        border-bottom: 1px solid #efefef
+        
 .green, .red
     display flex
     align-items center

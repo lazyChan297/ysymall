@@ -1,0 +1,54 @@
+<template>
+    <div>
+        <div class="search-wrapper">
+            <div class="searchBox">
+                <div class="icon icon-search"></div>
+                <input type="text" placeholder="输入手机号或昵称">
+            </div>
+        </div>
+        <slot></slot>
+        <router-link class="checkMore" tag="div" :to="{path:`/openRecord/${checkType}`}">
+            <span>查看开通记录</span>
+            <div class="icon icon-link"></div>
+        </router-link>
+    </div>
+</template>
+<script>
+export default {
+    props:{
+        checkType:{
+            type:String,
+            default:null
+        }
+    }
+}
+</script>
+<style lang="stylus" scoped>
+.search-wrapper
+    padding 10px 15px
+    background #fff
+    height 60px
+    box-sizing border-box
+    .searchBox
+        display flex
+        align-items center
+        background #efefef
+        border-radius 30px
+        height 40px
+        padding-left 15px
+        input
+            background #efefef
+            margin-left 10px
+.checkMore
+    position fixed
+    display flex
+    align-items center
+    justify-content space-between
+    box-sizing border-box
+    width 100%
+    bottom 0
+    background #fff
+    height 50px
+    color $text-l
+    padding 0 15px
+</style>
