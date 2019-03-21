@@ -97,6 +97,17 @@ export default {
                         _this.updateCart(good,"remove")
                     }
                 })
+                // this.$wechat.showModal({
+                //     title:'',
+                //     content:'是否从购物车删除该商品?',
+                //     success:function(sm){
+                //         if(sm.confirm) {
+                //             _this.updateCart(good,"remove")
+                //         } else {
+
+                //         }
+                //     }
+                // })
             }
         },
         addgoods(good) {

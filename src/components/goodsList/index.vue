@@ -9,7 +9,7 @@
                 <span class="price bold">¥{{g.special_price.value?g.special_price.value:g.price.value}}</span>
                 <span class="oldprice" v-if="g.special_price.value">原价：#{{g.price.value}}</span>
                 <span class="oldprice" v-else></span>
-                <span class="cart bold">加入购物车</span>
+                <span class="cart bold">购买</span>
             </div>
         </router-link>
         </div>

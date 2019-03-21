@@ -332,6 +332,10 @@ export default {
             this.custom_option_attr = custom_option_attr
         },
         addGoodsToCart(){
+            if(!global.token) {
+                this.$router.push('/login')
+                return false
+            }
             let valid = this.isSubmit()
             if(!valid) return
             let custom_option = JSON.stringify(this.custom_option_selected_attr)

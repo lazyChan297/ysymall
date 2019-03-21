@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-    <scroll class="index-wrapper" @scroll="scrollList">
+    <div class="index-wrapper">
         <div>
         <div class="header" :style="bgImg">
             <div class="mask"></div>
@@ -8,6 +8,7 @@
             <p class="name bold">{{userInfo.nickname}}</p>
             <p class="mobile">{{userInfo.mobile}}</p>
         </div>
+        <div :style="tabStyle" class="tab-container">
         <scroll :listenScroll="ulNoListenScroll" :scrollX="isScrollX" class="scrollTab" :data="topCategories">
             <ul class="category">
                 <li 
@@ -20,11 +21,12 @@
                 </li>
             </ul>
         </scroll>
+    </div>
         <!-- 商品 -->
         <goods-list :tab="currentTab" :productList="productList"/>
         
         </div>
-    </scroll>
+    </div>
     <!-- tabbar -->
         <tab-bar/>
     </div>
@@ -46,7 +48,8 @@ export default {
             categoryList:[], // 分类好的商品
             isFixed: false,
             ulNoListenScroll: false,
-            isScrollX: true
+            isScrollX: true,
+            tabStyle:''
         }
     },
     components: {
@@ -58,7 +61,8 @@ export default {
         this.getIndex()
     },
     mounted() {
-       
+        // 监听滚动
+       addEventListener('scroll',this.handleScroll)
     },
     computed:{
         bgImg() {
@@ -109,10 +113,13 @@ export default {
             })
             this.categoryList = categoryList
         },
-        scrollList(pos){
-            // 超过头像
-            if (-pos.y > 140 ) {
-                this.isFixed = true
+        // 监听滚动
+        handleScroll() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+            if(scrollTop > 140) {
+                this.tabStyle = `position:fixed;top:0;`
+            } else {
+                this.tabStyle = ''
             }
         },
         ...mapMutations({
@@ -123,10 +130,15 @@ export default {
 </script>
 <style lang="stylus" scoped>
     @import '../../common/stylus/variable.styl';
-    .wrapper
-        height 100%
+    .tab-container
+        background $bgcolor
+    .scrollTab
         overflow hidden
+    /* .wrapper
+        height 100%
+        overflow hidden */
     .index-wrapper
+        position raletive
         height 100%
         overflow-y hidden
         /* 头像 */
@@ -141,7 +153,6 @@ export default {
             color #fff
             box-sizing border-box
             box-shadow 0px 4px 8px 0px rgba(41,206,166,0.5)
-            margin-bottom 10px
             .mask 
                 position absolute
                 background $green
@@ -171,7 +182,7 @@ export default {
             white-space nowrap
             margin-bottom 15px
             /* width 500px */
-            min-width 550px
+            /* min-width 550px */
             /* padding-right 50px */
             li
                 line-height 50px

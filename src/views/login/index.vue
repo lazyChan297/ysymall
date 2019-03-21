@@ -6,11 +6,11 @@
         <div class="article">
             <div class="row">
                 <div class="iconbox"><div class="icon icon-mobile"></div></div>
-                <input type="text" placeholder="请输入手机号码" v-model="mobile">
+                <input type="text" placeholder="请输入手机号码" v-model="mobile" @blur.prevent="slideUpKeyboard">
             </div>
             <div class="row">
                 <div class="iconbox"><div class="icon icon-passwd"></div></div>
-                <input type="text" placeholder="请输入验证码" v-model="captcha">
+                <input type="text" placeholder="请输入验证码" v-model="captcha" @blur.prevent="slideUpKeyboard">
                 <div class="getcode" @click="getcode" :class="{'disable':!canSendCode}">{{getCodeTxt}}</div>
             </div>
         </div>
@@ -28,6 +28,7 @@ import {XDialog} from 'vux'
 import {validPhone} from '@/common/js/validated'
 import {saveToken, saveUUID, wxLogin} from '@/common/js/util'
 import Qs from 'qs'
+import urls from 'url'
 // const WAIT_TIME = 10
 const TYPE = 8
 let afterLogin = undefined
@@ -38,7 +39,8 @@ export default {
             getCodeTxt: '发送验证码',
             showDialog: false,
             mobile:null,
-            captcha:null
+            captcha:null,
+            redirect:''
         }
     },
     components: {
@@ -47,6 +49,9 @@ export default {
     beforeRouteEnter(to, from, next){
         if(from) {afterLogin = from.path}
         next()
+    },
+    created(){
+        this.redirect = this.$route.query.redirect
     },
     methods: {
         getcode() {
@@ -69,6 +74,10 @@ export default {
                     },1000)
                 }
             })
+        },
+        // 收起键盘
+        slideUpKeyboard() {
+            window.scrollTo(0,0)
         },
         valid(){
             if(!validPhone(this.mobile)){
@@ -98,10 +107,18 @@ export default {
                 }
             }).then((res)=>{
                 if(res.headers && res.data.code === 200) {
-                    saveToken(res.headers['access-token'])
-                    saveUUID(res.headers['fecshop-uuid'])
-                    wxLogin(window.location.href)
-                    location.href = '/'
+                    // saveToken(res.headers['access-token'])
+                    // saveUUID(res.headers['fecshop-uuid'])
+                    // let url = this.redirect
+                    // wxLogin(url)
+                    // if(res.data.)
+                    // 没有绑定微信 引导用户微信授权
+                    if(!res.data.data.wechatBound) {
+                        let url = window.location.href
+                        let urlObj = urls.parse(url)
+                        let _url = urlObj.protocol + '//' + urlObj.host + '/#' + this.redirect
+                        window.location.href = global.serverHost + '/customer/wechat/get-user-info?url_before_login=' + encodeURIComponent(_url)
+                    }
                 } else if (res.data.code === 1100103) {
                     this.$vux.toast.show({
                         text: '验证码已过期',

@@ -62,3 +62,23 @@ export function wxLogin(url){
         saveToken(getUrlParms('token'))
     }
 }
+
+export function getOpenid(){
+    console.log("getopenid")
+    setTimeout(()=>{
+        window.location.reload()
+    },60 * 60 * 1000 * 2)
+    // 没有登陆 or token已过期
+    if(!global.token&&!getUrlParms('token')&&!global.uuid&&!getUrlParms("uuid")) {
+        window.onload = function() {
+            window.location.href = global.serverHost + '/customer/wechat/get-openid?url_before_login='+window.location.href  
+        }
+    }
+    console.log('.....')
+    console.log(getUrlParms('token'))
+    // 登陆过且绑定了微信
+    if(getUrlParms('token')&&getUrlParms('uuid')) {
+        saveUUID(getUrlParms('uuid'))
+        saveToken(getUrlParms('token'))
+    }
+}

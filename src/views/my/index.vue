@@ -61,7 +61,7 @@
             </router-link> -->
             <router-link class="cell" to="/levelList" tag="div">
                 <div>
-                    <span class="icon icon-vip"></span>
+                    <span class="icon icon-level"></span>
                     <span class="bold">设置级别</span>
                 </div>
                 <div class="icon icon-link"></div>

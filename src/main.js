@@ -14,7 +14,7 @@ import webStorageCache from 'web-storage-cache'
 import { AlertPlugin, AjaxPlugin, ConfirmPlugin, ToastPlugin, LoadingPlugin } from 'vux'
 import 'swiper/dist/css/swiper.css'
 import "./common/stylus/index.styl"
-import {checkToken} from '@/common/js/util'
+import {checkToken,getOpenid} from '@/common/js/util'
 import VConsole from 'vconsole/dist/vconsole.min.js' //import vconsole
 let vConsole = new VConsole()
 // 调用微信jssdk
@@ -26,10 +26,6 @@ Vue.use(ConfirmPlugin)
 Vue.use(AlertPlugin)
 Vue.use(AjaxPlugin)
 
-
-// 是否登陆
-let islogin = checkToken()
-
 // 服务器地址
 if (process.env.NODE_ENV === 'development') {
   global.serverHost = ''
@@ -39,6 +35,18 @@ if (process.env.NODE_ENV === 'development') {
   // 测服务器
   //  global.serverHost = "https://ceshi100.caomeng.me"
 }
+
+// 从缓存中获取token和uuid
+const wsCache = new webStorageCache()
+global.token = wsCache.get('token')
+global.uuid = wsCache.get('uuid')
+
+// 获取openid 通过返回的token和uuid判断用户是否登陆和绑定微信
+getOpenid()
+
+// 是否登陆
+let islogin = global.token&&global.uuid
+
 
 // axios
 Vue.prototype.$axios = axios
@@ -81,6 +89,8 @@ if(global.uuid&&global.token){
   })
 }
 
+// 白名单
+const whiteList = ['index','cart','goodsDetail','login','my']
 // router
 router.beforeEach((to, from, next) => {
   if (to.meta.title) {
@@ -88,34 +98,49 @@ router.beforeEach((to, from, next) => {
   }
   let origin_path = from.path
   let path = to.path
-  // 获取微信jssdk配置项
   let params = Qs.stringify({url: encodeURI(location.href.split('#')[0])})
-  Vue.prototype.$axios.post('/customer/wechat/js-sdk-config', params).then(res => {
-    if(res.data.code === 200) {
-      Vue.wechat.config(res.data.data)
-      console.log(res.data.data)
-    }
-  })
-  // 前往登录页且没登录
-  if(path==='/login'){
-    // 判断是否登录
-    console.log('前往登录页')
-    if (!islogin) {
-      console.log('没登录')
-      next({params:{id:1}})
-      return
-    } else {
-      // console.log('登陆了')
-      next({path:'/'})
-    }
-  } 
-  if(!islogin) {
-    console.log('不是去登录页,让她去登陆')
-    next({path:'/login'})
+  // 获取微信jssdk配置项
+  // Vue.prototype.$axios.post('/customer/wechat/js-sdk-config', params).then(res => {
+  //   if(res.data.code === 200) {
+  //     Vue.wechat.config(res.data.data)
+  //   }
+  // })
+  if(islogin) {
+      // 已经登陆但是要前往登陆页,拦截
+      if(path === '/login') {
+        next({path:'/'})
+      } else {
+        next()
+      }
   } else {
-    next()
+    // 前往的页面是首页，商品详情，购物车其中之一
+    if(whiteList.indexOf(to.name) !== -1) {
+      next()
+    } else {
+      console.log("没登陆，让它去登陆")
+      next(`/login?redirect=${to.path}`)
+    }
   }
-  next()
+  // 前往登录页且没登录
+  // if(path==='/login'){
+  //   // 判断是否登录
+  //   console.log('前往登录页')
+  //   if (!islogin) {
+  //     console.log('没登录')
+  //     next()
+  //     return
+  //   } else {
+  //     // console.log('登陆了')
+  //     next({path:'/'})
+  //   }
+  // } 
+  // if(!islogin) {
+  //   console.log('不是去登录页,让她去登陆')
+  //   next({path:'/login'})
+  // } else {
+  //   next()
+  // }
+  // next()
 })
 
 router.afterEach((to,from) => {
