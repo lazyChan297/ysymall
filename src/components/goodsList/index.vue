@@ -2,14 +2,14 @@
     <div class="goodsList-wrapper">
         <div>
         <router-link :to="{path:`/goodsDetail/${g.product_id}`}" class="goodsItem" tag="div" v-for="(g,index) in productList">
-            <!-- <img :src="g.image" alt=""> -->
+            <img v-lazy="g.image" alt="">
             <p class="name bold">{{g.name}}</p>
             <p class="desc">{{g.desc}}</p>
             <div>
                 <span class="price bold">¥{{g.special_price.value?g.special_price.value:g.price.value}}</span>
-                <span class="oldprice" v-if="g.special_price.value">原价：#{{g.price.value}}</span>
+                <span class="oldprice" v-if="g.special_price.value">原价：¥{{g.price.value}}</span>
                 <span class="oldprice" v-else></span>
-                <span class="cart bold">购买</span>
+                <span class="cart bold">立即购买</span>
             </div>
         </router-link>
         </div>
@@ -45,6 +45,8 @@ export default {
         margin-bottom 15px
         img
             width 100%
+            border-top-left-radius 8px
+            border-top-right-radius 8px
         .name
             color $text-l
             font-size 22px

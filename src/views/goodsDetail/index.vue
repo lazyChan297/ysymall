@@ -1,11 +1,13 @@
 <template>
     <div class="goodsDetail-wrapper">
         <section v-if="goodsDetail" class="goodsDetail-container">
-            <swiper :options="swiperOption" v-if="goodsDetail.image_detail">
-                <swiper-slide  v-for="(img,index) in goodsDetail.image_detail" :key="index">
-                    <img :src="img" alt="" class="slideImg">
+            <swiper :options="swiperOption" v-if="goodsDetail.thumbnail_img">
+                <swiper-slide  v-for="(img,index) in goodsDetail.thumbnail_img" :key="index">
+                    <img v-lazy="img" alt="" class="slideImg">
                 </swiper-slide>
             </swiper>
+            <!-- <span>{{textarr.indexOf(1)}}</span> -->
+            <!-- <span>{{custom_option_names.indexOf('color')}}</span> -->
             <div class="price-container" v-if="goodsDetail.price_info">
                 <span class="price bold">
                     ¥{{goodsDetail.price_info.special_price?goodsDetail.price_info.special_price.value:goodsDetail.price_info.price.value}}
@@ -17,6 +19,9 @@
                 <!-- <p class="desc">{{goodsDetail.desc}}</p> -->
             </div>
             <div class="title bold">详情页</div>
+            <div class="goodsDetail" v-if="goodsDetail.image_detail">
+                <img v-lazy="img" alt="" v-for="(img,imgindex) in goodsDetail.image_detail" class="goodsImg">
+            </div>
             <div class="tabbar">
                 <router-link to="/cart" tag="div">
                     <div class="icon icon-shopcart"></div>
@@ -43,13 +48,13 @@
                 <div class="goods_options_container">
                 <div class="goods_options" v-for="(item,attr) in custom_option_attr">
                     <div class="label">
-                        <span class="black">{{attr=='my_color'?'颜色':'尺寸'}}</span>
-                        <span class="gray">(请选择{{attr=='my_color'?'颜色':'尺寸'}})</span>
+                        <span class="black">{{item.name}}</span>
+                        <span class="gray">(请选择{{item.name}})</span>
                     </div>
                     <ul class="value">
-                        <li v-for="(c_item,index) in item" 
+                        <li v-for="(c_item,index) in item.arr" 
                             :class="c_item.class"
-                            @click="selectCustomOption(attr,c_item.key)">{{c_item.key}}</li>
+                            @click="selectCustomOption(attr,c_item.key)">{{c_item.text || c_item.key}}</li>
                     </ul>
                 </div>
                 </div>
@@ -71,6 +76,7 @@ import Qs from 'qs'
 export default {
     data() {
         return {
+            textarr:[1,2],
             product_id:null,
             goodsDetail:{},
             // 幻灯片的配置项
@@ -95,7 +101,8 @@ export default {
             custom_option_add_price:0,          // 当把所有的custom option选择完成后，这个custom option 附加或减少的价格值，这个值用来计算这个custom option对应的最终价格
             custom_option_selected_sku:'',      // 当把所有的custom option选择完成后，这个将会设置当前选择的custom option sku。
             custom_option_show_as_img: '',
-            custom_option_checkAttr: [] // 保存所有应该提交的key
+            custom_option_checkAttr: [], // 保存所有应该提交的key
+            custom_option_names:[] // 显示选项中文
         }
     },
     components: {
@@ -113,11 +120,15 @@ export default {
             'cartLen'
         ])
     },
+    mounted() {
+        
+    },
     methods: {
         getGoodsDetail(id){
             this.$axios.get('/catalog/product/index',{params:{product_id:id}}).then((res)=>{
                 this.goodsDetail = Object.assign({qty:1},res.data.data.product) 
                 this.custom_option = res.data.data.product.custom_option
+                this.custom_option_names = res.data.data.product.custom_option_names
                 this.getCustomOptionAttr()
             })
         },
@@ -225,9 +236,6 @@ export default {
                 }
                 // tj 就是除去本元素，其他选中的属性的 k v 对象。
                 // 下面 得到本属性中active的值有哪些
-                // console.log("attr1:"+attr1);
-                // console.log('other_tj:',other_tj)
-                // console.log('tj:',tj);
                 // tj 其他已选， otder_tj 目前选择的
                 active_attr[attr1] = this.getActiveCustomOption(tj,attr1);
             }
@@ -282,9 +290,12 @@ export default {
         },
         // 处理视图显示
         getCustomOptionAttr() {
-            var noAttrArr = ['price','qty','sku','image'];
+            let noAttrArr = ['price','qty','sku','image'];
             let custom_option_attr = {};
             let custom_option = this.custom_option;
+            let custom_option_names = this.custom_option_names
+            console.log('custom_option_names')
+            console.log(custom_option_names)
             for (let o in custom_option) {
                 if(o) {
                     let option = custom_option[o]
@@ -293,6 +304,13 @@ export default {
                             let value = option[attr]
                             let obj = {
                                 key: value
+                            }
+                            console.log(value)
+                            for(let kt in custom_option_names) {
+                                if (kt === value) {
+                                    obj.text = custom_option_names[kt]
+                                    break
+                                }
                             }
                             obj.class = "" // current被选中 able可选 disable不可选
                             let option_able = this.custom_option_active_attr[attr]
@@ -311,31 +329,42 @@ export default {
                             }
                             if(custom_option_attr[attr]) {
                                 let flag = true
-                                for(let other_option in custom_option_attr[attr]) {
+                                for(let other_option in custom_option_attr[attr]['arr']) {
                                     // 如果已经添加过该选项相同的选择
-                                    let other = custom_option_attr[attr][other_option]
+                                    let other = custom_option_attr[attr]['arr'][other_option]
                                     if(other.key == value) {
                                         flag = false
                                         break;
                                     }
                                 }
                                 if(flag) {
-                                    custom_option_attr[attr].push(obj)
+                                    custom_option_attr[attr]['arr'].push(obj)
                                 }
                             } else {
-                                custom_option_attr[attr] = [obj]
+                                // custom_option_attr[attr] = [obj]
+                                for(let kn in custom_option_names) {
+                                    if(kn === attr) {
+                                        custom_option_attr[attr] = {
+                                            arr:[obj],
+                                            name:custom_option_names[kn]
+                                        }
+                                        break
+                                    }
+                                }
+                                // custom_option_attr[attr] = {
+                                //     arr:[obj],
+                                //     name:'name'
+                                // }
                             }
                         }
                     }
                 }
             }
             this.custom_option_attr = custom_option_attr
+            console.log(this.custom_option_attr)
+            console.log('...')
         },
         addGoodsToCart(){
-            if(!global.token) {
-                this.$router.push('/login')
-                return false
-            }
             let valid = this.isSubmit()
             if(!valid) return
             let custom_option = JSON.stringify(this.custom_option_selected_attr)
@@ -361,7 +390,7 @@ export default {
                         return
                     } else {
                         // this.$router.push('/payment')
-                        window.location.href = global.serverHost + '/checkout/onepage/pay/#/payment/'
+                        window.location.href = global.serverHost + '/checkout/onepage/pay/#/payment'
                     }
                 }
             })
@@ -392,6 +421,11 @@ export default {
             color $text-lll
             font-size 14px
             text-decoration line-through
+    .goodsDetail
+        margin-bottom 10px
+    .goodsImg
+        width 100%
+        display block
     .desc-container
         padding 0 15px 8px
         background #fff
@@ -407,6 +441,7 @@ export default {
             font-size 14px
             line-height 20px
             text-align left
+        
     .title
         color $text-l
         padding-left 15px
@@ -448,7 +483,7 @@ export default {
                 
     /* 弹窗 */
     .slide-wrapper
-        position absolute
+        position fixed
         width 100%
         bottom 0
         background #fff

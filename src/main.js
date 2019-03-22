@@ -16,6 +16,7 @@ import 'swiper/dist/css/swiper.css'
 import "./common/stylus/index.styl"
 import {checkToken,getOpenid} from '@/common/js/util'
 import VConsole from 'vconsole/dist/vconsole.min.js' //import vconsole
+import VueLazyLoad from 'vue-lazyload'
 let vConsole = new VConsole()
 // 调用微信jssdk
 import { WechatPlugin } from 'vux'
@@ -35,6 +36,11 @@ if (process.env.NODE_ENV === 'development') {
   // 测服务器
   //  global.serverHost = "https://ceshi100.caomeng.me"
 }
+
+// 图片懒加载
+Vue.use(VueLazyLoad, {
+  loading: require('@/common/images/default_pic.jpg')
+})
 
 // 从缓存中获取token和uuid
 const wsCache = new webStorageCache()
@@ -67,22 +73,19 @@ axios.interceptors.response.use(response => {
   Vue.$vux.loading.hide()
   // 登陆超时
   if(response.data.code === 1100003) {
-    // islogin = false
     router.push({path:'/login'})
-    // let url = window.location.href
-    // wxLogin(url)
   }
   return {data:response.data,headers:response.headers}
 })
-if(global.uuid&&global.token){
-  axios.defaults.headers.common['Fecshop-Uuid'] = global.uuid
-  axios.defaults.headers.common['Access-Token'] = global.token
+if((global.token || wsCache.get('token')) && (global.uuid || wsCache.get('uuid'))){
+  axios.defaults.headers.common['Fecshop-Uuid'] = global.uuid || wsCache.get('uuid')
+  axios.defaults.headers.common['Access-Token'] = global.token || wsCache.get('token')
   // 获取购物车信息
   Vue.prototype.$axios.get('/checkout/cart/index').then((res)=>{
     if(res.data.code === 200) {
         let data = res.data.data
         // this.saveCartLen(data.cart_info.products.length)  
-        if(data.cart_info.products.length) {
+        if(data.cart_info) {
           store.commit('SAVE_CARTLEN',data.cart_info.products.length)
         }
     }
@@ -90,7 +93,7 @@ if(global.uuid&&global.token){
 }
 
 // 白名单
-const whiteList = ['index','cart','goodsDetail','login','my']
+const whiteList = ['index','cart','goodsDetail','login','cardDetail']
 // router
 router.beforeEach((to, from, next) => {
   if (to.meta.title) {
@@ -100,12 +103,12 @@ router.beforeEach((to, from, next) => {
   let path = to.path
   let params = Qs.stringify({url: encodeURI(location.href.split('#')[0])})
   // 获取微信jssdk配置项
-  // Vue.prototype.$axios.post('/customer/wechat/js-sdk-config', params).then(res => {
-  //   if(res.data.code === 200) {
-  //     Vue.wechat.config(res.data.data)
-  //   }
-  // })
-  if(islogin) {
+  Vue.prototype.$axios.post('/customer/wechat/js-sdk-config', params).then(res => {
+    if(res.data.code === 200) {
+      Vue.wechat.config(res.data.data)
+    }
+  })
+  if((global.token || wsCache.get('token')) && (global.uuid || wsCache.get('uuid'))) {
       // 已经登陆但是要前往登陆页,拦截
       if(path === '/login') {
         next({path:'/'})
@@ -121,26 +124,6 @@ router.beforeEach((to, from, next) => {
       next(`/login?redirect=${to.path}`)
     }
   }
-  // 前往登录页且没登录
-  // if(path==='/login'){
-  //   // 判断是否登录
-  //   console.log('前往登录页')
-  //   if (!islogin) {
-  //     console.log('没登录')
-  //     next()
-  //     return
-  //   } else {
-  //     // console.log('登陆了')
-  //     next({path:'/'})
-  //   }
-  // } 
-  // if(!islogin) {
-  //   console.log('不是去登录页,让她去登陆')
-  //   next({path:'/login'})
-  // } else {
-  //   next()
-  // }
-  // next()
 })
 
 router.afterEach((to,from) => {

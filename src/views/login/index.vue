@@ -93,6 +93,9 @@ export default {
             return true
         },
         submit(){
+            // let uri = 'http://192.168.3.198:8090/#/my?sn=bhqwDF'
+            // window.location.href = global.serverHost + '/customer/wechat/get-user-info?url_before_login=' + encodeURIComponent(uri)
+            // return false
             let valid = this.valid()
             if(!valid) return
             let params = Qs.stringify({
@@ -100,24 +103,24 @@ export default {
                 captcha:this.captcha,
                 type:TYPE
             })
+            
             this.$axios.post('/customer/login/mobile-captcha',params,{
                 headers:{
                     'fecshop-uuid':'',
                     'access-token':''
                 }
             }).then((res)=>{
+                console.log(res)
                 if(res.headers && res.data.code === 200) {
-                    // saveToken(res.headers['access-token'])
-                    // saveUUID(res.headers['fecshop-uuid'])
-                    // let url = this.redirect
-                    // wxLogin(url)
-                    // if(res.data.)
+                    let wechatBound = res.data.data.wechatBound
                     // 没有绑定微信 引导用户微信授权
-                    if(!res.data.data.wechatBound) {
+                    if(!wechatBound) {
                         let url = window.location.href
                         let urlObj = urls.parse(url)
-                        let _url = urlObj.protocol + '//' + urlObj.host + '/#' + this.redirect
+                        let _url = urlObj.protocol + '//' + urlObj.host + '/#' + this.redirect + '?sn='+res.data.data.customerSn
                         window.location.href = global.serverHost + '/customer/wechat/get-user-info?url_before_login=' + encodeURIComponent(_url)
+                    } else {
+                        this.$router.push(this.redirect)
                     }
                 } else if (res.data.code === 1100103) {
                     this.$vux.toast.show({

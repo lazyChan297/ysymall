@@ -1,6 +1,6 @@
 <template>
     <div class="qrcode-wrapper">
-        <div class="guide">
+        <!-- <div class="guide">
             <div class="title">
                 <div class="bold">二维码使用指南</div>
                 <div class="icon icon-slide" @click="isShowGuide = !isShowGuide"></div>
@@ -22,7 +22,8 @@
                 </div>
             </div>
         </section>
-        <div class="submit bold">导出图片</div>
+        <div class="submit bold">导出图片</div> -->
+        <p style="padding-top:100px">该页面正在开发中～敬请期待！</p>
     </div>
 </template>
 <script>

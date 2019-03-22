@@ -72,14 +72,6 @@ export default {
             })
         },
         chooseAddr() {
-            // let addrInfo = JSON.stringify({ "userName": "张三","telNumber": "13899990000","provinceName": "广东省","cityName": "广州市","countyName": "海珠区","detail":"新港中路1号"})
-            // let params = Qs.stringify({addrInfo})
-            // this.$axios.post('/customer/service/save-addr', params).then(res => {
-            //     alert(res.data.code)
-            //     if (res.data.code == 200) {
-            //         that.addr = res.data.data
-            //     }
-            // })
             let that = this
             this.$wechat.openAddress({
                 success: res => {

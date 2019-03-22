@@ -67,7 +67,7 @@ export default {
             this.$axios.get('/checkout/cart/index').then((res)=>{
                 if(res.data.code === 200) {
                     let cart_info = res.data.data.cart_info
-                    let goodslist = cart_info.products
+                    let goodslist = cart_info && cart_info.products
                     if(goodslist) {
                         goodslist.forEach((item,index)=>{
                             item.checked = true
@@ -152,8 +152,9 @@ export default {
             })
             // this.$router.push('/payment')
             let turnPage = setTimeout(()=>{
-                // this.$router.push('/payment')
-                window.location.href = global.serverHost + '/checkout/onepage/pay/#/payment/'
+                this.$router.push('/payment')
+                console.log(global.serverHost)
+                // window.location.href = global.serverHost + '/checkout/onepage/pay/#/payment/'
             },200)
         },
         ...mapMutations({

@@ -116,8 +116,9 @@ export default {
         // 监听滚动
         handleScroll() {
             let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-            if(scrollTop > 140) {
-                this.tabStyle = `position:fixed;top:0;`
+            console.log(scrollTop)
+            if(scrollTop > 200) {
+                this.tabStyle = `position:fixed;top:0;width: 100%;`
             } else {
                 this.tabStyle = ''
             }
@@ -178,6 +179,7 @@ export default {
                 line-height 22px
         /* 商品分类栏 */
         .category
+            display flex
             text-align left
             white-space nowrap
             margin-bottom 15px
@@ -185,6 +187,7 @@ export default {
             /* min-width 550px */
             /* padding-right 50px */
             li
+                flex 1
                 line-height 50px
                 color $text-l
                 margin 0 10px
@@ -205,5 +208,7 @@ export default {
                             background rgba(41,206,166,1)
                             box-shadow 0px 4px 8px 0px rgba(41,206,166,0.47)
                             border-radius 3px
+                &:last-child
+                    margin-right 20px
                         
 </style>

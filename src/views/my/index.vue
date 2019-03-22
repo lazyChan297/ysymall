@@ -37,7 +37,7 @@
                 </div>
                 <div class="icon icon-link"></div>
             </router-link>
-            <router-link class="cell" to="/" tag="div">
+            <router-link class="cell" to="/agentArea" tag="div">
                 <div>
                     <span class="icon icon-area"></span>
                     <span class="bold">代理区域</span>

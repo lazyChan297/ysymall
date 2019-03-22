@@ -1,6 +1,6 @@
 <template>
     <div class="found-wrapper">
-        <div class="search-warpper">
+        <!-- <div class="search-warpper">
             <img src="../../common/images/df_user.jpg" alt="" width="35" height="35">
             <div class="input-wrapper">
                 <div class="icon icon-search"></div>
@@ -25,7 +25,8 @@
             <div @click="switchTab(0)" :class="{'active':currentTab==0}">动态</div>
             <div @click="switchTab(1)" :class="{'active':currentTab==1}">资讯</div>
         </div>
-        <dynamic-list></dynamic-list>
+        <dynamic-list></dynamic-list> -->
+        <p style="padding-top:100px">该页面正在开发中～敬请期待！</p>
         <tab-bar/>
     </div>
 </template>

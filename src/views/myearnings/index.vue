@@ -1,7 +1,7 @@
 <template>
     <div class="earnings-wrapper">
         <!-- 折线图 -->
-        <div class="panel">
+        <!-- <div class="panel">
             <p class="balance bold"> ¥4642.00</p>
             <p class="desc">当前余额</p>
             <router-link tag="div" to="/withdrawal" class="put">提现</router-link>
@@ -16,9 +16,9 @@
                 </router-link>
             </div>
             <p class="figure-title">一周收益曲线图</p>
-        </div>
+        </div> -->
         <!-- 列表 -->
-        <div class="sheet">
+        <!-- <div class="sheet">
             <ul>
                 <li class="active">今日收益明细</li>
                 <li>今日支出明细</li>
@@ -37,7 +37,8 @@
                     </li>
                 </ul>
             </div>
-        </div>
+        </div> -->
+        <p style="padding-top:100px">该页面正在开发中～敬请期待！</p>
     </div>
 </template>
 <style lang="stylus" scoped>

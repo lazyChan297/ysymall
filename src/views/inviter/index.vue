@@ -15,6 +15,7 @@
         line-height 50px
         color $text-lll
         padding-left 15px
+        text-align left
     section
         padding 0 15px
         background #fff
@@ -26,4 +27,6 @@
         height 50px
         &:last-child
             border none
+    input
+        flex 1
 </style>

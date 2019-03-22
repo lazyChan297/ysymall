@@ -169,6 +169,14 @@ export default new Router({
       }
     },
     {
+      path:'/agentArea',
+      name:'agentArea',
+      component:()=> import('@/views/agentArea/index'),
+      meta:{
+        title: '代理区域'
+      }
+    },
+    {
       path: '/cash',
       name: 'cash',
       component: () => import('@/views/cash/index'),
@@ -315,6 +323,14 @@ export default new Router({
       component:()=>import('@/views/custom_level/index'),
       meta:{
         title:'设置级别'
+      }
+    },
+    {
+      path:'/cardDetail',
+      name: 'cardDetail',
+      component:()=>import('@/views/cardDetail/index'),
+      meta:{
+        title: '名片内容'
       }
     }
   ]
