@@ -19,22 +19,21 @@
             </div>
             <div>
                 <span class="label">开通地区</span>
-                <div class="content" @click="isShowLevelPopup=true">
-                    <span >请选择地区</span>
+                <div class="content" @click="showAddress=true">
+                    <span :class="{'selected':districtInfo}">{{districtInfo || '请选择地区'}}</span>
                     <div class="icon icon-link"></div>
                 </div>
             </div>
             <div>
                 <span class="label">级别有效期</span>
-                <div class="content" @click="isShowCalendar = true">
-                    <span :class="{'selected':timeValue}">{{timeValue || '请选择级别有效期'}}</span>
-                    <div class="icon icon-link"></div>
+                <div class="content" @click="showPeriodPopup(1)">
+                    <span :class="{'selected':period}">{{period || '请选择级别有效期'}}</span><span v-show="period" class="selected">年</span>
                 </div>
             </div>
             <div>
                 <span class="label">缴纳金额（元）</span>
                 <div class="content">
-                    <input type="text">
+                    <input type="text" v-model="account">
                 </div>
             </div>
         </div>
@@ -42,75 +41,116 @@
             <div>
                 <span class="label">赠送VIP数量</span>
                 <div class="content">
-                    <span>80</span>
+                    <input type="text" placeholder="请输入赠送数量" v-model="vipQuota">
                 </div>
             </div>
-            <div>
+            <div @click="showPeriodPopup(2)">
                 <span class="label">VIP有效期</span>
                 <div class="content">
-                    <span>1</span>
-                    <span>年</span>
+                    <span :class="{'selected':vipPeriod}">{{vipPeriod||'请选择有效期'}}</span>
+                    <span v-show="vipPeriod" class="selected">年</span>
                 </div>
             </div>
             <div>
                 <span class="label">赠送总代数量</span>
                 <div class="content">
-                    <span>10</span>
+                   <input type="text" placeholder="请输入赠送数量" v-model="generalAgentQuota">
                 </div>
             </div>
-            <div>
+            <div @click="showPeriodPopup(3)">
                 <span class="label">总代有效期</span>
                 <div class="content">
-                    <span>1</span>
-                    <span>年</span>
+                    <span :class="{'selected':generalAgentPeriod}">{{generalAgentPeriod || '请选择有效期'}}</span>
+                    <span v-show="generalAgentPeriod" class="selected">年</span>
                 </div>
             </div>
         </div>
-        <div class="submit">开通级别</div>
+        <div class="submit" @click="submit">开通级别</div>
         <!-- 选择级别 -->
         <popup-picker :data="levelList" v-show="isShowLevelPopup"  :show.sync="isShowLevelPopup" @on-change="levelChange"></popup-picker>
         <!-- 选择有效期 -->
-        <popup :hide-on-blur="false" v-model="isShowCalendar">
-            <div class="popup-header">
-                <span @click="popupCancel" class="popup-cancel">取消</span>
-                <h4>选择日期</h4>
-            </div>
-            <inline-calendar
-                :render-function="buildSlotFn"
-                v-model="time"
-                :disable-past="disablePast"
-                @on-change="onCalendarChange"></inline-calendar>
-        </popup>
+        <popup-picker :data="periodList" v-show="isShowPeriodPopup"  :show.sync="isShowPeriodPopup" @on-change="handlePeriod"></popup-picker>
+        <!-- 选择地区 -->
+        <x-address style="display: none;" title="选择地区" v-model="district" raw-value :list="addressData" :show.sync="showAddress"></x-address>
+        <!-- <popup-picker @on-change="filterAddr" v-model="selRegion" v-show="showPopupPicker" :show-cell="false" :show.sync="showPopupPicker" :data="agentRegion"></popup-picker> -->
     </div>
 </template>
 <script>
-import {Popup,PopupPicker,InlineCalendar} from 'vux'
+import {Popup,PopupPicker,InlineCalendar,XAddress,Value2nameFilter as value2name } from 'vux'
+import Qs from 'qs'
+import {mapGetters} from 'vuex'
+let addrArray = []
 export default {
     data(){
         return {
             isShowLevelPopup:false,
             isShowCalendar:false,
             disablePast:true,
-            levelList:[
-                ["省代",
-                "市代",
-                "区代"]
-            ],
+            levelList:[],
             buildSlotFn:()=>'',
             time:[],
             levelValue:[],
+            level:'',
             timeValue:'',
-            currentLevel:null
+            currentLevel:null,
+            district:[],
+            addressData:[],
+            selRegion:[],
+            showPopupPicker:false,
+            agentRegion:[],
+            showAddress:false,
+            period:'',//级别有效期
+            vipPeriod:'',//vip有效期
+            generalAgentPeriod:'',//总代有效期
+            periodList:[[1,2,3]],
+            isShowPeriodPopup:false,
+            account:'',//缴纳金额
+            generalAgentQuota:'',//赠送总代数量
+            vipQuota:''//vip数量
         }
+    },
+    mounted(){
+        this.getDistricts()
     },
     components:{
         Popup,
         PopupPicker,
-        InlineCalendar
+        InlineCalendar,
+        XAddress
     },
     methods:{
+        // 打开选择级别的弹框
+        showPeriodPopup(period){
+            console.log(period)
+            this.isShowPeriodPopup = true
+            this.currentPeriod = period
+        },
+        handlePeriod(e){
+            let currentPeriod = this.currentPeriod
+            console.log(currentPeriod)
+            switch(currentPeriod) {
+                case 1:
+                    this.period = e[0]
+                    break
+                case 2:
+                    this.vipPeriod = e[0]
+                    break
+                case 3:
+                    this.generalAgentPeriod = e[0]
+                    break
+            }
+        },
         levelChange(e){
             this.currentLevel = e[0]
+            if(e[0] === '省级') {
+                this.level = 'provinceAgent'
+            } else if (e[0] === '市级') {
+                this.level = 'cityAgent'
+            } else {
+                this.level = 'countyAgent'
+            }
+            console.log(this.level)
+            this.filterAddr(e)
         },
         onCalendarChange(val){
             if(val.length >= 2) {
@@ -121,32 +161,116 @@ export default {
         },
         popupCancel(){
             this.isShowCalendar = false
+        },
+        getDistricts(){
+            this.$axios.get('/customer/service/get-districts').then((res)=>{
+                if(res.data.code) {
+                    addrArray = res.data.data.districts
+                    let _levelList = res.data.data.levels,levelList = []
+                    _levelList.forEach((item,index)=>{
+                        levelList.push(item.name)
+                    })
+					this.addressData = res.data.data.districts
+                    this.levelList = [levelList]
+                }
+            })
+        },
+        areaDetail (value) {
+            this.addressArr = (value2name(value, this.addressData)).split(' ')
+                return value2name(value, this.addressData)
+        },
+        filterAddr (v) {
+			this.district = []
+			let addressData = []
+			if (v[0] === '省级') {
+				addrArray.forEach(item => {
+					if (item.parent == 0) {
+						addressData.push(item)
+					}
+				})
+				this.addressData = addressData
+			}else if (v[0] === '市级') {
+				addrArray.forEach((item) => {
+					if (item.parent != 2) {
+						addressData.push(item)
+					}
+				})
+				this.addressData = addressData
+			}else {
+				this.addressData = addrArray
+			}
+        },
+        validForm(){
+            if(!this.level) {
+                this.showWarn("请选择级别")
+                return false
+            }
+            if(!this.period) {
+                this.showWarn('请选择级别有效期')
+                return false
+            }
+            if(!this.vipPeriod) {
+                this.showWarn('请选择VIP有效期')
+                return false
+            }
+            if(!this.generalAgentPeriod) {
+                this.showWarn('请选择总代有效期')
+                return false
+            }
+            if(!this.district) {
+                this.showWarn('请选择地区')
+                return false
+            }
+            if(!this.account) {
+                this.showWarn('请输入金额')
+                return false
+            }
+            if(!this.generalAgentQuota) {
+                this.showWarn('请输入赠送总代数量')
+                return false
+            }
+            if(!this.vipQuota) {
+                this.showWarn('请输入赠送VIP数量')
+                return false
+            }
+            return true
+        },
+        showWarn(txt){
+            this.$vux.toast.show({
+                text:txt,
+                type:'warn'
+            })
+        },
+        submit(){
+            let valid = this.validForm()
+            let params = Qs.stringify({
+                sn:this.userInfo.sn,
+                toLevel:this.level,
+                amount:this.account,
+                province:this.district[0],
+                city:this.district[1],
+                county:this.district[2],
+                vipQuota:this.vipQuota,
+                generalAgentQuota:this.generalAgentQuota,
+            })
+            console.log(params)
+            this.$axios.post('/customer/level/upgrade-step-one',params).then((res)=>{
+                console.log(res)
+            })
         }
     },
-    watch:{
-        time(val){
-            // if(val.length < 2) {
-            //     this.buildSlotFn = (line, index, date) => {
-			// 		if (val[0] == date.formatedDate) {
-			// 			if (date.weekDay == 0) {
-			// 				return '<div style="left: 0; margin: 0" class="date-tips">请选择使用后日期</div>'
-			// 			}else if (date.weekDay == 6) {
-			// 				return '<div style="right: 0; left: auto; margin: 0" class="date-tips">请选择使用后日期</div>'
-			// 			}else {
-			// 				return '<div class="date-tips">请选择使用后日期</div>'
-			// 			}
-			// 		}else {
-			// 			return ''
-			// 		}
-			// 	}
-            // }else {
-			// 	this.buildSlotFn = (line, index, date) => {
-			// 		if (val[0] == date.formatedDate) {
-			// 			return ''
-			// 		}
-			// 	}
-			// }
-        }
+    computed:{
+        districtInfo: {
+			get () {
+				return this.areaDetail(this.district)
+			},
+			set () {
+				return ''
+			}
+        },
+        ...mapGetters([
+            'userInfo'
+        ])
     }
 }
 </script>
@@ -187,6 +311,8 @@ export default {
                     color $text-lll
                 .selected
                     color $text-l
+                input
+                    text-align right
             .label 
                 color $text-l
     .submit

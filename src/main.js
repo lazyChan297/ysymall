@@ -80,6 +80,14 @@ axios.interceptors.response.use(response => {
 if((global.token || wsCache.get('token')) && (global.uuid || wsCache.get('uuid'))){
   axios.defaults.headers.common['Fecshop-Uuid'] = global.uuid || wsCache.get('uuid')
   axios.defaults.headers.common['Access-Token'] = global.token || wsCache.get('token')
+  // 获取用户信息
+  Vue.prototype.$axios.post('/customer/service/get-customer-info').then((res)=>{
+    console.log('用户信息')
+    if(res.data.code === 200) {
+      let data = res.data.data
+      store.commit('SAVE_USERINFO',data.customerInfo)
+    }
+  })
   // 获取购物车信息
   Vue.prototype.$axios.get('/checkout/cart/index').then((res)=>{
     if(res.data.code === 200) {

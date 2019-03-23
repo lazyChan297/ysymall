@@ -110,7 +110,6 @@ export default {
                     'access-token':''
                 }
             }).then((res)=>{
-                console.log(res)
                 if(res.headers && res.data.code === 200) {
                     let wechatBound = res.data.data.wechatBound
                     // 没有绑定微信 引导用户微信授权
