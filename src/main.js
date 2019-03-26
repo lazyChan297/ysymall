@@ -14,7 +14,7 @@ import webStorageCache from 'web-storage-cache'
 import { AlertPlugin, AjaxPlugin, ConfirmPlugin, ToastPlugin, LoadingPlugin } from 'vux'
 import 'swiper/dist/css/swiper.css'
 import "./common/stylus/index.styl"
-import {checkToken,getOpenid} from '@/common/js/util'
+import {getOpenid} from '@/common/js/util'
 import VConsole from 'vconsole/dist/vconsole.min.js' //import vconsole
 import VueLazyLoad from 'vue-lazyload'
 let vConsole = new VConsole()
@@ -48,7 +48,8 @@ global.token = wsCache.get('token')
 global.uuid = wsCache.get('uuid')
 
 // 获取openid 通过返回的token和uuid判断用户是否登陆和绑定微信
-getOpenid()
+let url = window.location.href
+getOpenid(url)
 
 // 是否登陆
 let islogin = global.token&&global.uuid
@@ -80,12 +81,15 @@ axios.interceptors.response.use(response => {
 if((global.token || wsCache.get('token')) && (global.uuid || wsCache.get('uuid'))){
   axios.defaults.headers.common['Fecshop-Uuid'] = global.uuid || wsCache.get('uuid')
   axios.defaults.headers.common['Access-Token'] = global.token || wsCache.get('token')
+  Vue.$vux.loading.show({
+    text: '加载中'
+  })
   // 获取用户信息
   Vue.prototype.$axios.post('/customer/service/get-customer-info').then((res)=>{
-    console.log('用户信息')
     if(res.data.code === 200) {
       let data = res.data.data
       store.commit('SAVE_USERINFO',data.customerInfo)
+      Vue.$vux.loading.hide()
     }
   })
   // 获取购物车信息

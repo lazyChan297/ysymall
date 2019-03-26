@@ -1,29 +1,63 @@
 <template>
     <div class="userList-wrapper" :class="level==='agent'?'agent':'vip'">
         <ul class="list">
-            <div class="list-title">
-                <div>已开通：<span :class="level==='agent'?'red':'green'">1</span>人</div>
-                <div>还可开通：<span :class="level==='agent'?'red':'green'">79</span>人</div>
+            <div class="list-title" v-if="vipInfo">
+                <div>已开通：<span :class="level==='agent'?'red':'green'">{{vipInfo.vipUsed}}</span>人</div>
+                <div>还可开通：<span :class="level==='agent'?'red':'green'">{{vipInfo.vipLeft}}</span>人</div>
             </div>
-            <li class="item">
-                <img src="../../common/images/df_user.jpg" alt="" width="54">
+            <div class="list-title" v-else-if="generalInfo">
+                <div>已开通：<span :class="level==='agent'?'red':'green'">{{generalInfo.generalAgentUsed}}</span>人</div>
+                <div>还可开通：<span :class="level==='agent'?'red':'green'">{{generalInfo.generalAgentLeft}}</span>人</div>
+            </div>
+            <li class="item" v-for="(item,index) in list">
+                <img v-lazy="item.avatar" alt="" width="54">
                 <div class="center">
-                    <div class="name">程潇</div>
-                    <div class="mobile">18677185555</div>
+                    <div class="name">{{item.nickname}}</div>
+                    <div class="mobile">{{item.mobile}}</div>
                 </div>
                 <!-- 设置级别 -->
-                <router-link tag="li" class="right" v-if="level==='level'" to="/customLevel">设置级别</router-link>
-                <router-link tag="li" class="right" :to="{path:`/openDetail/${level}`,}" v-else>{{level==='vip'?"去开通VIP":'去开通总代'}}</router-link>
+                <div class="right" v-if="level==='level'" @click="setLevel(item)">设置级别</div>
+                <div class="right" v-else @click="setLevel(item)">{{level==='vip'?"去开通VIP":'去开通总代'}}</div>
             </li>
         </ul>
     </div>
 </template>
 <script>
+import {mapMutations} from 'vuex'
 export default {
     props:{
         level:{
             type:String
+        },
+        list:{
+            type:Array,
+            default:null
+        },
+        vipInfo:{
+            type:Object,
+            required:false
+        },
+        generalInfo:{
+            type:Object,
+            required:false
         }
+    },
+    mounted(){
+        console.log(this.level)
+    },
+    methods:{
+        setLevel(customer){
+            this.saveCurrentCustomer(customer)
+            if(this.level === 'level') {
+                this.$router.push('/customLevel')
+            } else {
+                console.log('....')
+                this.$router.push(`/openDetail/${this.level}`)
+            }
+        },
+        ...mapMutations({
+            saveCurrentCustomer:'SAVE_CURRENT_CUSTOMER'
+        })
     }
 }
 </script>

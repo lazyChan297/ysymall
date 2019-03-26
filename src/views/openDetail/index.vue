@@ -1,39 +1,39 @@
 <template>
     <div class="openDetail-wrapper" :class="level==='vip'?'vip':'agent'">
         <div class="userinfo">
-            <img src="../../common/images/df_user.jpg" alt="" width="54" height="54">
+            <img v-lazy="current_customer.avatar" alt="" width="54" height="54">
             <div>
-                <div class="name">用户名</div>
-                <div class="date">绑定时间：2019-01-15 12:13:23</div>
+                <div class="name">{{current_customer.nickname}}</div>
+                <div class="date">绑定时间：{{current_customer.registeredAt}}</div>
             </div>
         </div>
         <div class="article">
             <div>
                 <div class="label">手机号</div>
-                <div class="content">18677182541</div>
+                <div class="content">{{current_customer.mobile}}</div>
             </div>
             <div>
                 <div class="label">级别</div>
-                <div class="content">普通用户</div>
+                <div class="content">{{getLevel(current_customer.level)}}</div>
             </div>
-            <div>
+            <!-- <div>
                 <div class="label">编号</div>
                 <div class="content">18677182541</div>
-            </div>
+            </div> -->
         </div>
         <div class="article">
             <div>
                 <div class="label">开通金额</div>
-                <div class="content">¥50.00</div>
+                <div class="content">¥{{fees|| 0}}</div>
             </div>
         </div>
-        <div class="submit" @click="showDialog=true">{{level==='vip'?'开通VIP':'开通总代'}}</div>
+        <div class="submit" @click="showDialog = true">{{level==='vip'?'开通VIP':'开通总代'}}</div>
         <x-dialog v-model="showDialog">
             <div class="dialog-window">
                 <div class="title">请选择支付方式</div>
                 <div class="optionContainer">
                     <div @click="showPaymentDialog">
-                        <span>余额支付（¥300.00）</span>
+                        <span>余额支付（¥{{balance|| 0}}）</span>
                         <div class="icon icon-link"></div>
                     </div>
                     <div @click="showDialog = false">
@@ -45,17 +45,17 @@
         </x-dialog>
         <x-dialog v-model="paymentDialog" class="paymentDialog">
             <div class="title">余额支付</div>
-            <div class="balance">¥50.00</div>
+            <div class="balance">¥{{fees}}</div>
             <div class="inputbox">
                 <div>
-                    <div class="mobile">186****0000</div>
-                    <div class="getcode">获取验证码</div>
+                    <div class="mobile">{{userInfo.mobile}}</div>
+                    <div class="getcode" @click="sendCode">{{codeTxt}}</div>
                 </div>
                 <div>
-                    <input type="text" placeholder="请输入验证码">
+                    <input type="text" placeholder="请输入验证码" v-model="code">
                 </div>
             </div>
-            <div class="submit">确认</div>
+            <div class="submit" @click="upGrade">确认</div>
             <div class="cancel" @click="paymentDialog=false">取消</div>
         </x-dialog>
     </div>
@@ -63,6 +63,8 @@
 <script>
 import {XDialog} from 'vux'
 import Qs from 'qs'
+import {mapGetters} from 'vuex'
+import {validNum} from '@/common/js/validated'
 export default {
     data(){
         return {
@@ -70,20 +72,35 @@ export default {
             paymentDialog:false,
             level:undefined,
             fees:'',
-            useBalance:undefined //支付方式
+            useBalance:undefined, //支付方式
+            balance:'',//用户余额
+            canSendCode:true,
+            codeTxt:'获取验证码',
+            code:''
         }
     },
     created(){
+        if(!this.current_customer){
+            this.$router.go(-1)
+        }
         this.level = this.$route.params.level
         if(this.level === 'vip') {
             document.title = '开通VIP'
         } else {
             document.title = '开通总代'
         }
-        
     },
     components:{
         XDialog
+    },
+    computed:{
+        ...mapGetters([
+            'current_customer',
+            'userInfo'
+        ])
+    },
+    mounted(){
+        this.getOrder()
     },
     methods:{
         // 使用余额支付
@@ -91,32 +108,84 @@ export default {
             this.showDialog = false
             this.paymentDialog = true
             this.useBalance = true
+            
+        },
+        sendCode(){
+            if(!this.canSendCode) return false
+            let params = Qs.stringify({
+                type:9
+            })
+            this.$axios.post('/customer/service/send-sms',params).then((res)=>{
+                if(res.data.code === 200) {
+                    this.$vux.toast.show({
+                        text:'验证码发送成功',
+                        type:'success'
+                    })
+                }
+            })
+            let reset = 10
+            let timer = setInterval(()=>{
+                reset--;
+                this.canSendCode = false
+                this.codeTxt = `${reset}秒后重新发送`
+                if(reset<=0){
+                    clearTimeout(timer)
+                    this.canSendCode = true
+                    this.codeTxt = '获取验证码'
+                }
+            },1000)
         },
         // 开通vip or 总代 获取订单信息
         getOrder() {
-            let toLevel = $route.params.level
+            // this.showDialog = true
+            let toLevel = this.$route.params.level
             let params = Qs.stringify({
-                sn:'',
+                sn:this.current_customer.sn,
                 toLevel:toLevel
             })
             this.$axios.post('/customer/level/upgrade-step-one',params).then((res)=>{
                 if(res.data.code === 200) {
                     this.fees = res.data.data.fees
-                    let params1 = Qs.stringify({
-                        orderId:res.data.data.orderId,
-                        useBalance:this.useBalance
+                    this.orderId = res.data.data.orderId
+                } else if (res.data.code === 1100120) {
+                    this.$vux.toast.show({
+                        text:res.data.message,
+                        type:'warn'
                     })
-                    this.upGrade(params1)
+                    let timer = setTimeout(()=>{
+                        this.$router.go(-1)
+                    },2000)
                 }
             })
         },
+        // 格式化级别
+        getLevel(level){
+            switch(level){
+                case('member'): 
+                    return "会员";
+                    break
+            }
+        },
         // 升级成vip或总代时需要支付的运费
-        upGrade(params){
+        upGrade(){
+            let valid = validNum(this.code)
+            if (!valid) return false
+            let params = Qs.stringify({
+                orderId: this.orderId,
+                useBalance:true,
+                captcha:this.code
+            })
             this.$axios.post('/customer/level/upgrade-step-two',params).then((res)=>{
                 if(res.data.code === 200) {
                     // 余额不足，剩余的需要微信支付
                     if(res.data.data.needWechat) {
                         this.wxPayment(res.data.data.paymentArgs)
+                    } else {
+                        this.$vux.toast.show({
+                            text:'处理成功',
+                            type:'success'
+                        })
+                        this.paymentDialog = false
                     }
                 }
             })

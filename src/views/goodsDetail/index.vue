@@ -35,7 +35,7 @@
         <transition name="slide">
             <div class="slide-wrapper" v-show="isShow">
                 <div class="goods-content">
-                    <div class="imgbox" v-if="goodsDetail.image_detail"><img :src="goodsDetail.image_detail[0]" alt="" width="100"></div>
+                    <div class="imgbox" v-if="goodsDetail.thumbnail_img"><img :src="goodsDetail.thumbnail_img[0]" alt="" width="100"></div>
                     <div class="text">
                         <p class="name">{{goodsDetail.name}}</p>
                         <p class="price" v-if="goodsDetail.price_info">¥{{goodsDetail.price_info.special_price?goodsDetail.price_info.special_price.value:goodsDetail.price_info.price.value}}</p>
@@ -126,10 +126,12 @@ export default {
     methods: {
         getGoodsDetail(id){
             this.$axios.get('/catalog/product/index',{params:{product_id:id}}).then((res)=>{
+                if(res.data.code === 200) {
                 this.goodsDetail = Object.assign({qty:1},res.data.data.product) 
                 this.custom_option = res.data.data.product.custom_option
                 this.custom_option_names = res.data.data.product.custom_option_names
                 this.getCustomOptionAttr()
+                }
             })
         },
         showSlide(flag) {
@@ -169,7 +171,7 @@ export default {
             for (let i in this.custom_option_attr) {
                 if(selected_attr.indexOf(i) <= -1) {
                     this.$vux.toast.show({
-                        text:`请选择${i}`,
+                        text:`请选择${this.custom_option_attr[i].name}`,
                         type: 'warn'
                     })
                     return false;
@@ -294,8 +296,6 @@ export default {
             let custom_option_attr = {};
             let custom_option = this.custom_option;
             let custom_option_names = this.custom_option_names
-            console.log('custom_option_names')
-            console.log(custom_option_names)
             for (let o in custom_option) {
                 if(o) {
                     let option = custom_option[o]
@@ -305,7 +305,6 @@ export default {
                             let obj = {
                                 key: value
                             }
-                            console.log(value)
                             for(let kt in custom_option_names) {
                                 if (kt === value) {
                                     obj.text = custom_option_names[kt]
@@ -351,18 +350,12 @@ export default {
                                         break
                                     }
                                 }
-                                // custom_option_attr[attr] = {
-                                //     arr:[obj],
-                                //     name:'name'
-                                // }
                             }
                         }
                     }
                 }
             }
             this.custom_option_attr = custom_option_attr
-            console.log(this.custom_option_attr)
-            console.log('...')
         },
         addGoodsToCart(){
             let valid = this.isSubmit()

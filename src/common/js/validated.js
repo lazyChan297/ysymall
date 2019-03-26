@@ -37,3 +37,22 @@ export function validPhone(phone) {
     }
     return true
 }
+
+export function validNum(num){
+  let reg = /^[0-9]*$/
+  if(!num) {
+    Vue.$vux.toast.show({
+      text: '请输入验证码',
+      type: 'warn'
+    })
+    return false
+  }
+  if(!reg.test(num)){
+    Vue.$vux.toast.show({
+      text: '验证码必须为数字',
+      type: 'warn'
+    })
+    return false
+  }
+  return true
+}

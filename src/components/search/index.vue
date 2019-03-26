@@ -3,7 +3,7 @@
         <div class="search-wrapper">
             <div class="searchBox">
                 <div class="icon icon-search"></div>
-                <input type="text" placeholder="输入手机号或昵称">
+                <input type="text" placeholder="输入手机号或昵称" v-model="keywords">
             </div>
         </div>
         <slot></slot>
@@ -14,12 +14,23 @@
     </div>
 </template>
 <script>
+import {debounce} from '@/common/js/util'
 export default {
     props:{
         checkType:{
             type:String,
             default:null
         }
+    },
+    data(){
+        return{
+            keywords:''
+        }
+    },
+    created(){
+        this.$watch('keywords',debounce((newQuery)=>{
+            this.$emit('keywords', newQuery)
+        },200))
     }
 }
 </script>

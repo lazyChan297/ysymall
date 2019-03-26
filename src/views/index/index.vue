@@ -34,7 +34,7 @@
 <script>
 import TabBar from '@/components/tabBar/index'
 import GoodsList from '@/components/goodsList/index'
-import {mapMutations, mapGetters} from 'vuex'
+import {mapGetters} from 'vuex'
 import Scroll from '@/base/scroll/index'
 import webStorageCache from 'web-storage-cache'
 const wsCache = new webStorageCache()
@@ -42,7 +42,7 @@ export default {
     data(){
         return {
             currentTab: 0,
-            topCategories:[{id:0,name:'全部'}],
+            topCategories:[],
             allProdList:[],//全部商品
             productList: [], // 当前显示商品
             categoryList:[], // 分类好的商品
@@ -85,12 +85,27 @@ export default {
             this.$axios.get('/cms/index/index').then((res)=>{
                 let data = res.data.data
                 if(res.data.code === 200) {
-                    // 保存到store
-                    this.saveUserInfo(data.customerInfo)
+                    this.topCategories.push({id:0,name:'全部'})
                     this.topCategories = this.topCategories.concat(data.topCategories)
                     this.formatProdList(this.topCategories,data.productList)
                     this.productList = data.productList
                     this.allProdList = data.productList
+                    // 分享
+					this.$wechat.ready(() => {
+                        this.$wechat.onMenuShareTimeline({
+                            title: '缘生源,老百姓的好商城',
+                            // link: res.data.shareTimeline.link + '/#/?userSn=' + this.userInfo.userSn,
+                            link:window.location.href,
+                            imgUrl: this.userInfo.avatar
+                        })
+
+                        this.$wechat.onMenuShareAppMessage({
+                            title: '缘生源,老百姓的好商城',
+                            // link: res.data.shareTimeline.link + '/#/?userSn=' + this.userInfo.userSn,
+                            link:window.location.href,
+                            imgUrl: this.userInfo.avatar
+                        })
+                    })
                 }
             })
         },
@@ -116,16 +131,12 @@ export default {
         // 监听滚动
         handleScroll() {
             let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-            console.log(scrollTop)
             if(scrollTop > 200) {
                 this.tabStyle = `position:fixed;top:0;width: 100%;`
             } else {
                 this.tabStyle = ''
             }
-        },
-        ...mapMutations({
-            saveUserInfo: 'SAVE_USERINFO'
-        })
+        }
     }
 }
 </script>
@@ -182,7 +193,6 @@ export default {
             display flex
             text-align left
             white-space nowrap
-            margin-bottom 15px
             /* width 500px */
             /* min-width 550px */
             /* padding-right 50px */

@@ -2,7 +2,7 @@
     <div class="goodsList-wrapper">
         <div>
         <router-link :to="{path:`/goodsDetail/${g.product_id}`}" class="goodsItem" tag="div" v-for="(g,index) in productList">
-            <img v-lazy="g.image" alt="">
+            <img :src="g.image" alt="">
             <p class="name bold">{{g.name}}</p>
             <p class="desc">{{g.desc}}</p>
             <div>
@@ -36,6 +36,7 @@ export default {
     @import '../../common/stylus/variable.styl'
     .goodsList-wrapper
         padding-bottom 50px
+        padding-top 15px
     .goodsItem
         background #fff
         margin 0 15px

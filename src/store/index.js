@@ -9,12 +9,14 @@ Vue.use(Vuex)
 const state = {
     userInfo:{},
     cartInfo:{},
-    cartLen:''
+    cartLen:'',
+    current_customer:{}
 }
 
 const SAVE_USERINFO = 'SAVE_USERINFO'
 const SAVE_CARTINFO = 'SAVE_CARTINFO'
 const SAVE_CARTLEN = 'SAVE_CARTLEN'
+const SAVE_CURRENT_CUSTOMER = 'SAVE_CURRENT_CUSTOMER'
 
 const mutations = {
     [SAVE_USERINFO](state,userInfo) {
@@ -22,13 +24,17 @@ const mutations = {
     },
     [SAVE_CARTLEN](state,len) {
         state.cartLen = len
+    },
+    [SAVE_CURRENT_CUSTOMER](state,current_customer){
+        state.current_customer = current_customer
     }
 }
 
 const getters = {
     userInfo: (state) => state.userInfo,
     cartInfo: (state) => state.cartInfo,
-    cartLen: (state) => state.cartLen
+    cartLen: (state) => state.cartLen,
+    current_customer:(state) => state.current_customer
 }
 
 

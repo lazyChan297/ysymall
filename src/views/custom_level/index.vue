@@ -2,11 +2,11 @@
     <div class="customeLevel-wrapper">
         <div class="header">
             <div>
-                <img src="../../common/images/df_user.jpg" alt="" width="54" height="54">
+                <img v-lazy="current_customer.avatar" alt="" width="54" height="54">
             </div>
             <div>
-                <div class="name">用户名</div>
-                <div class="mobile">手机号:18677185555</div>
+                <div class="name">{{current_customer.nickname}}</div>
+                <div class="mobile">手机号:{{current_customer.mobile}}</div>
             </div>
         </div>
         <div class="article">
@@ -244,7 +244,7 @@ export default {
         submit(){
             let valid = this.validForm()
             let params = Qs.stringify({
-                sn:this.userInfo.sn,
+                sn:this.current_customer.sn,
                 toLevel:this.level,
                 amount:this.account,
                 province:this.district[0],
@@ -253,7 +253,6 @@ export default {
                 vipQuota:this.vipQuota,
                 generalAgentQuota:this.generalAgentQuota,
             })
-            console.log(params)
             this.$axios.post('/customer/level/upgrade-step-one',params).then((res)=>{
                 console.log(res)
             })
@@ -269,7 +268,8 @@ export default {
 			}
         },
         ...mapGetters([
-            'userInfo'
+            'userInfo',
+            'current_customer'
         ])
     }
 }
