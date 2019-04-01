@@ -71,7 +71,8 @@ axios.interceptors.response.use(response => {
   Vue.$vux.loading.hide()
   // 登陆超时
   if(response.data.code === 1100003) {
-    router.push({path:'/login'})
+    // router.push({path:'/login'})
+    isBoundWechat = getOpenid(url)
   }
   return {data:response.data,headers:response.headers}
 })
