@@ -1,13 +1,13 @@
 <template>
-    <div class="userList-wrapper" :class="level==='agent'?'agent':'vip'">
+    <div class="userList-wrapper" :class="level==='generalAgent'?'agent':'vip'">
         <ul class="list">
             <div class="list-title" v-if="vipInfo">
-                <div>已开通：<span :class="level==='agent'?'red':'green'">{{vipInfo.vipUsed}}</span>人</div>
-                <div>还可开通：<span :class="level==='agent'?'red':'green'">{{vipInfo.vipLeft}}</span>人</div>
+                <div>已开通：<span :class="level==='generalAgent'?'red':'green'">{{vipInfo.vipUsed}}</span>人</div>
+                <div>还可开通：<span :class="level==='generalAgent'?'red':'green'">{{vipInfo.vipLeft}}</span>人</div>
             </div>
             <div class="list-title" v-else-if="generalInfo">
-                <div>已开通：<span :class="level==='agent'?'red':'green'">{{generalInfo.generalAgentUsed}}</span>人</div>
-                <div>还可开通：<span :class="level==='agent'?'red':'green'">{{generalInfo.generalAgentLeft}}</span>人</div>
+                <div>已开通：<span :class="level==='generalAgent'?'red':'green'">{{generalInfo.generalAgentUsed}}</span>人</div>
+                <div>还可开通：<span :class="level==='generalAgent'?'red':'green'">{{generalInfo.generalAgentLeft}}</span>人</div>
             </div>
             <li class="item" v-for="(item,index) in list">
                 <img v-lazy="item.avatar" alt="" width="54">

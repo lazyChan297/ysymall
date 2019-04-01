@@ -17,7 +17,6 @@ import "./common/stylus/index.styl"
 import {getOpenid} from '@/common/js/util'
 import VConsole from 'vconsole/dist/vconsole.min.js' //import vconsole
 import VueLazyLoad from 'vue-lazyload'
-let vConsole = new VConsole()
 // 调用微信jssdk
 import { WechatPlugin } from 'vux'
 Vue.use(WechatPlugin)
@@ -27,9 +26,11 @@ Vue.use(ConfirmPlugin)
 Vue.use(AlertPlugin)
 Vue.use(AjaxPlugin)
 
+
 // 服务器地址
 if (process.env.NODE_ENV === 'development') {
   global.serverHost = ''
+  let vConsole = new VConsole()
 } else {
   // 生产服务器
   global.serverHost = "http://fappserver.caomeng.me"
@@ -49,11 +50,7 @@ global.uuid = wsCache.get('uuid')
 
 // 获取openid 通过返回的token和uuid判断用户是否登陆和绑定微信
 let url = window.location.href
-getOpenid(url)
-
-// 是否登陆
-let islogin = global.token&&global.uuid
-
+let isBoundWechat = getOpenid(url)
 
 // axios
 Vue.prototype.$axios = axios
@@ -96,7 +93,6 @@ if((global.token || wsCache.get('token')) && (global.uuid || wsCache.get('uuid')
   Vue.prototype.$axios.get('/checkout/cart/index').then((res)=>{
     if(res.data.code === 200) {
         let data = res.data.data
-        // this.saveCartLen(data.cart_info.products.length)  
         if(data.cart_info) {
           store.commit('SAVE_CARTLEN',data.cart_info.products.length)
         }
@@ -105,7 +101,7 @@ if((global.token || wsCache.get('token')) && (global.uuid || wsCache.get('uuid')
 }
 
 // 白名单
-const whiteList = ['index','cart','goodsDetail','login','cardDetail']
+const whiteList = ['index','cart','goodsDetail','login']
 // router
 router.beforeEach((to, from, next) => {
   if (to.meta.title) {
@@ -120,15 +116,14 @@ router.beforeEach((to, from, next) => {
       Vue.wechat.config(res.data.data)
     }
   })
-  if((global.token || wsCache.get('token')) && (global.uuid || wsCache.get('uuid'))) {
-      // 已经登陆但是要前往登陆页,拦截
-      if(path === '/login') {
-        next({path:'/'})
-      } else {
-        next()
-      }
+  if(isBoundWechat) {
+    // 已经登陆但是要前往登陆页,拦截
+    if(path === '/login') {
+      next({path:'/'})
+    } else {
+      next()
+    }
   } else {
-    // 前往的页面是首页，商品详情，购物车其中之一
     if(whiteList.indexOf(to.name) !== -1) {
       next()
     } else {

@@ -24,7 +24,7 @@
                             <span class="price">¥{{item.product_price}}</span>
                         </p>
                         <p>
-                            <span class="desc"></span>
+                            <span class="desc">{{getOptionName(item.custom_option_info)}}</span>
                             <span class="quantity bold">x{{item.qty}}</span>
                         </p>
                     </div>
@@ -54,13 +54,36 @@ export default {
         return {
             addr:{},
             goodslist:[],
-            cart_info:{}
+            cart_info:{},
+            custom_option_names:null,
+            option_txt_arr:[]
         }
     },
     created(){
         this.getOrder()
     },
     methods: {
+        getOptionName(option){
+            let str = '',custom_option_names = this.custom_option_names,
+                option_txt_arr = this.option_txt_arr
+            for(let goodsOpt in option) {
+                for(let k in custom_option_names) {
+                   if(goodsOpt.toLowerCase() == k) {
+                       str += custom_option_names[k]+":"
+                       for(let v in custom_option_names) {
+                            if(v===option[goodsOpt]){
+                                str += custom_option_names[v]+";"
+                            } else if(option_txt_arr.indexOf(option[goodsOpt])==-1){
+                                str += option[goodsOpt] + ";"
+                                break;
+                           }
+                       } 
+                       break;
+                   }
+                } 
+            }
+            return str
+        },
         getOrder(){
             this.$axios.get('/checkout/onepage/index ').then((res)=>{
                 if(res.data.code===200){
@@ -68,6 +91,13 @@ export default {
                     this.addr = data.addr
                     this.goodslist = data.cart_info.products
                     this.cart_info = data.cart_info
+                    this.custom_option_names = data.cart_info.custom_option_names
+                    // 保存可以转换为汉字的规格属性值
+                    let attr = []
+                    for(let i in this.cart_info.custom_option_names) {
+                        attr.push(i)
+                    }
+                    this.option_txt_arr = attr
                 }
             })
         },
@@ -85,7 +115,7 @@ export default {
                     })
                     let params = Qs.stringify({addrInfo})
                     that.$axios.post('/customer/service/save-addr', params).then(res => {
-                        alert(res.data.data)
+                        // alert(res.data.data)
                         if (res.data.code == 200) {
                             that.addr = res.data.data
                         }
@@ -101,14 +131,18 @@ export default {
               })
               return false
           }
-          let params = Qs.stringify({shipping_method:'free_shipping',
-                                     payment_method:'wechatpay_standard',
-                                     address_id:this.addr.id})
-          this.$axios.post('/checkout/onepage/submitorder',params).then((res)=>{
-              if(res.data.code === 200) {
-                  this.payment(res.data.data.payargs)
-              }
-          })
+        this.$vux.toast.show({
+            text:'正在申请结算支付……',
+            type:'warn'
+        })
+        //   let params = Qs.stringify({shipping_method:'free_shipping',
+        //                              payment_method:'wechatpay_standard',
+        //                              address_id:this.addr.id})
+        //   this.$axios.post('/checkout/onepage/submitorder',params).then((res)=>{
+        //       if(res.data.code === 200) {
+        //           this.payment(res.data.data.payargs)
+        //       }
+        //   })
         },
         payment(arg) {
             this.$wechat.chooseWXPay({

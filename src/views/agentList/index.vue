@@ -16,7 +16,7 @@
     export default {
         data(){
             return {
-                checkType:'agent',
+                checkType:'generalAgent',
                 keywords:'',
                 friendsList:[],
                 generalInfo:{},
@@ -67,5 +67,5 @@
     </script>
     <style scoped lang="stylus">
     .empty
-        margin 100px auto
+        padding 100px 0 0
     </style>

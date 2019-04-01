@@ -1,6 +1,6 @@
 <template>
     <div class="cart-wrapper" v-if="ready">
-        <div v-if="goodslist.length" style="padding-bottom:50px">
+        <div v-if="goodslist.length>0" style="padding-bottom:50px">
             <section>
                 <div class="goodsItem" v-for="(item,index) in goodslist" :key="item.item_id">
                     <div class="icon icon-check" :class="{'icon-uncheck':!item.checked}" @click="selectGood(index)"></div>
@@ -8,7 +8,7 @@
                         <img :src="item.img_url" alt="" width="100" height="100">
                         <div class="info">
                             <p class="name bold">{{item.name}}</p>
-                            <p class="desc">{{item.desc}}</p>
+                            <p class="desc">{{getOptionName(item.custom_option_info)}}</p>
                             <div>
                                 <div class="price bold">¥{{item.product_price}}</div>
                                 <cart-control :good="item" @minus="minusgoods(item)" @add="addgoods(item)"></cart-control>
@@ -40,12 +40,22 @@
 import CartControl from '@/components/cartcontrol/index'
 import {mapGetters, mapMutations} from 'vuex'
 import Qs from 'qs'
+String.prototype.compare = function(str){
+    //不区分大小写
+    if(str.toLowerCase() == this.toLowerCase()){
+        return "1"; // 正确
+    } else {
+        return "0"; // 错误
+    }
+}
 export default {
     data(){
         return {
             isSelectAll: true,
             goodslist:[],
-            ready:false
+            ready:false,
+            custom_option_names:null,
+            option_txt_arr:[]
         }
     },
     components: {
@@ -55,6 +65,28 @@ export default {
         this.getCart()
     },
     methods: {
+        // 获取商品规格
+        getOptionName(option){
+            let str = '',custom_option_names = this.custom_option_names,
+                option_txt_arr = this.option_txt_arr
+            for(let goodsOpt in option) {
+                for(let k in custom_option_names) {
+                   if(goodsOpt.toLowerCase() == k) {
+                       str += custom_option_names[k]+":"
+                       for(let v in custom_option_names) {
+                            if(v===option[goodsOpt]){
+                                str += custom_option_names[v]+";"
+                            } else if(option_txt_arr.indexOf(option[goodsOpt])==-1){
+                                str += option[goodsOpt] + ";"
+                                break;
+                           }
+                       } 
+                       break;
+                   }
+                } 
+            }
+            return str
+        },
         selectGood(index) {
             let goodslist = this.goodslist
             goodslist[index].checked = !goodslist[index].checked
@@ -68,6 +100,7 @@ export default {
                 if(res.data.code === 200) {
                     let cart_info = res.data.data.cart_info
                     let goodslist = cart_info && cart_info.products
+                    this.custom_option_names = cart_info && cart_info.custom_option_names
                     if(goodslist) {
                         goodslist.forEach((item,index)=>{
                             item.checked = true
@@ -76,8 +109,17 @@ export default {
                     } else {
                         this.goodslist = []
                     }
+                    // 保存可以转换为汉字的规格属性值
+                    if(this.custom_option_names) {
+                        let attr = []
+                        for(let i in cart_info.custom_option_names) {
+                            attr.push(i)
+                        }
+                        this.option_txt_arr = attr
+                    }
+                    
                     this.ready = true
-                    let len = goodslist === undefined?0:goodslist.length
+                    let len = goodslist === null?0:goodslist.length
                     this.saveCartLen(len)
                 }
             })
@@ -97,17 +139,6 @@ export default {
                         _this.updateCart(good,"remove")
                     }
                 })
-                // this.$wechat.showModal({
-                //     title:'',
-                //     content:'是否从购物车删除该商品?',
-                //     success:function(sm){
-                //         if(sm.confirm) {
-                //             _this.updateCart(good,"remove")
-                //         } else {
-
-                //         }
-                //     }
-                // })
             }
         },
         addgoods(good) {
@@ -153,7 +184,6 @@ export default {
             // this.$router.push('/payment')
             let turnPage = setTimeout(()=>{
                 this.$router.push('/payment')
-                console.log(global.serverHost)
                 // window.location.href = global.serverHost + '/checkout/onepage/pay/#/payment/'
             },200)
         },

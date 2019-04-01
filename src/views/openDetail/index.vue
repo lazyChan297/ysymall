@@ -1,5 +1,5 @@
 <template>
-    <div class="openDetail-wrapper" :class="level==='vip'?'vip':'agent'">
+    <div class="openDetail-wrapper" :class="level==='vip'?'vip':'generalAgent'">
         <div class="userinfo">
             <img v-lazy="current_customer.avatar" alt="" width="54" height="54">
             <div>
@@ -33,10 +33,10 @@
                 <div class="title">请选择支付方式</div>
                 <div class="optionContainer">
                     <div @click="showPaymentDialog">
-                        <span>余额支付（¥{{balance|| 0}}）</span>
+                        <span :class="balance<=0?'disabled':''">余额支付（¥{{balance|| 0}}）</span>
                         <div class="icon icon-link"></div>
                     </div>
-                    <div @click="showDialog = false">
+                    <div @click="wxPrepayment">
                         <span>微信支付</span>
                         <div class="icon icon-link"></div>
                     </div>
@@ -105,6 +105,13 @@ export default {
     methods:{
         // 使用余额支付
         showPaymentDialog(){
+            if(this.balance<=0){
+                this.$vux.toast.show({
+                    text:'余额为0,请使用微信支付',
+                    type:'warn'
+                })
+                return false
+            }
             this.showDialog = false
             this.paymentDialog = true
             this.useBalance = true
@@ -123,7 +130,7 @@ export default {
                     })
                 }
             })
-            let reset = 10
+            let reset = 60
             let timer = setInterval(()=>{
                 reset--;
                 this.canSendCode = false
@@ -145,9 +152,18 @@ export default {
             })
             this.$axios.post('/customer/level/upgrade-step-one',params).then((res)=>{
                 if(res.data.code === 200) {
+                    // 如果需要支付的费用为0 升级到此结束
+                    if(res.data.data.fees === 0) {
+                        this.$vux.toast.show({
+                            text:"升级成功",
+                            type:'success'
+                        })
+                        return false;
+                    }
                     this.fees = res.data.data.fees
                     this.orderId = res.data.data.orderId
                 } else if (res.data.code === 1100120) {
+                    // 数据错误or该会员不需要升级
                     this.$vux.toast.show({
                         text:res.data.message,
                         type:'warn'
@@ -163,16 +179,24 @@ export default {
             switch(level){
                 case('member'): 
                     return "会员";
-                    break
+                    break;
+                case('vip'):
+                    return "vip";
+                    break;
+                case("generalAgent"):
+                    return "总代";
+                    break;
             }
         },
         // 升级成vip或总代时需要支付的运费
-        upGrade(){
+        upGrade(flag){
             let valid = validNum(this.code)
-            if (!valid) return false
+            if(flag){
+                if (!valid) return false
+            }
             let params = Qs.stringify({
                 orderId: this.orderId,
-                useBalance:true,
+                useBalance:flag,
                 captcha:this.code
             })
             this.$axios.post('/customer/level/upgrade-step-two',params).then((res)=>{
@@ -187,6 +211,13 @@ export default {
                         })
                         this.paymentDialog = false
                     }
+                } else {
+                    this.$vux.toast.show({
+                        text:res.data.message,
+                        type:'warn'
+                    })
+                    this.code = null
+                    this.paymentDialog = false
                 }
             })
         },
@@ -201,6 +232,11 @@ export default {
                     // 支付成功后的回调函数
                 }
             });
+        },
+        // 微信预支付
+        wxPrepayment(){
+            this.showDialog = false;
+            this.upGrade(false)
         }
     }
 }
@@ -225,7 +261,7 @@ export default {
             box-shadow 0px 4px 7px 0px rgba(41,206,166,0.47)
 
 /* 总代 */
-.agent
+.generalAgent
     .submit
         background linear-gradient(180deg,rgba(255,167,178,1) 0%,rgba(255,106,124,1) 100%)
         box-shadow:0px 4px 7px 0px rgba(255,106,124,0.47)
@@ -297,6 +333,8 @@ export default {
             border-bottom 1px solid #efefef
             justify-content space-between
             align-items center
+        .disabled
+            color $text-lll
 /* 余额支付 */
 .paymentDialog
     .title

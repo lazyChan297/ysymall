@@ -35,7 +35,7 @@
         <transition name="slide">
             <div class="slide-wrapper" v-show="isShow">
                 <div class="goods-content">
-                    <div class="imgbox" v-if="goodsDetail.thumbnail_img"><img :src="goodsDetail.thumbnail_img[0]" alt="" width="100"></div>
+                    <div class="imgbox" v-if="goodsDetail.thumbnail_img"><img :src="select_img" alt="" width="100"></div>
                     <div class="text">
                         <p class="name">{{goodsDetail.name}}</p>
                         <p class="price" v-if="goodsDetail.price_info">¥{{goodsDetail.price_info.special_price?goodsDetail.price_info.special_price.value:goodsDetail.price_info.price.value}}</p>
@@ -65,6 +65,9 @@
                 <div class="submit bold" @click="addGoodsToCart">{{submitText}}</div>
             </div>
         </transition>
+        <div class="suspension" @click="goBack">
+                <div class="icon icon-goindex"></div>
+        </div>
         <div class="mask" v-show="isShow"></div>
     </div>
 </template>
@@ -102,7 +105,10 @@ export default {
             custom_option_selected_sku:'',      // 当把所有的custom option选择完成后，这个将会设置当前选择的custom option sku。
             custom_option_show_as_img: '',
             custom_option_checkAttr: [], // 保存所有应该提交的key
-            custom_option_names:[] // 显示选项中文
+            custom_option_names:[], // 显示选项中文
+            custom_option_lens:0, //可选规格数
+            select_img:'',//当前选中商品img
+            inviter:''
         }
     },
     components: {
@@ -113,7 +119,8 @@ export default {
     created(){
         this.product_id = this.$route.params.id
         // this.product_id = '57bac5c6f656f2940a3bf570'
-        this.getGoodsDetail(this.product_id)
+        // this.getGoodsDetail(this.product_id)
+        this.hasInviter(this.product_id)
     },
     computed:{
         ...mapGetters([
@@ -124,13 +131,42 @@ export default {
         
     },
     methods: {
-        getGoodsDetail(id){
-            this.$axios.get('/catalog/product/index',{params:{product_id:id}}).then((res)=>{
+        // 返回首页
+        goBack(){
+            this.$router.push({path:'/'})
+        },
+        hasInviter(id){
+            let inviter = decodeURIComponent((new RegExp('[?|&]inviter='+'([^&;]+?)(&|#|;|$)').exec(location.href)||[,""])[1].replace(/\+/g,'%20'))||null;
+            if(inviter){
+                this.inviter = inviter
+                this.getGoodsDetail(id,inviter)
+            } else {
+                this.getGoodsDetail(id)
+            }
+        },
+        getGoodsDetail(id,inviter){
+            this.$axios.get('/catalog/product/index',{params:{product_id:id,inviter:inviter}}).then((res)=>{
                 if(res.data.code === 200) {
-                this.goodsDetail = Object.assign({qty:1},res.data.data.product) 
-                this.custom_option = res.data.data.product.custom_option
-                this.custom_option_names = res.data.data.product.custom_option_names
-                this.getCustomOptionAttr()
+                    this.goodsDetail = Object.assign({qty:1},res.data.data.product) 
+                    this.custom_option = res.data.data.product.custom_option
+                    this.custom_option_names = res.data.data.product.custom_option_names
+                    this.select_img = this.goodsDetail.thumbnail_img[0]
+                    this.getCustomOptionAttr()
+                    // 分享
+					this.$wechat.ready(() => {
+                        this.$wechat.onMenuShareTimeline({
+                            title: res.data.data.wechat.shareTimeline.title,
+                            link:res.data.data.wechat.shareTimeline.link,
+                            imgUrl: res.data.data.wechat.shareTimeline.imgUrl
+                        })
+
+                        this.$wechat.onMenuShareAppMessage({
+                            title: res.data.data.wechat.shareAppMessage.title,
+                            link:res.data.data.wechat.shareAppMessage.link,
+                            imgUrl: res.data.data.wechat.shareAppMessage.imgUrl,
+                            desc:res.data.data.wechat.shareAppMessage.desc
+                        })
+                    })
                 }
             })
         },
@@ -248,6 +284,20 @@ export default {
             }
             this.custom_option_active_attr = active_attr;
             this.reflushCustomOption();
+            if(this.custom_option_lens <= 1) return
+            // 确保已经选了全部规格
+            if(Object.keys(this.custom_option_selected_attr).length == this.custom_option_lens) {
+                console.log('.....')
+                for(let n in this.custom_option_selected_attr) {
+                    for(let i in this.custom_option) {
+                        if(i.indexOf(this.custom_option_selected_attr[n])<= -1) {
+                            continue
+                        } else {
+                            this.select_img = this.custom_option[i].image
+                        }
+                    } 
+                }
+            }
         },
         // 更新视图选项
         reflushCustomOption() {
@@ -296,6 +346,7 @@ export default {
             let custom_option_attr = {};
             let custom_option = this.custom_option;
             let custom_option_names = this.custom_option_names
+            let custom_option_lens = this.custom_option_lens
             for (let o in custom_option) {
                 if(o) {
                     let option = custom_option[o]
@@ -305,6 +356,7 @@ export default {
                             let obj = {
                                 key: value
                             }
+                           
                             for(let kt in custom_option_names) {
                                 if (kt === value) {
                                     obj.text = custom_option_names[kt]
@@ -355,7 +407,16 @@ export default {
                     }
                 }
             }
+            for(let i in custom_option_attr) {
+                if(custom_option_attr[i].arr.length ===1) {
+                    for(let k in custom_option_attr[i].arr) {
+                        custom_option_attr[i].arr[k].class += ' current '
+                        this.custom_option_selected_attr[i] = custom_option_attr[i].arr[k].key
+                    }
+                }
+            }
             this.custom_option_attr = custom_option_attr
+            this.custom_option_lens = Object.keys(custom_option_attr).length
         },
         addGoodsToCart(){
             let valid = this.isSubmit()
@@ -398,6 +459,17 @@ export default {
 <style lang="stylus" scoped>
     @import "../../common/stylus/variable.styl";
     @import "../../common/stylus/transition.styl";
+    /* 悬浮框 */
+    .suspension
+        position fixed
+        border-radius 50%
+        background #fff
+        bottom 70px
+        right 10px
+        padding 10px
+        line-height 20px
+        border 1px solid $green
+        z-index 1
     .goodsDetail-container
         padding-bottom 50px
     .price-container

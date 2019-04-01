@@ -48,7 +48,14 @@
                 </div>
                 <div class="icon icon-link"></div>
             </router-link>
-            <router-link class="cell" to="/QRcode" tag="div">
+            <!-- <router-link class="cell" to="/QRcode" tag="div">
+                <div>
+                    <span class="icon icon-code"></span>
+                    <span class="bold">二维码</span>
+                </div>
+                <div class="icon icon-link"></div>
+            </router-link> -->
+            <router-link class="cell" to="/inviteQRcode" tag="div">
                 <div>
                     <span class="icon icon-code"></span>
                     <span class="bold">二维码</span>
@@ -123,7 +130,7 @@ export default {
             let level = this.userInfo.level
             if(level === 'provinceAgent'|| level === 'cityAgent' || level === 'countyAgent') {
                 // 省/市/区 可以开通vipor总代
-                this.$router.push('/chooseLevel')
+                this.$router.push({path:`/chooseLevel/${level}`})
             } else {
                 // 总代只可以开通vip
                 this.$router.push('/vipList')

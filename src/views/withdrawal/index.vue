@@ -53,7 +53,7 @@ export default {
     }
 }
 </script>
-<style lang="stylus">
+<style lang="stylus" scoped>
 @import '../../common/stylus/variable.styl';
 /* 弹框 */
 .vux-x-dialog

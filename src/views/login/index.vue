@@ -60,7 +60,7 @@ export default {
             let params = Qs.stringify({mobile:this.mobile,type:TYPE})
             this.$axios.post('/customer/service/send-sms',params).then((res)=>{
                 if(res.data.code == 200) {
-                    let wait_time = 10
+                    let wait_time = 60
                     let timer = setInterval(()=>{
                         if(wait_time>0) {
                             wait_time--
@@ -93,9 +93,14 @@ export default {
             return true
         },
         submit(){
-            // let uri = 'http://192.168.3.198:8090/#/my?sn=bhqwDF'
-            // window.location.href = global.serverHost + '/customer/wechat/get-user-info?url_before_login=' + encodeURIComponent(uri)
-            // return false
+            // let _url = urlObj.protocol + '//' + urlObj.host + '/#' + this.redirect + '?sn='+res.data.data.customerSn
+            // let url = window.location.href
+            // let urlObj = urls.parse(url)
+            // console.log('redirect',this.redirect)
+            // console.log(urlObj)
+            // let _url = urlObj.protocol + '//' + urlObj.host + '/#' + this.redirect + '?sn=998877'
+            // console.log(global.serverHost + '/customer/wechat/get-user-info?url_before_login=' + encodeURIComponent(_url))
+            // window.location.href = global.serverHost + '/customer/wechat/get-user-info?url_before_login=' + encodeURIComponent(_url)
             let valid = this.valid()
             if(!valid) return
             let params = Qs.stringify({

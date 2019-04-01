@@ -2,7 +2,7 @@
     <div class="vipLevel-wrapper">
         <div class="header">
             <img src="../../common/images/viplevelbg.png" alt="">
-            <p class="txt">您的级别为南宁市市代，可以为三度以内人脉开通VIP会员或开通总代，请选择要开通的会员级别。</p>
+            <p class="txt">{{getText()}}</p>
         </div>
         <div class="article">
             <router-link tag="div" to="/vipList" class="green">
@@ -16,6 +16,41 @@
         </div>
     </div>
 </template>
+<script>
+import {mapGetters} from 'vuex'
+export default {
+    data(){
+        return {
+            level:''
+        }
+    },
+    created(){
+        this.level = this.$route.params.level
+    },
+    methods:{
+        getText(){
+            let level = this.level,currentLevel = ''
+            switch(level){
+                case "provinceAgent":
+                    currentLevel = "省代";
+                    break;
+                case "cityAgent":
+                    currentLevel = "市代";
+                    break;
+                case "countyAgent":
+                    currentLevel = "区代";
+                    break;
+            }
+            return `您的级别为${this.userInfo.agentDistrict}${currentLevel}，可以为三度以内人脉开通VIP会员或开通总代，请选择要开通的会员级别。`
+        }
+    },
+    computed:{
+        ...mapGetters([
+            'userInfo'
+        ])
+    }
+}
+</script>
 <style lang="stylus" scoped>
 @import "../../common/stylus/variable.styl";
 .header

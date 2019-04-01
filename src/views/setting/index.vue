@@ -4,42 +4,97 @@
         <section>    
             <div class="cell">
                 <label>头像</label>
-                <img src="../../common/images/df_user.jpg" width="36" height="36" alt="">
+                <img :src="userInfo.avatar" width="36" height="36" alt="">
             </div>
             <div class="cell">
                 <label>昵称</label>
-                <span>微信昵称</span>
+                <span>{{userInfo.nickname}}</span>
             </div>
-            <router-link to="/bindPhone" class="cell" tag="div">
+            <div to="/bindPhone" class="cell" tag="div">
                 <label>手机号</label>
                 <div>
-                    <span>18677185477</span>
-                    <div class="icon icon-link"></div>
+                    <span>{{userInfo.mobile}}</span>
+                    <!-- <div class="icon icon-link"></div> -->
                 </div>
-            </router-link>
-            <router-link tag="div" to="/inviter" class="cell">
+            </div>
+            <!-- <router-link tag="div" to="/inviter" class="cell">
                 <label>邀请人</label>
                 <div>
                     <span>shbh</span>
                     <div class="icon icon-link"></div>
                 </div>
-            </router-link>
-            <div class="cell">
+            </router-link> -->
+            <div class="cell" @click="chooseAddr">
                 <label>收货地址</label>
                 <div class="icon icon-link"></div>
             </div>
             <div class="cell">
                 <label>级别</label>
-                <span>普通用户</span>
-            </div>
-            <div class="cell">
-                <label>编号</label>
-                <span>123456</span>
-            </div>
-            
+                <span>{{getLevel(userInfo.level)}}</span>
+            </div> 
         </section>
     </div>
 </template>
+<script>
+import {mapGetters} from 'vuex'
+import Qs from 'qs'
+export default {
+    created(){
+        console.log(this.userInfo)
+    },
+    computed:{
+        ...mapGetters([
+            'userInfo'
+        ])
+    },
+    methods:{
+        getLevel(level){
+            switch(level){
+                case('member'): 
+                    return "会员";
+                    break;
+                case('vip'):
+                    return "vip";
+                    break;
+                case("generalAgent"):
+                    return "总代";
+                    break;
+                case("provinceAgent"):
+                    return "省代";
+                    break;
+                case("cityAgent"):
+                    return "市代";
+                    break;
+                case("countyAgent"):
+                    return "区代";
+                    break;
+            }
+        },
+        chooseAddr() {
+            let that = this
+            this.$wechat.openAddress({
+                success: res => {
+                    let addrInfo = JSON.stringify({
+                        userName: res.userName,
+                        telNumber: res.telNumber,
+                        provinceName: res.provinceName,
+                        cityName: res.cityName,
+                        countyName: res.countryName,
+                        detail: res.detailInfo
+                    })
+                    let params = Qs.stringify({addrInfo})
+                    that.$axios.post('/customer/service/save-addr', params).then(res => {
+                        // alert(res.data.data)
+                        if (res.data.code == 200) {
+                            that.addr = res.data.data
+                        }
+                    })
+                }
+            })
+        }
+    }
+}
+</script>
 <style lang="stylus" scoped>
     @import "../../common/stylus/variable.styl"
     .title

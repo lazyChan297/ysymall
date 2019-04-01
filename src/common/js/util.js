@@ -20,36 +20,39 @@ export function checkToken () {
 
 export function saveToken(token){
     let wsCache = new webStorageCache()
-    wsCache.set('token',token,{exp : 60*60*2})
+    wsCache.set('token',token,{exp : 30*60*1})
 }
 
 export function saveUUID(uuid){
     let wsCache = new webStorageCache()
-    wsCache.set('uuid',uuid,{exp: 60*60*2})
+    wsCache.set('uuid',uuid,{exp: 30*60*1})
 }
 
 export function getOpenid(url){
-    setTimeout(()=>{
+    setTimeout(() => {
         window.location.reload()
-    },60 * 60 * 1000 * 2)
+     }, 30 *60 * 1000 )
     let urlObj = urls.parse(url)
     let pageUrl = urlObj.protocol + '//' + urlObj.host + '/' + urlObj.hash
-    // 没有登陆 or token已过期
-    if(!global.token&&!getUrlParms('token')&&!global.uuid&&!getUrlParms("uuid")) {
+    // 获取openid 判断是否绑定微信号 绑定后会自动进行微信登陆
+    if(!global.token&&!getUrlParms('token')&&!getUrlParms('uuid')) {
         window.onload = function() {
-            window.location.href = global.serverHost + '/customer/wechat/get-openid?url_before_login='+window.location.href  
+            window.location.href = global.serverHost + '/customer/wechat/get-openid?url_before_login='+encodeURIComponent(url) 
         }
-    }
-    // 重置url 不能将token和uuid放在url
-    if (url != pageUrl && url != global.serverHost + '/checkout/onepage/pay/#/payment/') {
+    } else if(!global.token&&!getUrlParms('token')&&getUrlParms('uuid')) {
+        // 请求了openid 但是没有绑定微信不能自动登陆 需要手机+验证码 手动登陆
+        // window.location.href = global.serverHost + '#/login?redirect='+url
+        return false
+    } else if (url != pageUrl && url != global.serverHost + '/checkout/onepage/pay/#/payment/') {
+        // 重置url 不能将token和uuid放在url
 		window.location.href = pageUrl
-	}
-    
+    }
     // 登陆过且绑定了微信
     if(getUrlParms('token')&&getUrlParms('uuid')) {
         saveUUID(getUrlParms('uuid'))
         saveToken(getUrlParms('token'))
     }
+    return true
 }
 // 节流函数，防止input时频繁触发请求
 export function debounce(func, delay) {

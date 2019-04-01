@@ -57,6 +57,14 @@ export default new Router({
       }
     },
     {
+      path: '/inviteQRcode',
+      name:'inviteQRcode',
+      component:() => import('@/views/inviteQRcode/index'),
+      meta:{
+        title:'邀请二维码'
+      }
+    },
+    {
       path: '/payment',
       name: 'payment',
       component: () => import('@/views/payment/index'),
@@ -309,7 +317,7 @@ export default new Router({
       }
     },
     {
-      path:'/chooseLevel',
+      path:'/chooseLevel/:level',
       name:'chooseLevel',
       component:()=>import('@/views/chooseLevel/index'),
       meta:{
