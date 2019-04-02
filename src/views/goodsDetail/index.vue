@@ -144,6 +144,13 @@ export default {
                 this.getGoodsDetail(id)
             }
         },
+        _getGoodsDetail(id,inviter){
+            if(res.data.code === 200) {
+                this.custom_option = res.data.data.product.custom_option
+                this.custom_option_names = res.data.data.product.custom_option_names
+                
+            }
+        },
         getGoodsDetail(id,inviter){
             this.$axios.get('/catalog/product/index',{params:{product_id:id,inviter:inviter}}).then((res)=>{
                 if(res.data.code === 200) {
@@ -347,8 +354,19 @@ export default {
             let custom_option = this.custom_option;
             let custom_option_names = this.custom_option_names
             let custom_option_lens = this.custom_option_lens
+            let custom_option_group_arr = []
             for (let o in custom_option) {
                 if(o) {
+                    // attr_arr [蓝色,sf1801]
+                    // let attr_arr = o.split('-')
+                    // let keyName = ''
+                    // for(let a in attr_arr) {
+                    //     for(let b in custom_option_names) {
+                    //         if(b===attr_arr[a]) {
+                    //             str += custom_option_names[b]+'-'
+                    //         }
+                    //     }
+                    // }
                     let option = custom_option[o]
                     for(let attr in option) {
                         if (attr && (noAttrArr.indexOf(attr) <= -1)) {

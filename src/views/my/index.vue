@@ -58,7 +58,7 @@
             <router-link class="cell" to="/inviteQRcode" tag="div">
                 <div>
                     <span class="icon icon-code"></span>
-                    <span class="bold">二维码</span>
+                    <span class="bold">我的二维码</span>
                 </div>
                 <div class="icon icon-link"></div>
             </router-link>
@@ -72,7 +72,7 @@
             <div class="cell" to="/chooseLevel" @click="chooseLevel">
                 <div>
                     <span class="icon icon-vip"></span>
-                    <span class="bold">开通vip</span>
+                    <span class="bold">开通VIP</span>
                 </div>
                 <div class="icon icon-link"></div>
             </div>
@@ -94,7 +94,7 @@
             <router-link class="cell" to="/" tag="div" v-if="userInfo.level==='member'">
                 <div>
                     <span class="icon icon-UpVip"></span>
-                    <span class="bold">升级VIP</span>
+                    <span class="bold">申请VIP</span>
                     
                 </div>
                 <div class="icon icon-link"></div>
@@ -102,7 +102,7 @@
             <router-link class="cell" to="/" tag="div" v-if="userInfo.level==='vip'||userInfo.level==='member'">
                 <div>
                     <span class="icon icon-UpAgent"></span>
-                    <span class="bold">升级总代理</span>
+                    <span class="bold">申请总代理</span>
                     
                 </div>
                 <div class="icon icon-link"></div>

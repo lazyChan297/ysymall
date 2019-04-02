@@ -6,11 +6,11 @@
         </div>
         <div class="article">
             <router-link tag="div" to="/vipList" class="green">
-                <span>开通VIP</span>
+                <span>开通免费VIP</span>
                 <div class="icon icon-link"></div>
             </router-link>
             <router-link tag="div" to="/agentList" class="red">
-                <span>开通总代</span>
+                <span>开通免费全国总代</span>
                 <div class="icon icon-link"></div>
             </router-link>
         </div>
@@ -55,7 +55,7 @@ export default {
 @import "../../common/stylus/variable.styl";
 .header
     position relative
-    box-shadow 0px 4px 16px 0px rgba(41,206,166,0.47)
+    /* box-shadow 0px 4px 16px 0px rgba(41,206,166,0.47) */
     img
         width 100%
         display block

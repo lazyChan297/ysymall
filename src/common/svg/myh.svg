@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="28px" height="28px" viewBox="0 0 28 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 51 (57462) - http://www.bohemiancoding.com/sketch -->
-    <title>我的1</title>
+    <title>Combined Shape</title>
     <desc>Created with Sketch.</desc>
     <defs>
         <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
-            <stop stop-color="#64E5C6" offset="0%"></stop>
-            <stop stop-color="#29CEA6" offset="100%"></stop>
+            <stop stop-color="#0084FF" offset="0%"></stop>
+            <stop stop-color="#45A5FF" offset="100%"></stop>
         </linearGradient>
     </defs>
-    <g id="我的1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Group" transform="translate(2.000000, 2.000000)" fill="url(#linearGradient-1)">
-            <path d="M12,12 C8.6862915,12 6,9.3137085 6,6 C6,2.6862915 8.6862915,0 12,0 C15.3137085,0 18,2.6862915 18,6 C18,9.3137085 15.3137085,12 12,12 Z M5.5,13 L18.5,13 C21.5375661,13 24,15.4624339 24,18.5 C24,21.5375661 21.5375661,24 18.5,24 L5.5,24 C2.46243388,24 3.71994563e-16,21.5375661 0,18.5 C-3.71994563e-16,15.4624339 2.46243388,13 5.5,13 Z" id="Combined-Shape"></path>
+    <g id="首页-蓝色" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon-蓝色" transform="translate(-633.000000, -27.000000)" fill="url(#linearGradient-1)">
+            <path d="M645,39 C641.686292,39 639,36.3137085 639,33 C639,29.6862915 641.686292,27 645,27 C648.313708,27 651,29.6862915 651,33 C651,36.3137085 648.313708,39 645,39 Z M638.5,40 L651.5,40 C654.537566,40 657,42.4624339 657,45.5 C657,48.5375661 654.537566,51 651.5,51 L638.5,51 C635.462434,51 633,48.5375661 633,45.5 C633,42.4624339 635.462434,40 638.5,40 Z" id="Combined-Shape"></path>
         </g>
     </g>
 </svg>

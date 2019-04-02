@@ -4,10 +4,12 @@
         <div>
             <div class="header" :style="bgImg">
                 <div class="mask"></div>
-                <img :src="customerInfo.avatar" alt="" width="50" height="50">
+                <img :src="customerInfo.avatar" alt="" width="120" height="120">
                 <p class="name bold">{{customerInfo.nickname}}</p>
                 <p class="mobile">{{customerInfo.mobile}}</p>
+                <div class="tips"><span class="icon icon-tips"></span>所有商品买五送一</div>
             </div>
+
             <div :style="tabStyle" class="tab-container">
                 <ul class="category">
                     <li 
@@ -89,6 +91,9 @@ export default {
     methods: {
         // 打开物流停运窗口
         showExpress(){
+            let vuxAlert = document.getElementsByClassName('vux-alert')[0]
+            let alertContent = document.getElementsByClassName('weui-dialog__bd')[1]
+            alertContent.style.textAlign = 'left'
             let expressInfo = this.expressInfo
             let strArr = expressInfo.split('n')
             let _str = ''
@@ -177,7 +182,7 @@ export default {
         // 监听滚动
         handleScroll() {
             let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-            if(scrollTop > 200) {
+            if(scrollTop > 339) {
                 this.tabStyle = `position:fixed;top:0;width: 100%;`
             } else {
                 this.tabStyle = ''
@@ -201,6 +206,11 @@ export default {
 <style lang="stylus" scoped>
     @import '../../common/stylus/variable.styl';
     @import '../../common/css/media.css';
+    .weui-dialog
+        background red
+    .weui-dialog__bd
+        background red
+        text-align left !important
     /* 悬浮框 */
     .suspension
         position fixed
@@ -211,9 +221,8 @@ export default {
         top 220px
         right 10px
         line-height 20px
-        border 1px solid $red
         span
-            color $red
+            color $text-l
             font-size 12px
     /* 物流停运 */
     .express
@@ -242,15 +251,14 @@ export default {
         /* 头像 */
         .header
             position relative
-            padding-top 15px
+            padding-top 70px
             /* background-image url("../../common/images/df_user.jpg") */
             background-size 100%
             background-position-y center
-            height 140px
+            height 339px
             text-align center
             color #fff
             box-sizing border-box
-            box-shadow 0px 4px 8px 0px rgba(41,206,166,0.5)
             .mask 
                 position absolute
                 background $green
@@ -266,14 +274,29 @@ export default {
                 border-radius 50%
             .name
                 position relative
-                font-size 18px
+                font-size 22px
                 line-height 25px
                 margin-bottom 3px
-                margin-top 10px
+                margin-top 20px
             .mobile
                 position relative
-                font-size 16px
+                font-size 18px
                 line-height 22px
+            .tips
+                position absolute
+                display flex
+                align-items center
+                background #fff
+                width 100%
+                bottom 0
+                line-height 40px
+                border-top-left-radius 30px
+                border-top-right-radius 30px
+                border-bottom 1px solid $line
+                color $red
+                text-align left
+                padding-left 15px
+                z-index 1
         /* 商品分类栏 */
         .category
             display flex
@@ -301,8 +324,10 @@ export default {
                             content ''
                             display block
                             height 6px
-                            background rgba(41,206,166,1)
-                            box-shadow 0px 4px 8px 0px rgba(41,206,166,0.47)
+                            /* background rgba(41,206,166,1) */
+                            /* box-shadow 0px 4px 8px 0px rgba(41,206,166,0.47) */
+                            background rgba(0,132,255,1)
+                            box-shadow 0px 4px 8px 0px rgba(0,132,255,0.3)
                             border-radius 3px
                 /* &:last-child
                     margin-right 20px */

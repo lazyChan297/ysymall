@@ -79,7 +79,7 @@
                         this.tel = data.tel
                         this.url = data.url
                         this.organization = data.organization
-                    } else if (res.data.code = 1000000) {
+                    } else if (res.data.code === 1000000) {
                         this.$vux.toast.show({
                             text:res.data.message,
                             type:'warn'

@@ -21,13 +21,13 @@
                 <div class="content">18677182541</div>
             </div> -->
         </div>
-        <div class="article">
+        <!-- <div class="article">
             <div>
                 <div class="label">开通金额</div>
                 <div class="content">¥{{fees|| 0}}</div>
             </div>
-        </div>
-        <div class="submit" @click="showDialog = true">{{level==='vip'?'开通VIP':'开通总代'}}</div>
+        </div> -->
+        <div class="submit" @click="getOrder">{{level==='vip'?'开通VIP':'开通总代'}}</div>
         <x-dialog v-model="showDialog">
             <div class="dialog-window">
                 <div class="title">请选择支付方式</div>
@@ -100,7 +100,6 @@ export default {
         ])
     },
     mounted(){
-        this.getOrder()
     },
     methods:{
         // 使用余额支付

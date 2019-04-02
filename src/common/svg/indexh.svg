@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="28px" height="28px" viewBox="0 0 28 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 51 (57462) - http://www.bohemiancoding.com/sketch -->
-    <title>首页-1</title>
+    <title>Combined Shape Copy 3</title>
     <desc>Created with Sketch.</desc>
     <defs>
         <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
-            <stop stop-color="#64E5C6" offset="0%"></stop>
-            <stop stop-color="#29CEA6" offset="100%"></stop>
+            <stop stop-color="#0084FF" offset="0%"></stop>
+            <stop stop-color="#45A5FF" offset="100%"></stop>
         </linearGradient>
     </defs>
-    <g id="首页-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <path d="M16.6086957,25.7510951 L16.6086957,19.6668016 C16.6086957,18.2260588 15.4407428,17.058106 14,17.058106 C12.5592572,17.058106 11.3913043,18.2260588 11.3913043,19.6668016 L11.3913043,25.7510951 L5,25.7510951 C3.34314575,25.7510951 2,24.4079493 2,22.7510951 L2,11.652761 C2,10.701148 2.45148445,9.8059703 3.21672505,9.24030776 L12.2167251,2.5875468 C13.2765199,1.80415107 14.7234801,1.80415107 15.7832749,2.5875468 L24.7832749,9.24030776 C25.5485155,9.8059703 26,10.701148 26,11.652761 L26,22.7510951 C26,24.4079493 24.6568542,25.7510951 23,25.7510951 L16.6086957,25.7510951 Z" id="Combined-Shape-Copy-2" fill="url(#linearGradient-1)"></path>
+    <g id="首页-蓝色" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon-蓝色" transform="translate(-437.000000, -27.000000)" fill="url(#linearGradient-1)">
+            <path d="M451.608696,51 L451.608696,44.8246064 C451.608696,43.3838636 450.440743,42.2159108 449,42.2159108 C447.559257,42.2159108 446.391304,43.3838636 446.391304,44.8246064 L446.391304,51 L440,51 C438.343146,51 437,49.6568542 437,48 L437,36.728684 C437,35.7823428 437.446523,34.8914808 438.204707,34.3251609 L447.204707,27.6026808 C448.269451,26.8073783 449.730549,26.8073783 450.795293,27.6026808 L459.795293,34.3251609 C460.553477,34.8914808 461,35.7823428 461,36.728684 L461,48 C461,49.6568542 459.656854,51 458,51 L451.608696,51 Z" id="Combined-Shape-Copy-3"></path>
+        </g>
     </g>
 </svg>

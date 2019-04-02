@@ -40,7 +40,7 @@
             getFriends(){
                 let params = Qs.stringify({
                     keywords:this.keywords,
-                    inviter:'bhqwDF',//'邀请人的sn',
+                    // inviter:this.userInfo.sn,//'邀请人的sn',
                     fromLevel:'member',//'需要的人脉的最低级别'
                     toLevel:'vip'//'需要的人脉的最高级别'
                 })
@@ -48,14 +48,31 @@
                     if(res.data.code === 200) {
                         this.ready = true
                         this.friendsList = res.data.data.friendsInfo
-
+                    }
+                })
+            },
+            searchFriends(){
+                let params = Qs.stringify({
+                    keywords:this.keywords,
+                    // inviter:this.userInfo.sn,//'邀请人的sn',
+                    fromLevel:'member',//'需要的人脉的最低级别'
+                    toLevel:'vip'//'需要的人脉的最高级别'
+                })
+                this.$axios.post('/customer/service/search-friends',params).then((res)=>{
+                    if(res.data.code === 200) {
+                        this.ready = true
+                        this.friendsList = res.data.data.friendsInfo
                     }
                 })
             },
             // 监听input
             handleKeyWords(val){
                 this.keywords = val
-                this.getFriends()
+                if(!val) {
+                    this.getFriends()
+                    return
+                }
+                this.searchFriends()
             }
         },
         computed:{

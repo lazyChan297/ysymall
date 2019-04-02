@@ -61,7 +61,7 @@ export default new Router({
       name:'inviteQRcode',
       component:() => import('@/views/inviteQRcode/index'),
       meta:{
-        title:'邀请二维码'
+        title:'我的二维码'
       }
     },
     {
@@ -246,7 +246,7 @@ export default new Router({
           name: 'inviter',
           component: userList,
           meta: {
-            title: '访客'
+            title: '人脉'
           }
         },
         {
@@ -288,7 +288,7 @@ export default new Router({
       name: 'agentList',
       component:()=>import('@/views/agentList/index'),
       meta:{
-        title: '开通总代'
+        title: '开通全国总代'
       }
     },
     {

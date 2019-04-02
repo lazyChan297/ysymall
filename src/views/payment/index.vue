@@ -131,18 +131,14 @@ export default {
               })
               return false
           }
-        this.$vux.toast.show({
-            text:'正在申请结算支付……',
-            type:'warn'
-        })
-        //   let params = Qs.stringify({shipping_method:'free_shipping',
-        //                              payment_method:'wechatpay_standard',
-        //                              address_id:this.addr.id})
-        //   this.$axios.post('/checkout/onepage/submitorder',params).then((res)=>{
-        //       if(res.data.code === 200) {
-        //           this.payment(res.data.data.payargs)
-        //       }
-        //   })
+          let params = Qs.stringify({shipping_method:'free_shipping',
+                                     payment_method:'wechatpay_standard',
+                                     address_id:this.addr.id})
+          this.$axios.post('/checkout/onepage/submitorder',params).then((res)=>{
+              if(res.data.code === 200) {
+                  this.payment(res.data.data.payargs)
+              }
+          })
         },
         payment(arg) {
             this.$wechat.chooseWXPay({
