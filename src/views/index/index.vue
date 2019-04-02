@@ -89,8 +89,17 @@ export default {
     methods: {
         // 打开物流停运窗口
         showExpress(){
+            let expressInfo = this.expressInfo
+            let strArr = expressInfo.split('n')
+            let _str = ''
+            strArr.forEach((item,index)=>{
+                let len = item.length
+                item = item.substring(0,len-1)
+                item+="<br/>"
+                _str+=item
+            })
             this.$vux.alert.show({
-                content:this.expressInfo
+                content:_str
             })
         },
         hasInviter(){
@@ -177,7 +186,8 @@ export default {
         getExpressInfo(){
             this.$axios.get('/customer/service/get-notice').then((res)=>{
                 if(res.data.code === 200) {
-                    this.expressInfo = res.data.data.info.replace(/\n/g,"<br/>");
+                    // this.expressInfo = res.data.data.info.replace(/\n/g,"<br/>");
+                    this.expressInfo = res.data.data.info
                     this.isShowDialog = res.data.data.hasRead === false?true:false
                     if(!res.data.data.hasRead){
                         this.showExpress()
