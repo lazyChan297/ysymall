@@ -91,7 +91,7 @@
                 </div>
                 <div class="icon icon-link"></div>
             </router-link>
-            <router-link class="cell" to="/" tag="div" v-if="userInfo.level==='member'">
+            <router-link class="cell" to="/applyVip" tag="div" v-if="userInfo.level==='member'">
                 <div>
                     <span class="icon icon-UpVip"></span>
                     <span class="bold">申请VIP</span>
@@ -99,7 +99,7 @@
                 </div>
                 <div class="icon icon-link"></div>
             </router-link>
-            <router-link class="cell" to="/" tag="div" v-if="userInfo.level==='vip'||userInfo.level==='member'">
+            <router-link class="cell" to="/applyAgent" tag="div" v-if="userInfo.level==='vip'||userInfo.level==='member'">
                 <div>
                     <span class="icon icon-UpAgent"></span>
                     <span class="bold">申请总代理</span>

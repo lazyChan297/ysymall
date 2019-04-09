@@ -1,16 +1,16 @@
 <template>
-    <div class="applyVIP-wrapper">
+    <div class="applyAgent-wrapper">
         <div class="headers">
-            <img src="../../common/images/vipbg.png" alt="" class="bg">
-            <img src="../../common/images/viplogo.png" alt="" width="80" class="logo">
+            <img src="../../common/images/agentbg.png" alt="" class="bg">
+            <img src="../../common/images/agentlogo.png" alt="" width="80" class="logo">
             <div class="userInfo">{{userInfo.nickname}} | {{getLevel(userInfo.level)}}</div>
             <div class="account">
-                <p class="desc">申请VIP需要支付</p>
-                <p class="accountNum"><span class="ti">￥</span><span class="num">500.00</span></p>
+                <p class="desc">申请总代理需要支付</p>
+                <p class="accountNum"><span class="ti">￥</span><span class="num">10000.00</span></p>
             </div>
         </div>
         <section>
-            <img src="../../common/images/applyvip_c.png" alt="" class="vipContent">
+            <img src="../../common/images/applyagent_c.png" alt="" class="agentContent">
             <div class="addrInfo" @click="chooseAddr">
                 <div class="icon icon-location"></div>
                 <div class="content" v-if="addr">
@@ -21,7 +21,7 @@
                 <div class="icon icon-link"></div>
             </div>
         </section>
-        <div class="submit" @click="submit">支付</div>
+        <div class="submit">支付</div>
     </div>
 </template>
 <script>
@@ -71,7 +71,6 @@ export default {
                     })
                     let params = Qs.stringify({addrInfo})
                     that.$axios.post('/customer/service/save-addr', params).then(res => {
-                        // alert(res.data.data)
                         if (res.data.code == 200) {
                             that.addr = res.data.data
                         }
@@ -80,7 +79,7 @@ export default {
             })
         },
         submit(){
-            this.$axios.post('/customer/level/upgrade-to-vip').then((res)=>{
+            this.$axios.post('/customer/level/upgrade-to-agent').then((res)=>{
                 if(res.data.code === 200) {
                     if(res.data.data.needWechat) {
                         this.payment(res.data.data.paymentArgs)
@@ -109,85 +108,84 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-@import '../../common/stylus/variable.styl';
-.applyVIP-wrapper
-    background #fff !important
-.headers
-    position relative
-    .bg
-        position absolute
-        left 0
-        width 100%
-        z-index 0
-    .logo
+    @import '../../common/stylus/variable.styl';
+    .applyVIP-wrapper
+        background #fff !important
+    .headers
         position relative
-        margin 18px auto 0
-        z-index 1
-    .userInfo
-        position relative
-        margin-top 10px
-        margin-bottom 15px
-        color #fff
-        z-index 1
-    .account
-        position relative
-        background #ffffff
-        height 160px
-        border-radius 8px
-        margin 0 15px
-        padding-top 34px
-        box-sizing border-box
-        box-shadow 0px 4px 12px 0px rgba(0,0,0,0.1)
-        z-index 1
-    .desc
-        color $text-ll
-    .accountNum
-        line-height 70px
-        .num
-            font-size 50px
-            font-weight bold
-            color $text-l
-            display inline-block
-            vertical-align middle
-        .ti
-            font-size 30px
-            color $text-l
-            font-weight bold
-            display inline-block
-            vertical-align middle
-section
-    margin-top -15px
-    padding 0 15px
-    background #ffffff
-    .vipContent
-        display block
-        width 100%
-    .addrInfo
-        display flex
-        align-items center
-        background #ffffff
-        border-top 1px solid $line
-        border-bottom 1px solid $line
-        padding 10px 0
-        .icon-location
-            margin-right 15px
-        .content
-            flex 1
-            text-align left
-            .mobile
+        .bg
+            position absolute
+            left 0
+            width 100%
+            z-index 0
+        .logo
+            position relative
+            margin 18px auto 0
+            z-index 1
+        .userInfo
+            position relative
+            margin-top 10px
+            margin-bottom 15px
+            color #fff
+            z-index 1
+        .account
+            position relative
+            background #ffffff
+            height 160px
+            border-radius 8px
+            margin 0 15px
+            padding-top 34px
+            box-sizing border-box
+            box-shadow 0px 4px 12px 0px rgba(0,0,0,0.1)
+            z-index 1
+        .desc
+            color $text-ll
+        .accountNum
+            line-height 70px
+            .num
+                font-size 50px
+                font-weight bold
                 color $text-l
-                font-size 16px
-            .addr
-                color $text-lll
-                font-size 14px
-                margin-top 2px
-.submit
-    line-height 50px
-    background linear-gradient(180deg,rgba(0,132,255,1) 0%,rgba(69,165,255,1) 100%)
-    box-shadow 0px 4px 7px 0px rgba(0,132,255,0.3)
-    border-radius 5px
-    color #fff
-    font-weight bold
-    margin 20px 15px
+                display inline-block
+                vertical-align middle
+            .ti
+                font-size 30px
+                color $text-l
+                font-weight bold
+                display inline-block
+                vertical-align middle
+    section
+        margin-top -15px
+        padding 0 15px
+        background #ffffff
+        .agentContent
+            display block
+            width 100%
+        .addrInfo
+            display flex
+            align-items center
+            background #ffffff
+            border-top 1px solid $line
+            border-bottom 1px solid $line
+            padding 10px 0
+            .icon-location
+                margin-right 15px
+            .content
+                flex 1
+                text-align left
+                .mobile
+                    color $text-l
+                    font-size 16px
+                .addr
+                    color $text-lll
+                    font-size 14px
+                    margin-top 2px
+    .submit
+        line-height 50px
+        background linear-gradient(180deg,rgba(0,132,255,1) 0%,rgba(69,165,255,1) 100%)
+        box-shadow 0px 4px 7px 0px rgba(0,132,255,0.3)
+        border-radius 5px
+        color #fff
+        font-weight bold
+        margin 20px 15px
 </style>
-

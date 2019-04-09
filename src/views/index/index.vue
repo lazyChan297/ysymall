@@ -2,12 +2,16 @@
     <div class="wrapper">
     <div class="index-wrapper">
         <div>
-            <div class="header" :style="bgImg" v-if="customerInfo">
+            <div class="header" :style="bgImg">
                 <div class="mask"></div>
-                <img :src="customerInfo.avatar" alt="">
-                <!-- <img src="../../common/images/logo.png" alt=""> -->
+                <img :src="customerInfo.avatar" alt="" v-if="customerInfo.mobile">
+                <img src="../../common/images/logo1.png" alt="" v-else>
                 <p class="name bold">{{customerInfo.nickname}}</p>
-                <p class="mobile">{{customerInfo.mobile}}</p>
+                <a class="call" :href="`tel:${customerInfo.mobile}`">
+                    <p class="mobile">{{customerInfo.mobile}}</p>
+                    <div class="icon icon-phone"></div>
+                </a>
+                
                 <div class="tips"><span class="icon icon-tips"></span>所有商品买五送一</div>
             </div>
 
@@ -82,8 +86,11 @@ export default {
     },
     computed:{
         bgImg() {
-            let maxHeight = document.body.clientHeight*0.3
-            return `background-image:url(${this.userInfo.avatar});max-height:${maxHeight}px;`
+            let url = '../../common/images/logo1.png'
+            if(this.customerInfo.avatar) {
+                url = this.userInfo.avatar
+            }
+            return `background-image:url(${url});`
         },
         ...mapGetters([
             'userInfo'
@@ -183,7 +190,7 @@ export default {
         // 监听滚动
         handleScroll() {
             let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-            if(scrollTop > 339) {
+            if(scrollTop > 400) {
                 this.tabStyle = `position:fixed;top:0;width: 100%;`
             } else {
                 this.tabStyle = ''
@@ -222,6 +229,7 @@ export default {
         top 220px
         right 10px
         line-height 20px
+        z-index 1
         span
             color $text-l
             font-size 12px
@@ -262,6 +270,14 @@ export default {
             text-align center
             color #fff
             box-sizing border-box
+            .call
+                position relative
+                display flex
+                align-items center
+                margin-top 5px
+                z-index 1
+                .mobile
+                    color #fff
             .mask 
                 position absolute
                 background $green
@@ -272,21 +288,21 @@ export default {
             img
                 position relative
                 display block
-                margin 0 auto 0
+                margin 70px auto 0
                 border 2px solid #fff
                 border-radius 50%
-                width 60px
-                height 60px
+                width 120px
+                height 120px
             .name
                 position relative
                 font-size 22px
                 line-height 25px
                 // margin-bottom 3px
-                margin-top 10px
+                margin-top 20px
             .mobile
                 position relative
                 font-size 18px
-                line-height 22px
+                line-height 25px
             .tips
                 position absolute
                 display flex
@@ -307,6 +323,7 @@ export default {
         .category
             display flex
             text-align left
+            background #fff
             /* white-space nowrap */
             /* width 500px */
             /* min-width 550px */

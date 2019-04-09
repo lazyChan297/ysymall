@@ -2,6 +2,7 @@
     <div class="rank-wrapper">
         <div class="headers">
             <img src="../../common/images/rank_bg.png" alt="">
+            <p class="interval" v-show="current_rank==1">倒计时: {{interval}}</p>
             <div class="tab-container">
                 <div :class="current_rank==1?'current_rank':''" @click="switchRank(1)"><span>今日排名</span></div>
                 <div :class="current_rank==2?'current_rank':''" @click="switchRank(2)"><span>昨日排名</span></div>
@@ -9,13 +10,13 @@
         </div>
         <section>
             <div class="my_rank">
-                <img src="../../common/images/default_pic.jpg" alt="" width="30" height="30">
+                <img :src="userInfo.avatar" alt="" width="30" height="30">
                 <span>您当前排名是第 {{my_rank}} 名</span>
             </div>
             <div class="th">
                 <span>排名</span>
                 <span>用户</span>
-                <span>今日</span>
+                <span>{{current_rank==1?'今日':'昨日'}}</span>
             </div>
             <ul class="tb">
                 <li v-for="(item,index) in rankList" :key="index">
@@ -38,13 +39,16 @@
 </template>
 <script>
 import TabBar from '@/components/tabBar/index'
+import {mapGetters} from 'vuex'
 import Qs from 'qs'
 export default {
     data(){
         return {
             current_rank:1,
             my_rank:'',
-            rankList:null
+            rankList:null,
+            countdown:'',
+            interval:''
         }
     },
     components:{
@@ -52,6 +56,7 @@ export default {
     },
     mounted(){
         this.getRank('today')
+        this.timer = null
     },
     methods:{
         switchRank(n){
@@ -68,9 +73,46 @@ export default {
                 if(res.data.code === 200) {
                     this.my_rank = res.data.data.myRank
                     this.rankList = res.data.data.rankList
+                    if(time==='today') {
+                        this.countdown = res.data.data.countdown
+                        this._setInterval(this.countdown)
+                    } else {
+                        clearInterval(this.timer)
+                    }
+                    
                 }
             })
+        },
+        _setInterval(countdown){
+            this.timer = setInterval(()=>{
+                this.countdown--;
+                this.formatTime(this.countdown)
+                if(countdown<=0){
+                    clearInterval(timer)
+                    this.interval = '倒计时结束';
+                }
+            },1000)
+        },
+        formatTime(countdown){
+            // 时
+            let h = 0
+            if(countdown<60*60) {
+                h = '00'
+            } else {
+                h = parseInt(countdown / (60*60))<10?"0"+parseInt(countdown / (60*60)):parseInt(countdown / (60*60))
+            }
+            // 分
+            let _m = countdown % (60*60) 
+            let m = parseInt(_m/60)<10?'0'+parseInt(_m/60):parseInt(_m/60)
+            // 秒
+            let s = _m%60<10?"0"+_m%60:_m%60
+            this.interval = h+":"+m+":"+s
         }
+    },
+    computed:{
+        ...mapGetters([
+            'userInfo'
+        ])
     }
 }
 </script>
@@ -81,6 +123,13 @@ export default {
     position relative
     img
         width 100%
+    .interval
+        position absolute
+        color #fff
+        top 0
+        text-align center
+        width 100%
+        top 16px
     .tab-container
         position absolute
         display flex

@@ -10,7 +10,7 @@
         text-overflow: ellipsis;
         overflow: hidden
     }
-    .index-wrapper .header img{
+    /* .index-wrapper .header img{
         width:50px !important;
         height:50px !important;
     }
@@ -21,7 +21,7 @@
     .index-wrapper .header .mobile{
         font-size:14px !important;
         line-height: 16px !important;
-    }
+    } */
 }
 
 @media screen and (max-width: 375px) {

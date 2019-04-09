@@ -18,7 +18,7 @@ export default {
         }
     },
     mounted(){
-        this.userSn = this.$route.query.userSn
+        this.userSn = this.$route.query.inviter
         this.getInviter(this.userSn)
     },
     methods:{

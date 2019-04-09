@@ -25,12 +25,12 @@ Vue.use(LoadingPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(AlertPlugin)
 Vue.use(AjaxPlugin)
-
+let vConsole = new VConsole()
 
 // 服务器地址
 if (process.env.NODE_ENV === 'development') {
   global.serverHost = ''
-  let vConsole = new VConsole()
+  
 } else {
   // 生产服务器
   global.serverHost = "http://fappserver.caomeng.me"
@@ -70,8 +70,10 @@ axios.interceptors.request.use(config => {
 axios.interceptors.response.use(response => {
   Vue.$vux.loading.hide()
   // 登陆超时
+  // alert(response.data.code)
   if(response.data.code === 1100003) {
-    getOpenid(url)
+    let url = window.location.href
+    getOpenid(url,true)
   }
   return {data:response.data,headers:response.headers}
 })

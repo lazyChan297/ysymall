@@ -365,6 +365,14 @@ export default new Router({
       meta:{
         title:'申请VIP'
       }
+    },
+    {
+      path:'/applyAgent',
+      name:'applyAgent',
+      component:()=>import('@/views/applyAgent/index'),
+      meta:{
+        title: '申请总代理'
+      }
     }
   ]
 })
