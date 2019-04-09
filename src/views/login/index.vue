@@ -110,10 +110,10 @@ export default {
             })
             
             this.$axios.post('/customer/login/mobile-captcha',params,{
-                headers:{
-                    'fecshop-uuid':'',
-                    'access-token':''
-                }
+                // headers:{
+                //     'fecshop-uuid':'',
+                //     'access-token':''
+                // }
             }).then((res)=>{
                 if(res.headers && res.data.code === 200) {
                     let wechatBound = res.data.data.wechatBound
@@ -182,8 +182,10 @@ export default {
         .disable
             background $text-lll
 .submit
-    background:linear-gradient(180deg,rgba(100,229,198,1) 0%,rgba(41,206,166,1) 100%);
-    box-shadow:0px 4px 7px 0px rgba(41,206,166,0.47);
+    // background:linear-gradient(180deg,rgba(100,229,198,1) 0%,rgba(41,206,166,1) 100%);
+    // box-shadow:0px 4px 7px 0px rgba(41,206,166,0.47);
+    background linear-gradient(180deg,rgba(0,132,255,1) 0%,rgba(69,165,255,1) 100%)
+    box-shadow 0px 4px 7px 0px rgba(0,132,255,0.3)
     border-radius:5px
     color #fff
     font-weight bold

@@ -340,6 +340,31 @@ export default new Router({
       meta:{
         title: '名片内容'
       }
+    },
+    //接受邀请
+    {
+      path: '/inviteConfirm',
+      name: 'inviteConfirm',
+      component:()=>import('@/views/inviteConfirm/index'),
+      meta:{
+        title: '缘生源'
+      }
+    },
+    {
+      path:'/rank',
+      name:'rank',
+      component:()=>import('@/views/rank/index'),
+      meta:{
+        title:'竞赛'
+      }
+    },
+    {
+      path:'/applyVip',
+      name:'applyVip',
+      component:()=>import('@/views/applyVIP/index'),
+      meta:{
+        title:'申请VIP'
+      }
     }
   ]
 })

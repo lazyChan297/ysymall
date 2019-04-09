@@ -34,7 +34,7 @@
         </section>
         <transition name="slide">
             <div class="slide-wrapper" v-show="isShow">
-                <div class="goods-content">
+                <div class="goods-content">
                     <div class="imgbox" v-if="goodsDetail.thumbnail_img"><img :src="select_img" alt="" width="100"></div>
                     <div class="text">
                         <p class="name">{{goodsDetail.name}}</p>
@@ -46,15 +46,24 @@
                     <div class="icon icon-close" @click="isShow = false"></div>
                 </div>
                 <div class="goods_options_container">
-                <div class="goods_options" v-for="(item,attr) in custom_option_attr">
-                    <div class="label">
+                <div class="goods_options">
+                    <!-- <div class="label">
                         <span class="black">{{item.name}}</span>
                         <span class="gray">(请选择{{item.name}})</span>
-                    </div>
-                    <ul class="value">
+                    </div> -->
+                    <!-- <ul class="value">
                         <li v-for="(c_item,index) in item.arr" 
                             :class="c_item.class"
                             @click="selectCustomOption(attr,c_item.key)">{{c_item.text || c_item.key}}</li>
+                    </ul> -->
+                    <!-- <div class="label">
+                        <span class="black">请选择规格</span>
+                        <span class="gray">(请选择{{item.name}})</span>
+                    </div> -->
+                    <ul class="value" >
+                        <li v-for="(item,attr) in custom_option_attr" 
+                            @click="_selectCustomOption(item)"
+                            :class="item.class">{{item.name}}</li>
                     </ul>
                 </div>
                 </div>
@@ -97,7 +106,7 @@ export default {
             custom_option:[],                   // 产品的custom_option属性，传递过来的custom option，img和price都已经处理。
             custom_option_attr:{},              // 处理后的 custom_option 数组，这个数组用于生成显示
             custom_option_show_as_img:'',       // 那个属性 当做图片显示
-            custom_option_selected_attr:{},     // 选中的属性，以及对应的值
+            custom_option_selected_attr:null,     // 选中的属性，以及对应的值
             custom_option_active_attr:{},       // active的属性，以及对应的值（active代表有相应的库存）
             // custom_option_active_attr: {当前选择的label:value}
             ustom_option_all_select:0,         // 当把所有的custom option选择完成后(譬如颜色尺码都选择完成)，这个值将会被设置成1。
@@ -108,7 +117,8 @@ export default {
             custom_option_names:[], // 显示选项中文
             custom_option_lens:0, //可选规格数
             select_img:'',//当前选中商品img
-            inviter:''
+            inviter:'',
+            default_img:''
         }
     },
     components: {
@@ -144,13 +154,6 @@ export default {
                 this.getGoodsDetail(id)
             }
         },
-        _getGoodsDetail(id,inviter){
-            if(res.data.code === 200) {
-                this.custom_option = res.data.data.product.custom_option
-                this.custom_option_names = res.data.data.product.custom_option_names
-                
-            }
-        },
         getGoodsDetail(id,inviter){
             this.$axios.get('/catalog/product/index',{params:{product_id:id,inviter:inviter}}).then((res)=>{
                 if(res.data.code === 200) {
@@ -158,7 +161,9 @@ export default {
                     this.custom_option = res.data.data.product.custom_option
                     this.custom_option_names = res.data.data.product.custom_option_names
                     this.select_img = this.goodsDetail.thumbnail_img[0]
-                    this.getCustomOptionAttr()
+                    this.default_img = this.goodsDetail.thumbnail_img[0]
+                    // this.getCustomOptionAttr()
+                    this._getCustomOptionAttr()
                     // 分享
 					this.$wechat.ready(() => {
                         this.$wechat.onMenuShareTimeline({
@@ -206,19 +211,30 @@ export default {
             this.goodsDetail.qty = this.goodsDetail.qty +1
         },
         isSubmit() {
-            let selected_attr = []
-            for (let i in this.custom_option_selected_attr) {
-                selected_attr.push(i)
-            }
-            this.selected_attr = selected_attr
-            for (let i in this.custom_option_attr) {
-                if(selected_attr.indexOf(i) <= -1) {
-                    this.$vux.toast.show({
-                        text:`请选择${this.custom_option_attr[i].name}`,
-                        type: 'warn'
-                    })
-                    return false;
-                }
+            // ======各种属性分开选择
+            // let selected_attr = []
+            // for (let i in this.custom_option_selected_attr) {
+            //     selected_attr.push(i)
+            // }
+            // this.selected_attr = selected_attr
+            // for (let i in this.custom_option_attr) {
+            //     if(selected_attr.indexOf(i) <= -1) {
+            //         this.$vux.toast.show({
+            //             text:`请选择${this.custom_option_attr[i].name}`,
+            //             type: 'warn'
+            //         })
+            //         return false;
+            //     }
+            // }
+            // return true
+            // ======各种属性组合在一起
+            let selectAttr = this.custom_option_selected_attr
+            if(!selectAttr) {
+                this.$vux.toast.show({
+                    text:`请选择商品规格`,
+                    type: 'warn'
+                })
+                return false
             }
             return true
         },
@@ -247,6 +263,33 @@ export default {
                 }
             }
             return false
+        },
+        _selectCustomOption(selectVal){
+            // 只有一个必选选项
+            if (selectVal.required) return false
+            let custom_option_attr = this.custom_option_attr
+            if(!selectVal.class) {
+                for(let i in custom_option_attr) {
+                    custom_option_attr[i].class = ''
+                }
+                this.custom_option_attr = custom_option_attr
+                selectVal.class += " current "
+                this.select_img = selectVal.value.image
+                let value = selectVal.value
+                let obj = {}
+                for(let key in value) {
+                    if(key !== 'image'){
+                        obj[key] = value[key]
+                    }
+                }
+                this.custom_option_selected_attr = obj
+            } else {
+                selectVal.class = ''
+                this.custom_option_selected_attr = null
+                this.select_img = this.default_img
+            }
+            
+            
         },
         selectCustomOption(selectAttr,selectVal) {
             // 判断该选项是否可选
@@ -347,6 +390,39 @@ export default {
             }
             return activeArr;
         },
+        _getCustomOptionAttr(){
+            let noAttrArr = ['price','qty','sku'];
+            let custom_option = this.custom_option
+            let custom_option_names = this.custom_option_names
+            let custom_option_arr = []
+            for(let a in custom_option) {
+                if(a) {
+                    let arrText = a.split('-')
+                    let arrLen = arrText.length
+                     let str = '',obj = {}
+                    for(let b in arrText) {
+                        if(custom_option_names.hasOwnProperty(arrText[b])){
+                            str += custom_option_names[arrText[b]]
+                        } else {
+                            str += arrText[b]
+                        }
+                    }
+                    let option = custom_option[a]
+                    for(let d in option) {
+                        if(noAttrArr.indexOf(d)<=-1) {
+                            obj[d] = option[d]
+                        }
+                    }
+                    custom_option_arr.push({name:str,value:obj})
+                }
+            }
+            if(custom_option_arr.length === 1) {
+                custom_option_arr[0].class = ' current '
+                this.custom_option_selected_attr = custom_option_arr[0].required = true
+            }
+            this.custom_option_attr = custom_option_arr
+
+        },
         // 处理视图显示
         getCustomOptionAttr() {
             let noAttrArr = ['price','qty','sku','image'];
@@ -357,16 +433,6 @@ export default {
             let custom_option_group_arr = []
             for (let o in custom_option) {
                 if(o) {
-                    // attr_arr [蓝色,sf1801]
-                    // let attr_arr = o.split('-')
-                    // let keyName = ''
-                    // for(let a in attr_arr) {
-                    //     for(let b in custom_option_names) {
-                    //         if(b===attr_arr[a]) {
-                    //             str += custom_option_names[b]+'-'
-                    //         }
-                    //     }
-                    // }
                     let option = custom_option[o]
                     for(let attr in option) {
                         if (attr && (noAttrArr.indexOf(attr) <= -1)) {
@@ -580,6 +646,7 @@ export default {
             display flex
             border-bottom 1px solid $line
             padding-bottom 10px
+            padding-top 10px
             .imgbox
                 height 100px
                 overflow hidden
@@ -606,6 +673,7 @@ export default {
                     color $text-ll
                     font-size 14px
             .value
+                padding 10px 0
                 overflow hidden
                 li
                     float left
@@ -632,8 +700,10 @@ export default {
             align-items center
         .submit
             margin 10px 0
-            background linear-gradient(180deg,rgba(100,229,198,1) 0%,rgba(41,206,166,1) 100%)
-            box-shadow 0px 4px 7px 0px rgba(41,206,166,0.47)
+            // background linear-gradient(180deg,rgba(100,229,198,1) 0%,rgba(41,206,166,1) 100%)
+            // box-shadow 0px 4px 7px 0px rgba(41,206,166,0.47)
+            background:linear-gradient(180deg,rgba(0,132,255,1) 0%,rgba(69,165,255,1) 100%);
+            box-shadow:0px 4px 7px 0px rgba(0,132,255,0.3)
             border-radius 5px 
             color #fff
             text-align center

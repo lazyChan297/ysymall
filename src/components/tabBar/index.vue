@@ -8,6 +8,10 @@
             <div class="icon icon-found"></div>
             <p class="bold">发现</p>
         </router-link>
+        <router-link to="/rank" tag="div">
+            <div class="icon icon-rank"></div>
+            <p class="bold">竞赛</p>
+        </router-link>
         <router-link to="/cart" tag="div">
             <div class="icon icon-cart"></div>
             <span class="cartNum" v-if="cartLen">{{cartLen}}</span>

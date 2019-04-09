@@ -75,8 +75,10 @@ axios.interceptors.response.use(response => {
   }
   return {data:response.data,headers:response.headers}
 })
-if((global.token || wsCache.get('token')) && (global.uuid || wsCache.get('uuid'))){
+if(global.uuid || wsCache.get('uuid')) {
   axios.defaults.headers.common['Fecshop-Uuid'] = global.uuid || wsCache.get('uuid')
+}
+if(global.token || wsCache.get('token') ){
   axios.defaults.headers.common['Access-Token'] = global.token || wsCache.get('token')
   Vue.$vux.loading.show({
     text: '加载中'
@@ -101,7 +103,7 @@ if((global.token || wsCache.get('token')) && (global.uuid || wsCache.get('uuid')
 }
 
 // 白名单
-const whiteList = ['index','cart','goodsDetail','login']
+const whiteList = ['index','cart','goodsDetail','login','inviteConfirm','rank','applyVip']
 // router
 router.beforeEach((to, from, next) => {
   if (to.meta.title) {
@@ -127,7 +129,7 @@ router.beforeEach((to, from, next) => {
     if(whiteList.indexOf(to.name) !== -1) {
       next()
     } else {
-      console.log("没登陆，让它去登陆")
+      // "没登陆，让它去登陆"
       next(`/login?redirect=${to.path}`)
     }
   }

@@ -29,29 +29,33 @@ export function saveUUID(uuid){
 }
 
 export function getOpenid(url){
+    console.log('执行了get-openid')
     setTimeout(() => {
         window.location.reload()
      }, 30 *60 * 1000 )
     let urlObj = urls.parse(url)
     let pageUrl = urlObj.protocol + '//' + urlObj.host + '/' + urlObj.hash
+    // 登陆过且绑定了微信
+    if(getUrlParms('token')){
+        saveToken(getUrlParms('token'))
+    }
+    if(getUrlParms('uuid')) {
+        saveUUID(getUrlParms('uuid'))
+    }
     // 获取openid 判断是否绑定微信号 绑定后会自动进行微信登陆
     if(!global.token&&!getUrlParms('token')&&!getUrlParms('uuid')) {
         window.onload = function() {
             window.location.href = global.serverHost + '/customer/wechat/get-openid?url_before_login='+encodeURIComponent(url) 
         }
     } else if(!global.token&&!getUrlParms('token')&&getUrlParms('uuid')) {
+        
         // 请求了openid 但是没有绑定微信不能自动登陆 需要手机+验证码 手动登陆
-        // window.location.href = global.serverHost + '#/login?redirect='+url
         return false
     } else if (url != pageUrl && url != global.serverHost + '/checkout/onepage/pay/#/payment/') {
         // 重置url 不能将token和uuid放在url
 		window.location.href = pageUrl
     }
-    // 登陆过且绑定了微信
-    if(getUrlParms('token')&&getUrlParms('uuid')) {
-        saveUUID(getUrlParms('uuid'))
-        saveToken(getUrlParms('token'))
-    }
+    console.log(global.token)
     return true
 }
 // 节流函数，防止input时频繁触发请求

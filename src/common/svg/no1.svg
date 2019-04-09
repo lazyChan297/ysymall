@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="34px" height="40px" viewBox="0 0 34 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51 (57462) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 16</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="100%" x2="50%" y2="0%" id="linearGradient-1">
+            <stop stop-color="#3E67FA" offset="0%"></stop>
+            <stop stop-color="#5B85FF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#FFCE34" offset="0%"></stop>
+            <stop stop-color="#F5860C" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#FFEE78" offset="0%"></stop>
+            <stop stop-color="#FFD71E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="首页-蓝色" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon-蓝色" transform="translate(-628.000000, -71.000000)">
+            <g id="Group-16" transform="translate(628.000000, 71.000000)">
+                <circle id="Oval-8" fill="url(#linearGradient-1)" cx="16.8" cy="23.2" r="16.8"></circle>
+                <g id="Group-14-Copy" transform="translate(12.000000, 9.035383) scale(1, -1) rotate(30.000000) translate(-12.000000, -9.035383) translate(6.400000, 1.835383)">
+                    <rect id="Rectangle-19" fill="#1E46F2" x="0" y="0" width="3.73333333" height="14.4"></rect>
+                    <rect id="Rectangle-19-Copy" fill="#FFFFFF" x="3.73333333" y="0" width="3.73333333" height="14.4"></rect>
+                    <rect id="Rectangle-19-Copy-2" fill="#FF4E57" x="7.46666667" y="0" width="3.73333333" height="14.4"></rect>
+                </g>
+                <g id="Group-14" transform="translate(21.600000, 9.035383) rotate(30.000000) translate(-21.600000, -9.035383) translate(16.000000, 1.835383)">
+                    <rect id="Rectangle-19" fill="#1E46F2" x="0" y="0" width="3.73333333" height="14.4"></rect>
+                    <rect id="Rectangle-19-Copy" fill="#FFFFFF" x="3.73333333" y="0" width="3.73333333" height="14.4"></rect>
+                    <rect id="Rectangle-19-Copy-2" fill="#FF4E57" x="7.46666667" y="0" width="3.73333333" height="14.4"></rect>
+                </g>
+                <circle id="Oval-9" fill="url(#linearGradient-2)" cx="16.8" cy="23.2" r="12.8"></circle>
+                <circle id="Oval-9-Copy" fill="url(#linearGradient-3)" cx="16.8" cy="23.2" r="9.6"></circle>
+                <text id="1" font-family="Arial-Black, Arial Black" font-size="16" font-weight="700" fill="#FF7C00">
+                    <tspan x="11.2" y="29.2">1</tspan>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg>

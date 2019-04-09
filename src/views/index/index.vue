@@ -2,9 +2,10 @@
     <div class="wrapper">
     <div class="index-wrapper">
         <div>
-            <div class="header" :style="bgImg">
+            <div class="header" :style="bgImg" v-if="customerInfo">
                 <div class="mask"></div>
-                <img :src="customerInfo.avatar" alt="" width="120" height="120">
+                <img :src="customerInfo.avatar" alt="">
+                <!-- <img src="../../common/images/logo.png" alt=""> -->
                 <p class="name bold">{{customerInfo.nickname}}</p>
                 <p class="mobile">{{customerInfo.mobile}}</p>
                 <div class="tips"><span class="icon icon-tips"></span>所有商品买五送一</div>
@@ -46,7 +47,6 @@ import GoodsList from '@/components/goodsList/index'
 import {mapGetters} from 'vuex'
 import Scroll from '@/base/scroll/index'
 import {XDialog} from 'vux'
-
 export default {
     data(){
         return {
@@ -82,7 +82,8 @@ export default {
     },
     computed:{
         bgImg() {
-            return `background-image:url(${this.userInfo.avatar})`
+            let maxHeight = document.body.clientHeight*0.3
+            return `background-image:url(${this.userInfo.avatar});max-height:${maxHeight}px;`
         },
         ...mapGetters([
             'userInfo'
@@ -251,8 +252,10 @@ export default {
         /* 头像 */
         .header
             position relative
-            padding-top 70px
-            /* background-image url("../../common/images/df_user.jpg") */
+            display flex
+            flex-direction column
+            align-items center
+            padding-top 10px
             background-size 100%
             background-position-y center
             height 339px
@@ -272,12 +275,14 @@ export default {
                 margin 0 auto 0
                 border 2px solid #fff
                 border-radius 50%
+                width 60px
+                height 60px
             .name
                 position relative
                 font-size 22px
                 line-height 25px
-                margin-bottom 3px
-                margin-top 20px
+                // margin-bottom 3px
+                margin-top 10px
             .mobile
                 position relative
                 font-size 18px
@@ -296,6 +301,7 @@ export default {
                 color $red
                 text-align left
                 padding-left 15px
+                box-sizing border-box
                 z-index 1
         /* 商品分类栏 */
         .category
