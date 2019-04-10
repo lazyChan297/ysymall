@@ -40,8 +40,17 @@ export default {
                         text:'接受邀请成功！',
                         type:'success'
                     })
-                } else {
-                    this.$router.push({path:'/login'})
+                    let timer = setTimeout(()=>{
+                        this.$router.push({path:'/login'})
+                    },1000) 
+                } else if (res.data.code=== 1000008){
+                    this.$vux.toast.show({
+                        text:res.data.message,
+                        type:'warn'
+                    })
+                    let timer = setTimeout(()=>{
+                        this.$router.push({path:'/'})
+                    },1000) 
                 }
                 
             })

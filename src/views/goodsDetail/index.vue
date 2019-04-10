@@ -23,6 +23,10 @@
                 <img v-lazy="img" alt="" v-for="(img,imgindex) in goodsDetail.image_detail" class="goodsImg">
             </div>
             <div class="tabbar">
+                <router-link to="/" tag="div">
+                    <div class="icon icon-gobackIndex"></div>
+                    <div class="text">首页</div>
+                </router-link>
                 <router-link to="/cart" tag="div">
                     <div class="icon icon-shopcart"></div>
                     <div class="text">购物车</div>
@@ -74,9 +78,9 @@
                 <div class="submit bold" @click="addGoodsToCart">{{submitText}}</div>
             </div>
         </transition>
-        <div class="suspension" @click="goBack">
+        <!-- <div class="suspension" @click="goBack">
                 <div class="icon icon-goindex"></div>
-        </div>
+        </div> -->
         <div class="mask" v-show="isShow"></div>
     </div>
 </template>

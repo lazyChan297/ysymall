@@ -40,7 +40,7 @@ export default {
             showDialog: false,
             mobile:null,
             captcha:null,
-            redirect:''
+            redirect:null
         }
     },
     components: {
@@ -52,6 +52,7 @@ export default {
     },
     created(){
         this.redirect = this.$route.query.redirect
+        console.log(this.redirect)
     },
     methods: {
         getcode() {
@@ -121,7 +122,9 @@ export default {
                     if(!wechatBound) {
                         let url = window.location.href
                         let urlObj = urls.parse(url)
-                        let _url = urlObj.protocol + '//' + urlObj.host + '/#' + this.redirect + '?sn='+res.data.data.customerSn
+                        let redirect = this.redirect?this.redirect:'/'
+                        // let redirect = '/'
+                        let _url = urlObj.protocol + '//' + urlObj.host + '/#' + redirect + '?sn='+res.data.data.customerSn
                         window.location.href = global.serverHost + '/customer/wechat/get-user-info?url_before_login=' + encodeURIComponent(_url)
                     } else {
                         this.$router.push(this.redirect)

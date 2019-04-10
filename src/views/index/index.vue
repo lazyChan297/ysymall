@@ -7,7 +7,7 @@
                 <img :src="customerInfo.avatar" alt="" v-if="customerInfo.mobile">
                 <img src="../../common/images/logo1.png" alt="" v-else>
                 <p class="name bold">{{customerInfo.nickname}}</p>
-                <a class="call" :href="`tel:${customerInfo.mobile}`">
+                <a class="call" :href="`tel:${customerInfo.mobile}`" v-if="customerInfo.mobile">
                     <p class="mobile">{{customerInfo.mobile}}</p>
                     <div class="icon icon-phone"></div>
                 </a>

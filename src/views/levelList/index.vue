@@ -32,9 +32,9 @@
                     fromLevel:'member',//'需要的人脉的最低级别'
                     toLevel:'cityAgent'//'需要的人脉的最高级别'
                 })
-                this.$axios.post('/customer/service/search-friends',params).then((res)=>{
+                this.$axios.post('/customer/service/search-customers',params).then((res)=>{
                     if(res.data.code === 200) {
-                        this.friendsList = res.data.data.friendsInfo
+                        this.friendsList = res.data.data.customersInfo
                     }
                 })
             },
