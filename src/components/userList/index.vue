@@ -9,7 +9,7 @@
                 <div>已开通：<span :class="level==='generalAgent'?'red':'green'">{{generalInfo.generalAgentUsed}}</span>人</div>
                 <div>还可开通：<span :class="level==='generalAgent'?'red':'green'">{{generalInfo.generalAgentLeft}}</span>人</div>
             </div>
-            <li class="item" v-for="(item,index) in list">
+            <li class="item" v-for="(item,index) in list" :key="index">
                 <img v-lazy="item.avatar" alt="" width="54">
                 <div class="center">
                     <div class="name">{{item.nickname}}</div>

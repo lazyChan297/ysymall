@@ -21,7 +21,7 @@
                 <div class="icon icon-link"></div>
             </div>
         </section>
-        <div class="submit">支付</div>
+        <div class="submit" @click="submit">支付</div>
     </div>
 </template>
 <script>
@@ -79,11 +79,16 @@ export default {
             })
         },
         submit(){
-            this.$axios.post('/customer/level/upgrade-to-agent').then((res)=>{
+            this.$axios.post('/customer/level/upgrade-to-general-agent').then((res)=>{
                 if(res.data.code === 200) {
                     if(res.data.data.needWechat) {
                         this.payment(res.data.data.paymentArgs)
                     }
+                } else {
+                    this.$vux.toast.show({
+                        text:res.data.message,
+                        type:'warn'
+                    })
                 }
             })
         },

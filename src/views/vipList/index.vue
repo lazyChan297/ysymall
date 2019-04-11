@@ -1,11 +1,11 @@
 <template>
     <div v-show="ready">
-        <div v-if="friendsList.length">
+        <div>
             <search :checkType="checkType" @keywords="handleKeyWords">
                 <user-list :level="checkType" :list="friendsList" :vipInfo="vipInfo"></user-list>
             </search>
         </div>
-        <div v-else class="empty">暂无数据</div>
+        <!-- <div v-else class="empty">暂无数据</div> -->
     </div>
 </template>
 <script>

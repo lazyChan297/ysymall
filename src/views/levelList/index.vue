@@ -22,7 +22,7 @@
             UserList
         },
         mounted(){
-            this.searchFriends()
+            // this.searchFriends()
         },
         methods:{
             searchFriends(){
@@ -47,7 +47,7 @@
                     if(val.length>7){
                         this.searchFriends()
                     }
-                } else if(val.length>2) {
+                } else if(val.length>=2) {
                     this.searchFriends()
                 }
             }

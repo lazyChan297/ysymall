@@ -85,6 +85,11 @@ export default {
                     if(res.data.data.needWechat) {
                         this.payment(res.data.data.paymentArgs)
                     }
+                } else {
+                    this.$vux.toast.show({
+                        text:res.data.message,
+                        type:'warn'
+                    })
                 }
             })
         },
