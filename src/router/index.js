@@ -65,7 +65,7 @@ export default new Router({
       }
     },
     {
-      path: '/payment',
+      path: '/checkout/onepage/pay/payment',
       name: 'payment',
       component: () => import('@/views/payment/index'),
       meta: {

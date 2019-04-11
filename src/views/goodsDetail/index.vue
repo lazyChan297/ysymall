@@ -23,15 +23,17 @@
                 <img v-lazy="img" alt="" v-for="(img,imgindex) in goodsDetail.image_detail" class="goodsImg">
             </div>
             <div class="tabbar">
-                <router-link to="/" tag="div">
-                    <div class="icon icon-gobackIndex"></div>
-                    <div class="text">首页</div>
-                </router-link>
-                <router-link to="/cart" tag="div">
-                    <div class="icon icon-shopcart"></div>
-                    <div class="text">购物车</div>
-                    <span class="cartLen" v-if="cartLen">{{cartLen}}</span>
-                </router-link>
+                <div class="icon-container">
+                    <router-link to="/" tag="div">
+                        <div class="icon icon-gobackIndex"></div>
+                        <div class="text">首页</div>
+                    </router-link>
+                    <router-link to="/cart" tag="div">
+                        <div class="icon icon-shopcart"></div>
+                        <div class="text">购物车</div>
+                        <span class="cartLen" v-if="cartLen">{{cartLen}}</span>
+                    </router-link>
+                </div>
                 <div class="yellow bold" @click="showSlide(true)">加入购物车</div>
                 <div class="red bold" @click="showSlide(false)">购买</div>
             </div>
@@ -233,6 +235,9 @@ export default {
             // return true
             // ======各种属性组合在一起
             let selectAttr = this.custom_option_selected_attr
+            if(!this.custom_option.length){
+                return true
+            }
             if(!selectAttr) {
                 this.$vux.toast.show({
                     text:`请选择商品规格`,
@@ -341,7 +346,6 @@ export default {
             if(this.custom_option_lens <= 1) return
             // 确保已经选了全部规格
             if(Object.keys(this.custom_option_selected_attr).length == this.custom_option_lens) {
-                console.log('.....')
                 for(let n in this.custom_option_selected_attr) {
                     for(let i in this.custom_option) {
                         if(i.indexOf(this.custom_option_selected_attr[n])<= -1) {
@@ -531,8 +535,7 @@ export default {
                         this.isShow = false
                         return
                     } else {
-                        // this.$router.push('/payment')
-                        window.location.href = global.serverHost + '/checkout/onepage/pay/#/payment'
+                        window.location.href = global.serverHost + '/#/checkout/onepage/pay/payment'
                     }
                 }
             })
@@ -613,6 +616,11 @@ export default {
         left 0
         bottom 0
         background #fff
+        .icon-container
+            display flex
+            &>div
+                position relative
+                flex 1
         &>div
             position relative
             flex 1

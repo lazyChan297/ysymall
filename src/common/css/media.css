@@ -25,7 +25,7 @@
 }
 
 @media screen and (max-width: 375px) {
-    .tab-container .category li{
+    /* .tab-container .category li{
         margin:0 2px !important
-    }
+    } */
 }

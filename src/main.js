@@ -67,6 +67,7 @@ axios.interceptors.request.use(config => {
 }, err => {
   return Promise.reject(err)
 })
+
 axios.interceptors.response.use(response => {
   Vue.$vux.loading.hide()
   // 登陆超时

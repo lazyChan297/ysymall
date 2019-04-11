@@ -11,7 +11,8 @@
         <section>
             <div class="my_rank">
                 <img :src="userInfo.avatar" alt="" width="30" height="30">
-                <span>您当前排名是第 {{my_rank}} 名</span>
+                <span>您{{current_rank==1?'当前':'的'}}排名是第 {{my_rank}} 名</span>
+                <!-- <div class="icon icon-no1"></div> -->
             </div>
             <div class="th">
                 <span>排名</span>
@@ -24,6 +25,7 @@
                         <div class="icon icon-no1" v-if="item.rankNo==1"></div>
                         <div class="icon icon-no2" v-else-if="item.rankNo==2"></div>
                         <div class="icon icon-no3" v-else-if="item.rankNo==3"></div>
+                        <div v-else>{{item.rankNo}}</div>
                     </div>
                     <div class="user">
                         <img :src="item.avatar" alt="" width="35" height="35">
@@ -38,6 +40,7 @@
     </div>
 </template>
 <script>
+
 import TabBar from '@/components/tabBar/index'
 import {mapGetters} from 'vuex'
 import Qs from 'qs'
@@ -158,7 +161,7 @@ export default {
                     display block
                     position absolute
                     width 100%
-                    bottom -15px
+                    bottom -12px
                     left 0
                     background $green
                     height 2px

@@ -1,26 +1,49 @@
 <template>
     <div class="openListRecord-wrapper">
-        <ul>
-            <li>
-                <img src="../../common/images/df_user.jpg" alt="" width="54">
+        <ul v-if="recordList">
+            <li v-for="(item,index) in recordList" :key="index">
+                <img :src="item.avatar" alt="" width="54">
                 <div>
                     <div>
-                        <div class="name">用户名</div>
-                        <div class="acccount">开通金额:¥50.00</div>
+                        <div class="name">{{item.nickname}}</div>
+                        <div class="acccount">开通金额:¥{{item.amount}}</div>
                     </div>
                     <div class="date">
-                        开通时间：2019-02-13 12:12:33
+                        开通时间：{{item.time}}
                     </div>
                 </div>
             </li>
         </ul>
-        <div class="nomore">暂无数据</div>
+        <div class="nomore" v-else>暂无数据</div>
     </div>
 </template>
 <script> 
 export default {
+    data(){
+        return {
+            recordList:null
+        }
+    },
     created() {
-        console.log(this.$route.params)
+        
+    },
+    mounted(){
+        this.getRecord(this.$route.params.type)
+    },
+    methods:{
+        getRecord(type){
+            let url = ''
+            if(type === 'level') {
+                url = '/customer/level/upgrade-records'
+            } else {
+                url = '/customer/level/upgrade-list'
+            }
+            this.$axios.post(url).then((res)=>{
+                if(res.data.code === 200) {
+                    this.recordList = res.data.data
+                }
+            })
+        }
     }
 }
 </script>

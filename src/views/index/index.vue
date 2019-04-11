@@ -2,7 +2,7 @@
     <div class="wrapper">
     <div class="index-wrapper">
         <div>
-            <div class="header" :style="bgImg">
+            <div class="header" :style="bgImg" ref="header">
                 <div class="mask"></div>
                 <img :src="customerInfo.avatar" alt="" v-if="customerInfo.mobile">
                 <img src="../../common/images/logo1.png" alt="" v-else>
@@ -12,17 +12,19 @@
                     <div class="icon icon-phone"></div>
                 </a>
                 
-                <div class="tips"><span class="icon icon-tips"></span>所有商品买五送一</div>
+                <div class="tips"><span class="icon icon-tips"></span><span>所有商品买五送一</span></div>
             </div>
-
-            <div :style="tabStyle" class="tab-container">
+            <div :style="tabStyle" class="tab-container" ref="tabContainer">
+                <!-- <ul class="category" :style="{width:tabContainerWidth}"> -->
                 <ul class="category">
                     <li 
                         @click="switchTab(c,index)" 
                         :class="{'active':currentTab==index}" 
                         v-for="(c,index) in topCategories"
                         :key="index"
-                        ref="categoryItem">
+                        ref="tabItem"
+                        :style="{width:tabItemWidth}">
+                        <img :src="c.imgUrl" alt="">
                         <span>{{c.name}}</span>
                     </li>
                 </ul>
@@ -51,6 +53,16 @@ import GoodsList from '@/components/goodsList/index'
 import {mapGetters} from 'vuex'
 import Scroll from '@/base/scroll/index'
 import {XDialog} from 'vux'
+const ICON_SRC = [
+    'quanbu',
+    'jiankang',
+    'meiye',
+    'xihu',
+    'yanjing',
+    'dalibao',
+    'jingpin',
+    'wuliao'
+]
 export default {
     data(){
         return {
@@ -66,7 +78,9 @@ export default {
             isShowDialog:false,
             expressInfo:'',
             inviter:'',
-            customerInfo:{}
+            customerInfo:{},
+            tabItemWidth:'',
+            tabContainerWidth:''
         }
     },
     components: {
@@ -97,6 +111,13 @@ export default {
         ])
     },
     methods: {
+        // 计算tab宽度
+        calculateWidth(num){
+            let sw = window.innerWidth
+            let iw = sw / 4
+            this.tabItemWidth = iw + 'px'
+            this.tabContainerWidth = num * (iw+4) + 'px'
+        },
         // 打开物流停运窗口
         showExpress(){
             let vuxAlert = document.getElementsByClassName('vux-alert')[0]
@@ -140,11 +161,19 @@ export default {
             }).then((res)=>{
                 let data = res.data.data
                 if(res.data.code === 200) {
-                    this.topCategories = data.topCategories
+                    let array = [{name:"全部",_id:''}]
+                    this.topCategories = array.concat(data.topCategories)
+                    this.topCategories.forEach((item,index)=>{
+                        item.imgUrl = require('@/common/images/' + ICON_SRC[index]+ '.png')
+                    })
+                    // 计算tab宽度
+                    this.calculateWidth(data.topCategories.length+1)
                     let _id = this.topCategories[0]._id
                     this.formatProdList(this.topCategories,data.productList)
-                    this.productList = this.categoryList[_id]
+                    // console.log(this.categoryList[_id])
                     this.allProdList = data.productList
+                    // this.productList = this.categoryList[_id]
+                    this.productList = this.allProdList
                     if(this.inviter) {
                         this.customerInfo = res.data.customerInfoOnTop
                     } else {
@@ -190,7 +219,10 @@ export default {
         // 监听滚动
         handleScroll() {
             let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-            if(scrollTop > 400) {
+            let headerHeight = this.$refs.header && this.$refs.header.clientHeight
+            let tabContainerHeight = this.$refs.tabContainer && this.$refs.tabContainer.clientHeight
+            let listenerHeight = headerHeight + tabContainerHeight
+            if(scrollTop > listenerHeight) {
                 this.tabStyle = `position:fixed;top:0;width: 100%;`
             } else {
                 this.tabStyle = ''
@@ -247,6 +279,7 @@ export default {
             margin 10px auto
             border-radius 5px
     .tab-container
+        /* overflow scroll */
         background $bgcolor
     .scrollTab
         overflow hidden
@@ -307,6 +340,7 @@ export default {
                 position absolute
                 display flex
                 align-items center
+                font-size 14px
                 background #fff
                 width 100%
                 bottom 0
@@ -321,37 +355,49 @@ export default {
                 z-index 1
         /* 商品分类栏 */
         .category
-            display flex
+            /* display flex */
             text-align left
             background #fff
+            padding-bottom 12px
             /* white-space nowrap */
             /* width 500px */
             /* min-width 550px */
             /* padding-right 50px */
             li
-                flex 1
-                line-height 50px
+                /* flex 1 */
+                /* line-height 50px */
                 color $text-l
-                margin 0 10px
+                /* margin 0 2px */
                 display inline-block
                 text-align center
                 min-width 40px
+                margin-top 12px
+                img
+                    display block
+                    margin 0 auto 9px
+                    width 45px
+                    height 45px
+                span
+                    font-size 14px
+                    color $text-ll
                 &.active
+                    span
+                        color $green
+                /* &.active
                     span
                         display inline-block
                         color $green
                         font-weight bold
                         font-size 20px
                         line-height 28px
+                        
                         &:after
                             content ''
                             display block
                             height 6px
-                            /* background rgba(41,206,166,1) */
-                            /* box-shadow 0px 4px 8px 0px rgba(41,206,166,0.47) */
                             background rgba(0,132,255,1)
                             box-shadow 0px 4px 8px 0px rgba(0,132,255,0.3)
-                            border-radius 3px
+                            border-radius 3px */
                 /* &:last-child
                     margin-right 20px */
                         

@@ -181,10 +181,8 @@ export default {
                     this.updateCart(item,"remove")
                 }
             })
-            // this.$router.push('/payment')
             let turnPage = setTimeout(()=>{
-                this.$router.push('/payment')
-                // window.location.href = global.serverHost + '/checkout/onepage/pay/#/payment/'
+                window.location.href = global.serverHost + '/#/checkout/onepage/pay/payment'
             },200)
         },
         ...mapMutations({
