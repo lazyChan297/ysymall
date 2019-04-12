@@ -17,6 +17,7 @@ import "./common/stylus/index.styl"
 import {getOpenid} from '@/common/js/util'
 import VConsole from 'vconsole/dist/vconsole.min.js' //import vconsole
 import VueLazyLoad from 'vue-lazyload'
+import InfiniteScroll from 'vue-infinite-scroll'
 // 调用微信jssdk
 import { WechatPlugin } from 'vux'
 Vue.use(WechatPlugin)
@@ -25,6 +26,7 @@ Vue.use(LoadingPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(AlertPlugin)
 Vue.use(AjaxPlugin)
+Vue.use(InfiniteScroll)
 let vConsole = new VConsole()
 
 // 服务器地址

@@ -2,17 +2,22 @@
     <div class="wrapper">
     <div class="index-wrapper">
         <div>
-            <div class="header" :style="bgImg" ref="header">
-                <div class="mask"></div>
-                <img :src="customerInfo.avatar" alt="" v-if="customerInfo.mobile">
-                <img src="../../common/images/logo1.png" alt="" v-else>
-                <p class="name bold">{{customerInfo.nickname}}</p>
-                <a class="call" :href="`tel:${customerInfo.mobile}`" v-if="customerInfo.mobile">
-                    <p class="mobile">{{customerInfo.mobile}}</p>
-                    <div class="icon icon-phone"></div>
-                </a>
-                
-                <div class="tips"><span class="icon icon-tips"></span><span>所有商品买五送一</span></div>
+            <!-- inviter header -->
+            <div class="header" ref="header" v-if="headerInfo || inviterInfo">
+                <div class="userInfo-container">
+                        <img :src="headerInfo.avatar || inviterInfo.avatar" alt="">
+                        <div class="name bold">
+                            <span>{{headerInfo.nickname|| inviterInfo.nickname}}</span>
+                            <a class="icon icon-phone" :href="`tel:${headerInfo.mobile || inviterInfo.mobile}`" v-if="headerInfo.mobile || inviterInfo.mobile"></a>
+                        </div>
+                        <div class="desc">邀请您参与社交电商</div>
+                        <div class="received-invite" @click="receivedInvite">接收邀请</div>
+                </div>
+            </div>
+            <!-- tips -->
+            <div class="tips">
+                <span class="icon icon-tips"></span>
+                <span>所有商品买五送一,全场包邮！！！</span>
             </div>
             <div :style="tabStyle" class="tab-container" ref="tabContainer">
                 <!-- <ul class="category" :style="{width:tabContainerWidth}"> -->
@@ -50,9 +55,10 @@
 <script>
 import TabBar from '@/components/tabBar/index'
 import GoodsList from '@/components/goodsList/index'
-import {mapGetters} from 'vuex'
+import {mapGetters,mapMutations} from 'vuex'
 import Scroll from '@/base/scroll/index'
 import {XDialog} from 'vux'
+import Qs from 'qs'
 const ICON_SRC = [
     'quanbu',
     'jiankang',
@@ -80,7 +86,9 @@ export default {
             inviter:'',
             customerInfo:{},
             tabItemWidth:'',
-            tabContainerWidth:''
+            tabContainerWidth:'',
+            userSn:'',
+            headerInfo:null
         }
     },
     components: {
@@ -99,18 +107,40 @@ export default {
         this.getExpressInfo()
     },
     computed:{
-        bgImg() {
-            let url = '../../common/images/logo1.png'
-            if(this.customerInfo.avatar) {
-                url = this.userInfo.avatar
-            }
-            return `background-image:url(${url});`
-        },
         ...mapGetters([
-            'userInfo'
+            'userInfo',
+            'inviterInfo'
         ])
     },
     methods: {
+        // 接收邀请
+        receivedInvite(){
+            if(!this.userSn) {
+                this.$vux.toast.show({
+                    text:'您是本人,不可以邀请自己',
+                    type:'warn'
+                })
+                return false
+            }
+            let params = Qs.stringify({inviter:this.userSn})
+            this.$axios.post('/customer/service/confirm-inviter',params).then((res)=>{
+                if(res.data.code === 200) {
+                    this.$vux.toast.show({
+                        text:'接受邀请成功！',
+                        type:'success'
+                    })
+                    let timer = setTimeout(()=>{
+                        this.$router.push({path:'/login'})
+                    },1000) 
+                } else if (res.data.code=== 1000008){
+                    this.$vux.toast.show({
+                        text:res.data.message,
+                        type:'warn'
+                    })
+                }
+                
+            })
+        },
         // 计算tab宽度
         calculateWidth(num){
             let sw = window.innerWidth
@@ -137,13 +167,23 @@ export default {
             })
         },
         hasInviter(){
-            let inviter = decodeURIComponent((new RegExp('[?|&]inviter='+'([^&;]+?)(&|#|;|$)').exec(location.href)||[,""])[1].replace(/\+/g,'%20'))||null;
-            if(inviter){
-                this.inviter = inviter
-                this.getIndex(inviter)
+            let userSn = decodeURIComponent((new RegExp('[?|&]inviter='+'([^&;]+?)(&|#|;|$)').exec(location.href)||[,""])[1].replace(/\+/g,'%20'))||null;
+            if(userSn){
+                this.userSn = userSn
+                this.getIndex(userSn)
             } else {
                 this.getIndex()
+                this.inviter = null
             }
+        },
+        // 获取邀请人信息
+        getInviter(sn){
+            let params = Qs.stringify({inviter:sn})
+            this.$axios.post('/customer/service/get-inviter-info',params).then((res)=>{
+                if(res.data.code === 200) {
+                    this.headerInfo = res.data.data.inviterInfo
+                }
+            })
         },
         switchTab(c,num){
             this.currentTab = Number(num)
@@ -174,10 +214,11 @@ export default {
                     this.allProdList = data.productList
                     // this.productList = this.categoryList[_id]
                     this.productList = this.allProdList
-                    if(this.inviter) {
-                        this.customerInfo = res.data.customerInfoOnTop
+                    if(!inviter) {
+                        this.headerInfo = this.userInfo
                     } else {
-                        this.customerInfo = this.userInfo
+                        this.headerInfo = res.data.customerInfoOnTop
+                        this.savaInviteInfo(res.data.customerInfoOnTop)
                     }
                     // 分享
 					this.$wechat.ready(() => {
@@ -239,18 +280,16 @@ export default {
                     }
                 }
             })
-        }
+        },
+        ...mapMutations({
+            savaInviteInfo:'SAVE_INVITEINFO'
+        })
     }
 }
 </script>
 <style lang="stylus" scoped>
     @import '../../common/stylus/variable.styl';
     @import '../../common/css/media.css';
-    .weui-dialog
-        background red
-    .weui-dialog__bd
-        background red
-        text-align left !important
     /* 悬浮框 */
     .suspension
         position fixed
@@ -287,22 +326,45 @@ export default {
         height 100%
         overflow hidden */
     .index-wrapper
-        position raletive
         height 100%
         overflow-y hidden
         /* 头像 */
         .header
             position relative
-            display flex
-            flex-direction column
-            align-items center
-            padding-top 10px
             background-size 100%
             background-position-y center
-            height 339px
+            height 250px
+            background-image url('../../common/images/index_bg.png')
             text-align center
             color #fff
+            padding-top 60px
             box-sizing border-box
+            .userInfo-container
+                position relative
+                margin 0 15px
+                height 175px
+                background #fff
+                border-radius 5px
+                padding-top 40px
+                box-sizing border-box
+                .desc
+                    color $text-ll
+                    margin-top 10px
+                .name
+                    display flex
+                    align-items center
+                    justify-content center
+                    span
+                        font-size 22px
+                        line-height 22px
+                        color $text-l
+                .received-invite
+                    border-radius 30px
+                    border 1px solid $red
+                    line-height 35px
+                    color $red
+                    width 100px
+                    margin 15px auto 0
             .call
                 position relative
                 display flex
@@ -311,48 +373,31 @@ export default {
                 z-index 1
                 .mobile
                     color #fff
-            .mask 
-                position absolute
-                background $green
-                width 100%
-                height 100%
-                opacity 0.9
-                top 0
             img
-                position relative
+                position absolute
                 display block
-                margin 70px auto 0
+                top -30px
                 border 2px solid #fff
                 border-radius 50%
-                width 120px
-                height 120px
-            .name
-                position relative
-                font-size 22px
-                line-height 25px
-                // margin-bottom 3px
-                margin-top 20px
+                width 60px
+                height 60px
+                left 50%
+                margin-left -30px
+            
             .mobile
-                position relative
                 font-size 18px
                 line-height 25px
-            .tips
-                position absolute
-                display flex
-                align-items center
-                font-size 14px
-                background #fff
-                width 100%
-                bottom 0
-                line-height 40px
-                border-top-left-radius 30px
-                border-top-right-radius 30px
-                border-bottom 1px solid $line
-                color $red
-                text-align left
-                padding-left 15px
-                box-sizing border-box
-                z-index 1
+        .tips
+            display flex
+            align-items center
+            font-size 14px
+            width 100%
+            line-height 40px
+            border-bottom 1px solid $line
+            color $red
+            text-align left
+            padding-left 15px
+            box-sizing border-box
         /* 商品分类栏 */
         .category
             /* display flex */
@@ -375,8 +420,8 @@ export default {
                 img
                     display block
                     margin 0 auto 9px
-                    width 45px
-                    height 45px
+                    width 35px
+                    height 35px
                 span
                     font-size 14px
                     color $text-ll

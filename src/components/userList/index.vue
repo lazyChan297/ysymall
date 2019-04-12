@@ -1,6 +1,9 @@
 <template>
     <div class="userList-wrapper" :class="level==='generalAgent'?'agent':'vip'">
-        <ul class="list">
+        <ul class="list"
+            v-infinite-scroll="loadMore"
+            infinite-scroll-disabled="loading"
+            infinite-scroll-distance="10">
             <div class="list-title" v-if="vipInfo">
                 <div>已开通：<span :class="level==='generalAgent'?'red':'green'">{{vipInfo.vipUsed}}</span>人</div>
                 <div>还可开通：<span :class="level==='generalAgent'?'red':'green'">{{vipInfo.vipLeft}}</span>人</div>
@@ -19,12 +22,110 @@
                 <div class="right" v-if="level==='level'" @click="setLevel(item)">设置级别</div>
                 <div class="right" v-else @click="setLevel(item)">{{level==='vip'?"去开通VIP":'去开通总代'}}</div>
             </li>
+            <li class="item">
+                <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
+                <div class="center">
+                    <div class="name">item.nickname</div>
+                    <div class="mobile">item.mobile</div>
+                </div>
+                <!-- 设置级别 -->
+                <div class="right">设置级别</div>
+            </li>
+            <li class="item">
+                <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
+                <div class="center">
+                    <div class="name">item.nickname</div>
+                    <div class="mobile">item.mobile</div>
+                </div>
+                <!-- 设置级别 -->
+                <div class="right">设置级别</div>
+            </li>
+            <li class="item">
+                <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
+                <div class="center">
+                    <div class="name">item.nickname</div>
+                    <div class="mobile">item.mobile</div>
+                </div>
+                <!-- 设置级别 -->
+                <div class="right">设置级别</div>
+            </li>
+            <li class="item">
+                    <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
+                    <div class="center">
+                        <div class="name">item.nickname</div>
+                        <div class="mobile">item.mobile</div>
+                    </div>
+                    <!-- 设置级别 -->
+                    <div class="right">设置级别</div>
+                </li>   
+
+                <li class="item">
+                        <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
+                        <div class="center">
+                            <div class="name">item.nickname</div>
+                            <div class="mobile">item.mobile</div>
+                        </div>
+                        <!-- 设置级别 -->
+                        <div class="right">设置级别</div>
+                    </li>   
+                    <li class="item">
+                            <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
+                            <div class="center">
+                                <div class="name">item.nickname</div>
+                                <div class="mobile">item.mobile</div>
+                            </div>
+                            <!-- 设置级别 -->
+                            <div class="right">设置级别</div>
+                        </li>   
+                        <li class="item">
+                                <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
+                                <div class="center">
+                                    <div class="name">item.nickname</div>
+                                    <div class="mobile">item.mobile</div>
+                                </div>
+                                <!-- 设置级别 -->
+                                <div class="right">设置级别</div>
+                            </li>
+                            <li class="item">
+                                    <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
+                                    <div class="center">
+                                        <div class="name">item.nickname</div>
+                                        <div class="mobile">item.mobile</div>
+                                    </div>
+                                    <!-- 设置级别 -->
+                                    <div class="right">设置级别</div>
+                                </li>   
+                                <li class="item">
+                                        <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
+                                        <div class="center">
+                                            <div class="name">item.nickname</div>
+                                            <div class="mobile">item.mobile</div>
+                                        </div>
+                                        <!-- 设置级别 -->
+                                        <div class="right">设置级别</div>
+                                    </li>   
+                                    <li class="item">
+                                            <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
+                                            <div class="center">
+                                                <div class="name">item.nickname</div>
+                                                <div class="mobile">item.mobile</div>
+                                            </div>
+                                            <!-- 设置级别 -->
+                                            <div class="right">设置级别</div>
+                                        </li>   
+            <!-- <load-more v-if="loading" :show-loading="false" tip="暂无更多数据" background-color="#ffdfe0"></load-more> -->
         </ul>
     </div>
 </template>
 <script>
 import {mapMutations} from 'vuex'
+import {InlineLoading,LoadMore} from 'vux'
 export default {
+    data(){
+        return {
+            
+        }
+    },
     props:{
         level:{
             type:String
@@ -40,10 +141,13 @@ export default {
         generalInfo:{
             type:Object,
             required:false
+        },
+        loading:{
+            type: Boolean
         }
     },
     mounted(){
-        console.log(this.level)
+        
     },
     methods:{
         setLevel(customer){
@@ -51,13 +155,20 @@ export default {
             if(this.level === 'level') {
                 this.$router.push('/customLevel')
             } else {
-                console.log('....')
                 this.$router.push(`/openDetail/${this.level}`)
             }
+        },
+        loadMore(){
+            console.log('loadmore')
+            this.$emit('loadMore')
         },
         ...mapMutations({
             saveCurrentCustomer:'SAVE_CURRENT_CUSTOMER'
         })
+    },
+    components:{
+        InlineLoading,
+        LoadMore
     }
 }
 </script>
@@ -72,8 +183,11 @@ export default {
 .agent
     .right
         background linear-gradient(180deg,rgba(255,167,178,1) 0%,rgba(255,106,124,1) 100%)
+.userList-wrapper
+    height 100%
 .list
     background #fff
+    height 100%
     .list-title
         display flex
         justify-content space-between

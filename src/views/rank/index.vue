@@ -19,7 +19,7 @@
                 <span>用户</span>
                 <span>{{current_rank==1?'今日':'昨日'}}</span>
             </div>
-            <ul class="tb">
+            <ul class="tb" v-if="rankList.length">
                 <li v-for="(item,index) in rankList" :key="index">
                     <div class="rank">
                         <div class="icon icon-no1" v-if="item.rankNo==1"></div>
@@ -34,6 +34,10 @@
                     <div class="num">{{item.quantity}}</div>
                 </li>
             </ul>
+            <div v-else class="empty">
+                <img src="../../common/images/rank_empty.png" alt="" width="182">
+                <p class="desc">排行榜空了</p>
+            </div>
         </section>
         <!-- tabbar -->
         <tab-bar/>
@@ -226,5 +230,8 @@ section
                 font-size 18px
                 color $green
                 font-weight bold
+.empty
+    p
+        color $text-lll
 </style>
 

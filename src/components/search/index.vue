@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="searchPage-wrapper">
         <div class="search-wrapper">
             <div class="searchBox">
                 <div class="icon icon-search"></div>
@@ -35,6 +35,8 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
+.searchPage-wrapper
+    height 100%
 .search-wrapper
     padding 10px 15px
     background #fff

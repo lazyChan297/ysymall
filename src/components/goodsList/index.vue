@@ -4,12 +4,10 @@
         <router-link :to="{path:`/goodsDetail/${g.product_id}`}" class="goodsItem" tag="div" v-for="(g,index) in productList">
             <img :src="g.image" alt="">
             <p class="name bold">{{g.name}}</p>
-            <p class="desc">{{g.desc}}</p>
             <div>
                 <span class="price bold">¥{{g.special_price.value?g.special_price.value:g.price.value}}</span>
                 <span class="oldprice" v-if="g.special_price.value">原价：¥{{g.price.value}}</span>
                 <span class="oldprice" v-else></span>
-                <span class="cart bold">立即购买</span>
             </div>
         </router-link>
         </div>
@@ -36,25 +34,35 @@ export default {
     @import '../../common/stylus/variable.styl'
     .goodsList-wrapper
         padding-bottom 50px
-        padding-top 15px
+        padding 15px 15px 50px
+        font-size 0
+        text-align left
     .goodsItem
+        display inline-block
+        width 47%
         background #fff
-        margin 0 15px
+        /* margin 0 15px */
         padding-bottom 10px
         box-shadow 0px 2px 2px -1px rgba(129,131,140,0.1)
         border-radius 8px
         margin-bottom 15px
+        &:nth-child(odd)
+            margin-right 15px
         img
+            display block
             width 100%
             border-top-left-radius 8px
             border-top-right-radius 8px
         .name
             color $text-l
-            font-size 22px
-            margin-top 10px
-            line-height 30px
+            font-size 16px
+            margin 5px 0
+            line-height 22px
             padding-left 10px
             text-align left
+            white-space nowrap
+            overflow hidden
+            text-overflow ellipsis
         .desc
             color $text-ll
             font-size 14px
@@ -67,10 +75,10 @@ export default {
             align-items center
             .price
                 color $red
-                font-size 24px
+                font-size 16px
                 padding-left 10px
             .oldprice
-                font-size 14px
+                font-size 12px
                 color $text-lll
                 flex 1
                 margin-left 5px

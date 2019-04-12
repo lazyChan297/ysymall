@@ -1,7 +1,7 @@
 <template>
         <div>
             <search :checkType="checkType" @keywords="handleKeyWords">
-                <user-list :level="checkType" :list="friendsList"></user-list>
+                <user-list :level="checkType" :list="friendsList" @loadMore="loadMore"></user-list>
             </search>
         </div>
     </template>
@@ -14,7 +14,13 @@
             return {
                 checkType:'level',
                 keywords:'',
-                friendsList:[]
+                friendsList:[],
+                articleParams:{
+                    loading:true,
+                    nomore:false,
+                    page:1,//初始请求的页面
+                    number:6 //每页请求的数据
+                }
             }
         },
         components:{
@@ -27,8 +33,9 @@
         methods:{
             searchFriends(){
                 let params = Qs.stringify({
+                    // page:this.articleParams.page,
+                    // number:this.articleParams.number,
                     keywords:this.keywords,
-                    // inviter:'bhqwDF',//'邀请人的sn',
                     fromLevel:'member',//'需要的人脉的最低级别'
                     toLevel:'cityAgent'//'需要的人脉的最高级别'
                 })
@@ -50,6 +57,10 @@
                 } else if(val.length>=2) {
                     this.searchFriends()
                 }
+            },
+            // 滚动加载
+            loadMore(){
+
             }
         }
     }
