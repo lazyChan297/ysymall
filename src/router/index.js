@@ -13,7 +13,7 @@ export default new Router({
       name: 'login',
       component: () => import('@/views/login/index'),
       meta: {
-        title: '登陆'
+        title: '登录'
       }
     },
     {

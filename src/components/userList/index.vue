@@ -1,9 +1,6 @@
 <template>
     <div class="userList-wrapper" :class="level==='generalAgent'?'agent':'vip'">
-        <ul class="list"
-            v-infinite-scroll="loadMore"
-            infinite-scroll-disabled="loading"
-            infinite-scroll-distance="10">
+        <ul class="list">
             <div class="list-title" v-if="vipInfo">
                 <div>已开通：<span :class="level==='generalAgent'?'red':'green'">{{vipInfo.vipUsed}}</span>人</div>
                 <div>还可开通：<span :class="level==='generalAgent'?'red':'green'">{{vipInfo.vipLeft}}</span>人</div>
@@ -22,104 +19,73 @@
                 <div class="right" v-if="level==='level'" @click="setLevel(item)">设置级别</div>
                 <div class="right" v-else @click="setLevel(item)">{{level==='vip'?"去开通VIP":'去开通总代'}}</div>
             </li>
+            <!-- test -->
             <li class="item">
-                <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
                 <div class="center">
-                    <div class="name">item.nickname</div>
-                    <div class="mobile">item.mobile</div>
+                    <div class="name">name</div>
+                    <div class="mobile">mobile</div>
                 </div>
-                <!-- 设置级别 -->
-                <div class="right">设置级别</div>
             </li>
             <li class="item">
-                <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
                 <div class="center">
-                    <div class="name">item.nickname</div>
-                    <div class="mobile">item.mobile</div>
+                    <div class="name">name</div>
+                    <div class="mobile">mobile</div>
                 </div>
-                <!-- 设置级别 -->
-                <div class="right">设置级别</div>
             </li>
             <li class="item">
-                <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
                 <div class="center">
-                    <div class="name">item.nickname</div>
-                    <div class="mobile">item.mobile</div>
+                    <div class="name">name</div>
+                    <div class="mobile">mobile</div>
                 </div>
-                <!-- 设置级别 -->
-                <div class="right">设置级别</div>
             </li>
             <li class="item">
-                    <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
-                    <div class="center">
-                        <div class="name">item.nickname</div>
-                        <div class="mobile">item.mobile</div>
-                    </div>
-                    <!-- 设置级别 -->
-                    <div class="right">设置级别</div>
-                </li>   
-
-                <li class="item">
-                        <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
-                        <div class="center">
-                            <div class="name">item.nickname</div>
-                            <div class="mobile">item.mobile</div>
-                        </div>
-                        <!-- 设置级别 -->
-                        <div class="right">设置级别</div>
-                    </li>   
-                    <li class="item">
-                            <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
-                            <div class="center">
-                                <div class="name">item.nickname</div>
-                                <div class="mobile">item.mobile</div>
-                            </div>
-                            <!-- 设置级别 -->
-                            <div class="right">设置级别</div>
-                        </li>   
-                        <li class="item">
-                                <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
-                                <div class="center">
-                                    <div class="name">item.nickname</div>
-                                    <div class="mobile">item.mobile</div>
-                                </div>
-                                <!-- 设置级别 -->
-                                <div class="right">设置级别</div>
-                            </li>
-                            <li class="item">
-                                    <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
-                                    <div class="center">
-                                        <div class="name">item.nickname</div>
-                                        <div class="mobile">item.mobile</div>
-                                    </div>
-                                    <!-- 设置级别 -->
-                                    <div class="right">设置级别</div>
-                                </li>   
-                                <li class="item">
-                                        <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
-                                        <div class="center">
-                                            <div class="name">item.nickname</div>
-                                            <div class="mobile">item.mobile</div>
-                                        </div>
-                                        <!-- 设置级别 -->
-                                        <div class="right">设置级别</div>
-                                    </li>   
-                                    <li class="item">
-                                            <!-- <img v-lazy="item.avatar" alt="" width="54"> -->
-                                            <div class="center">
-                                                <div class="name">item.nickname</div>
-                                                <div class="mobile">item.mobile</div>
-                                            </div>
-                                            <!-- 设置级别 -->
-                                            <div class="right">设置级别</div>
-                                        </li>   
-            <!-- <load-more v-if="loading" :show-loading="false" tip="暂无更多数据" background-color="#ffdfe0"></load-more> -->
+                <div class="center">
+                    <div class="name">name</div>
+                    <div class="mobile">mobile</div>
+                </div>
+            </li>
+            <li class="item">
+                <div class="center">
+                    <div class="name">name</div>
+                    <div class="mobile">mobile</div>
+                </div>
+            </li>
+            <li class="item">
+                <div class="center">
+                    <div class="name">name</div>
+                    <div class="mobile">mobile</div>
+                </div>
+            </li>
+            <li class="item">
+                <div class="center">
+                    <div class="name">name</div>
+                    <div class="mobile">mobile</div>
+                </div>
+            </li>
+            <li class="item">
+                <div class="center">
+                    <div class="name">name</div>
+                    <div class="mobile">mobile</div>
+                </div>
+            </li>
+            <li class="item">
+                <div class="center">
+                    <div class="name">name</div>
+                    <div class="mobile">mobile</div>
+                </div>
+            </li>
+            <li class="item">
+                <div class="center">
+                    <div class="name">name</div>
+                    <div class="mobile">mobile</div>
+                </div>
+            </li>
         </ul>
     </div>
 </template>
 <script>
 import {mapMutations} from 'vuex'
-import {InlineLoading,LoadMore} from 'vux'
+import {debounce} from '@/common/js/util'
 export default {
     data(){
         return {
@@ -143,11 +109,12 @@ export default {
             required:false
         },
         loading:{
-            type: Boolean
+            type: Boolean,
+            default:false
         }
     },
     mounted(){
-        
+        addEventListener('scroll',this.handleScroll)
     },
     methods:{
         setLevel(customer){
@@ -158,17 +125,18 @@ export default {
                 this.$router.push(`/openDetail/${this.level}`)
             }
         },
-        loadMore(){
-            console.log('loadmore')
-            this.$emit('loadMore')
+        handleScroll(){
+            let scrollTop =  document.documentElement.scrollTop||document.body.scrollTop
+            let windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+            let scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
+            // 滚动到底部
+            if(scrollTop+windowHeight==scrollHeight){
+                this.$emit('loadMore')            
+            }   
         },
         ...mapMutations({
             saveCurrentCustomer:'SAVE_CURRENT_CUSTOMER'
         })
-    },
-    components:{
-        InlineLoading,
-        LoadMore
     }
 }
 </script>

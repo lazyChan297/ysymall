@@ -29,7 +29,17 @@ export default {
     },
     created(){
         this.$watch('keywords',debounce((newQuery)=>{
-            this.$emit('keywords', newQuery)
+            if(!newQuery) return false
+            let reg = /^[0-9]*$/, regStr = /[^0-9]+/g
+            // 当搜索手机号码时，大于7位才发送请求
+            if(reg.test(newQuery)){
+                if(newQuery.length>=2){
+                    this.$emit('keywords', newQuery)
+                }
+            } else if(newQuery.length>=2&&regStr.test(newQuery)) {
+                this.$emit('keywords', newQuery)
+            }
+            
         },200))
     }
 }

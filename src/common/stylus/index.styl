@@ -49,3 +49,19 @@ textarea::-webkit-input-placeholder
 .index-wrapper
     .weui-dialog>div:nth-child(2)
         text-align left !important
+
+// 公司员工开通会员级别
+.customeLevel-wrapper
+    .vux-no-group-title
+        margin-top 0
+        &:before
+            content ''
+            display none
+            border none
+        &:after
+            content ''
+            display none
+            border none
+    .weui-switch:checked
+        border-color $green
+        background-color $green

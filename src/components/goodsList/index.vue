@@ -6,7 +6,7 @@
             <p class="name bold">{{g.name}}</p>
             <div>
                 <span class="price bold">¥{{g.special_price.value?g.special_price.value:g.price.value}}</span>
-                <span class="oldprice" v-if="g.special_price.value">原价：¥{{g.price.value}}</span>
+                <span class="oldprice" v-if="g.special_price.value">¥{{g.price.value}}</span>
                 <span class="oldprice" v-else></span>
             </div>
         </router-link>

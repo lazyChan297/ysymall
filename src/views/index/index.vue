@@ -3,15 +3,16 @@
     <div class="index-wrapper">
         <div>
             <!-- inviter header -->
-            <div class="header" ref="header" v-if="headerInfo || inviterInfo">
+            <div class="header" ref="header" v-if="headerInfo">
                 <div class="userInfo-container">
-                        <img :src="headerInfo.avatar || inviterInfo.avatar" alt="">
-                        <div class="name bold">
-                            <span>{{headerInfo.nickname|| inviterInfo.nickname}}</span>
-                            <a class="icon icon-phone" :href="`tel:${headerInfo.mobile || inviterInfo.mobile}`" v-if="headerInfo.mobile || inviterInfo.mobile"></a>
+                        <img :src="headerInfo.avatar" alt="" v-if="headerInfo.avatar">
+                        <div class="name bold" v-if="headerInfo.mobile">
+                            <span>{{headerInfo.nickname}}</span>
+                            <a class="icon icon-phone" :href="`tel:${headerInfo.mobile}`" ></a>
                         </div>
                         <div class="desc">邀请您参与社交电商</div>
-                        <div class="received-invite" @click="receivedInvite">接收邀请</div>
+                        <div class="received-invite" @click="receivedInvite" v-if="headerInfo.mobile">接收邀请</div>
+                        <router-link class="received-invite" to="/login" v-else tag="div">绑定手机号码</router-link>
                 </div>
             </div>
             <!-- tips -->
@@ -218,7 +219,7 @@ export default {
                         this.headerInfo = this.userInfo
                     } else {
                         this.headerInfo = res.data.customerInfoOnTop
-                        this.savaInviteInfo(res.data.customerInfoOnTop)
+                        // this.savaInviteInfo(res.data.customerInfoOnTop)
                     }
                     // 分享
 					this.$wechat.ready(() => {
@@ -262,7 +263,7 @@ export default {
             let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
             let headerHeight = this.$refs.header && this.$refs.header.clientHeight
             let tabContainerHeight = this.$refs.tabContainer && this.$refs.tabContainer.clientHeight
-            let listenerHeight = headerHeight + tabContainerHeight
+            let listenerHeight = headerHeight + tabContainerHeight + 50
             if(scrollTop > listenerHeight) {
                 this.tabStyle = `position:fixed;top:0;width: 100%;`
             } else {
@@ -363,7 +364,7 @@ export default {
                     border 1px solid $red
                     line-height 35px
                     color $red
-                    width 100px
+                    width 120px
                     margin 15px auto 0
             .call
                 position relative

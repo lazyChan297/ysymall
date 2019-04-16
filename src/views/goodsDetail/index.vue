@@ -235,9 +235,10 @@ export default {
             // return true
             // ======各种属性组合在一起
             let selectAttr = this.custom_option_selected_attr
-            if(!this.custom_option.length){
+            if(this.custom_option.length === 0){
                 return true
             }
+            
             if(!selectAttr) {
                 this.$vux.toast.show({
                     text:`请选择商品规格`,

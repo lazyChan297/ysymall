@@ -1,12 +1,28 @@
 <template>
     <div class="customeLevel-wrapper">
         <div class="header">
-            <div>
-                <img v-lazy="current_customer.avatar" alt="" width="54" height="54">
+            <div class="userinfo">
+                <div>
+                    <img v-lazy="current_customer.avatar" alt="" width="54" height="54">
+                </div>
+                <div>
+                    <div class="name">{{current_customer.nickname}}</div>
+                    <div class="mobile">手机号:{{current_customer.mobile}}</div>
+                </div>
             </div>
-            <div>
-                <div class="name">{{current_customer.nickname}}</div>
-                <div class="mobile">手机号:{{current_customer.mobile}}</div>
+            <div class="relationship">
+                <div>
+                    <span>用户姓名</span>
+                    <span>陈东</span>
+                </div>
+                <div>
+                    <span>邀请人</span>
+                    <span>安然</span>
+                </div>
+                <div>
+                    <span>上属代理商</span>
+                    <span>安然</span>
+                </div>
             </div>
         </div>
         <div class="article">
@@ -30,13 +46,9 @@
                     <span :class="{'selected':period}">{{period || '请选择级别有效期'}}</span><span v-show="period" class="selected">年</span>
                 </div>
             </div>
-            <div>
-                <span class="label">缴纳金额（元）</span>
-                <div class="content">
-                    <input type="text" v-model="account">
-                </div>
-            </div>
+            
         </div>
+        
         <div class="article">
             <div>
                 <span class="label">赠送VIP数量</span>
@@ -65,6 +77,36 @@
                 </div>
             </div>
         </div>
+        <div class="article">
+                <div>
+                    <span class="label">应缴金额（元）</span>
+                    <div class="content">
+                        <input type="text" v-model="account">
+                    </div>
+                </div>
+                <div>
+                    <span class="label">实收金额</span>
+                    <div class="content">
+                        <input type="text">
+                    </div>
+                </div>
+                <div>
+                    <span class="label">允许提现</span>
+                    <div class="content">
+                        <group>
+                            <x-switch v-model="withdrawal" title="" @on-change="handleWithdrawal"></x-switch>
+                        </group>
+                    </div>
+                </div>
+                <div>
+                    <span class="label">给上级结算佣金</span>
+                    <div class="content">
+                        <group>
+                            <x-switch v-model="allowSettlement" title="" @on-change="handleAllowSettlement"></x-switch>
+                        </group>
+                    </div>
+                </div>
+        </div>
         <div class="submit" @click="submit">开通级别</div>
         <!-- 选择级别 -->
         <popup-picker :data="levelList" v-show="isShowLevelPopup"  :show.sync="isShowLevelPopup" @on-change="levelChange"></popup-picker>
@@ -76,7 +118,13 @@
     </div>
 </template>
 <script>
-import {Popup,PopupPicker,InlineCalendar,XAddress,Value2nameFilter as value2name } from 'vux'
+import {Popup,
+    PopupPicker,
+    InlineCalendar,
+    XAddress,
+    Value2nameFilter as value2name,
+    Group,
+    XSwitch} from 'vux'
 import Qs from 'qs'
 import {mapGetters} from 'vuex'
 let addrArray = []
@@ -106,19 +154,29 @@ export default {
             isShowPeriodPopup:false,
             account:'',//缴纳金额
             generalAgentQuota:'',//赠送总代数量
-            vipQuota:''//vip数量
+            vipQuota:'',//vip数量
+            withdrawal:false,
+            allowSettlement:false
         }
     },
     mounted(){
-        this.getDistricts()
+        // this.getDistricts()
     },
     components:{
         Popup,
         PopupPicker,
         InlineCalendar,
-        XAddress
+        XAddress,
+        XSwitch,
+        Group
     },
     methods:{
+        handleWithdrawal(val){
+            this.withdrawal = val
+        },
+        handleAllowSettlement(val){
+            this.allowSettlement = val
+        },
         // 打开选择级别的弹框
         showPeriodPopup(period){
             console.log(period)
@@ -277,12 +335,13 @@ export default {
 <style lang="stylus" scoped>
     @import "../../common/stylus/variable.styl";
     .header
-        display flex
-        align-items center
-        height 100px
         background #fff
-        padding 0 15px
         margin-bottom 10px
+        .userinfo
+            display flex
+            align-items center
+            height 100px
+            padding 0 15px
         img
             border-radius 50%
             margin-right 10px
@@ -293,6 +352,14 @@ export default {
         .mobile
             color $text-lll
             margin-top 7px
+        .relationship
+            border-top 2px dashed $line
+            padding 0 15px
+            &>div
+                display flex
+                justify-content space-between
+                line-height 35px
+                color $text-lll
     .article
         background #fff
         padding 0 15px
@@ -317,9 +384,9 @@ export default {
                 color $text-l
     .submit
         margin 10px 15px
-        line-height:50px
-        background linear-gradient(180deg,rgba(100,229,198,1) 0%,rgba(41,206,166,1) 100%)
-        box-shadow 0px 4px 7px 0px rgba(41,206,166,0.47)
+        line-height 50px
+        background linear-gradient(180deg,rgba(0,132,255,1) 0%,rgba(69,165,255,1) 100%)
+        box-shadow 0px 4px 7px 0px rgba(0,132,255,0.3)
         border-radius 5px
         color #fff
 </style>
