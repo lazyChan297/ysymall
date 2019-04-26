@@ -64,8 +64,9 @@ export default {
     watch:{
         data(){
             setTimeout(()=>{
+                // alert('change')
                 this.refresh()
-            }, 20) 
+            }, 500) 
         }
     }
 }

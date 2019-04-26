@@ -27,7 +27,7 @@ Vue.use(ConfirmPlugin)
 Vue.use(AlertPlugin)
 Vue.use(AjaxPlugin)
 Vue.use(InfiniteScroll)
-let vConsole = new VConsole()
+// let vConsole = new VConsole()
 
 // 服务器地址
 if (process.env.NODE_ENV === 'development') {
@@ -73,7 +73,6 @@ axios.interceptors.request.use(config => {
 axios.interceptors.response.use(response => {
   Vue.$vux.loading.hide()
   // 登陆超时
-  // alert(response.data.code)
   if(response.data.code === 1100003) {
     let url = window.location.href
     getOpenid(url,true)

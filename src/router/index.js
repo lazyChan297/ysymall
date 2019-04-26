@@ -7,6 +7,7 @@ import orderList from '@/views/orderList/index'
 import cashList from '@/views/cashList/index'
 import userList from '@/views/userList/index'
 export default new Router({
+  // mode:'history',
   routes: [
     {
       path: '/login',
@@ -21,8 +22,19 @@ export default new Router({
       name: 'index',
       component: () => import('@/views/index/index'),
       meta: {
-        title: '首页'
-      }
+        title: '首页',
+        keepAlive:true
+      },
+      children:[
+        {
+          path: '/goodsDetail/:id',
+          name: 'goodsDetail',
+          component: () => import('@/views/goodsDetail/index'),
+          meta: {
+            title: '商品详情'
+          }
+        }
+      ]
     },
     {
       path: '/found',
@@ -48,14 +60,14 @@ export default new Router({
         title: '我的'
       }
     },
-    {
-      path: '/goodsDetail/:id',
-      name: 'goodsDetail',
-      component: () => import('@/views/goodsDetail/index'),
-      meta: {
-        title: '商品详情'
-      }
-    },
+    // {
+    //   path: '/goodsDetail/:id',
+    //   name: 'goodsDetail',
+    //   component: () => import('@/views/goodsDetail/index'),
+    //   meta: {
+    //     title: '商品详情'
+    //   }
+    // },
     {
       path: '/inviteQRcode',
       name:'inviteQRcode',
@@ -65,7 +77,7 @@ export default new Router({
       }
     },
     {
-      path: '/checkout/onepage/pay/payment',
+      path: '/checkout/onepage/pay/',
       name: 'payment',
       component: () => import('@/views/payment/index'),
       meta: {
@@ -240,13 +252,16 @@ export default new Router({
       name: 'friendship',
       component: () => import('@/views/friendship/index'),
       redirect: '/friendship/inviter',
+      meta:{
+        keepAlive:true
+      },
       children: [
         {
           path: 'inviter',
           name: 'inviter',
           component: userList,
           meta: {
-            title: '人脉'
+            title: '访客'
           }
         },
         {
@@ -254,13 +269,21 @@ export default new Router({
           name: 'customer',
           component: userList,
           meta: {
-            title: '客户'
+            title: '扫码客'
+          }
+        },
+        {
+          path: 'friends',
+          name: 'friends',
+          component:userList,
+          meta:{
+            title:'人脉'
           }
         }
       ]
     },
     {
-      path: '/userDetail/:id',
+      path: '/userDetail/:sn',
       name: 'userDetail',
       component: () => import('@/views/userDetail/index'),
       meta: {
@@ -326,11 +349,20 @@ export default new Router({
     },
     // 设置界别详情
     {
-      path:'/customLevel',
+      path:'/customLevel/:type/:sn',
       name:'customLevel',
       component:()=>import('@/views/custom_level/index'),
       meta:{
         title:'设置级别'
+      }
+    },
+    // 编辑代理信息
+    {
+      path: '/editAgent/:sn',
+      name: 'editAgent',
+      component: ()=>import('@/views/editAgent/index'),
+      meta:{
+        title: '编辑代理信息'
       }
     },
     {

@@ -1,6 +1,6 @@
 <template>
     <div class="openListRecord-wrapper">
-        <ul v-if="recordList">
+        <ul v-if="recordList.length">
             <li v-for="(item,index) in recordList" :key="index">
                 <img :src="item.avatar" alt="" width="54">
                 <div>
@@ -14,7 +14,7 @@
                 </div>
             </li>
         </ul>
-        <div class="nomore" v-else>暂无数据</div>
+        <div class="nomore" v-else>您没有开通记录~</div>
     </div>
 </template>
 <script> 
@@ -80,5 +80,5 @@ ul
 .nomore
     font-size 14px
     color $text-ll
-    margin-top 20px
+    padding-top 70px
 </style>

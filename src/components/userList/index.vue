@@ -12,73 +12,17 @@
             <li class="item" v-for="(item,index) in list" :key="index">
                 <img v-lazy="item.avatar" alt="" width="54">
                 <div class="center">
-                    <div class="name">{{item.nickname}}</div>
+                    <div class="name">{{item.nickname}}<span class="level">{{getLevel(item.level)}}</span></div>
                     <div class="mobile">{{item.mobile}}</div>
                 </div>
                 <!-- 设置级别 -->
-                <div class="right" v-if="level==='level'" @click="setLevel(item)">设置级别</div>
-                <div class="right" v-else @click="setLevel(item)">{{level==='vip'?"去开通VIP":'去开通总代'}}</div>
-            </li>
-            <!-- test -->
-            <li class="item">
-                <div class="center">
-                    <div class="name">name</div>
-                    <div class="mobile">mobile</div>
+                <div class="right">
+                    <div v-if="level==='level'" @click="setLevel(item)" class="btn">设置级别</div>
+                    <div v-else @click="setLevel(item)">{{level==='vip'?"去开通VIP":'去开通总代'}}</div>
+                    <router-link class="edit" v-if="item.level==='countyAgent'||level==='cityAgent'||level==='provinceAgent'" :to="{path:`/editAgent/${item.sn}`}">编辑代理</router-link>
                 </div>
-            </li>
-            <li class="item">
-                <div class="center">
-                    <div class="name">name</div>
-                    <div class="mobile">mobile</div>
-                </div>
-            </li>
-            <li class="item">
-                <div class="center">
-                    <div class="name">name</div>
-                    <div class="mobile">mobile</div>
-                </div>
-            </li>
-            <li class="item">
-                <div class="center">
-                    <div class="name">name</div>
-                    <div class="mobile">mobile</div>
-                </div>
-            </li>
-            <li class="item">
-                <div class="center">
-                    <div class="name">name</div>
-                    <div class="mobile">mobile</div>
-                </div>
-            </li>
-            <li class="item">
-                <div class="center">
-                    <div class="name">name</div>
-                    <div class="mobile">mobile</div>
-                </div>
-            </li>
-            <li class="item">
-                <div class="center">
-                    <div class="name">name</div>
-                    <div class="mobile">mobile</div>
-                </div>
-            </li>
-            <li class="item">
-                <div class="center">
-                    <div class="name">name</div>
-                    <div class="mobile">mobile</div>
-                </div>
-            </li>
-            <li class="item">
-                <div class="center">
-                    <div class="name">name</div>
-                    <div class="mobile">mobile</div>
-                </div>
-            </li>
-            <li class="item">
-                <div class="center">
-                    <div class="name">name</div>
-                    <div class="mobile">mobile</div>
-                </div>
+                <!-- <div class="right" v-if="level==='level'" @click="setLevel(item)">设置级别</div>
+                <div class="right" v-else @click="setLevel(item)">{{level==='vip'?"去开通VIP":'去开通总代'}}</div> -->
             </li>
         </ul>
     </div>
@@ -120,7 +64,7 @@ export default {
         setLevel(customer){
             this.saveCurrentCustomer(customer)
             if(this.level === 'level') {
-                this.$router.push('/customLevel')
+                this.$router.push(`/customLevel/open/${customer.sn}`)
             } else {
                 this.$router.push(`/openDetail/${this.level}`)
             }
@@ -134,6 +78,28 @@ export default {
                 this.$emit('loadMore')            
             }   
         },
+        getLevel(level){
+            switch(level){
+                case "member":
+                    return "普通会员";
+                    break;
+                case "vip":
+                    return "VIP";
+                    break;
+                case "generalAgent":
+                    return "总代";
+                    break;
+                case "countyAgent":
+                    return "区代";
+                    break;
+                case "cityAgent":
+                    return "市代";
+                    break;
+                case "provinceAgent":
+                    return "省代";
+                    break;
+            }
+        },
         ...mapMutations({
             saveCurrentCustomer:'SAVE_CURRENT_CUSTOMER'
         })
@@ -145,12 +111,13 @@ export default {
 /* VIP */
 .vip
     .right
-        /* background linear-gradient(180deg,rgba(100,229,198,1) 0%,rgba(41,206,166,1) 100%) */
-        background linear-gradient(180deg,rgba(0,132,255,1) 0%,rgba(69,165,255,1) 100%)
+        .btn
+            background linear-gradient(180deg,rgba(0,132,255,1) 0%,rgba(69,165,255,1) 100%)
 /* 总代 */
 .agent
     .right
-        background linear-gradient(180deg,rgba(255,167,178,1) 0%,rgba(255,106,124,1) 100%)
+        .btn
+            background linear-gradient(180deg,rgba(255,167,178,1) 0%,rgba(255,106,124,1) 100%)
 .userList-wrapper
     height 100%
 .list
@@ -174,6 +141,7 @@ export default {
         margin 23px 15px
         border-bottom 1px solid #efefef
         padding-bottom 23px
+        padding-top 10px
         align-items center
         img
             border-radius 50%
@@ -181,6 +149,14 @@ export default {
             text-align left
             margin-left 10px
             flex 1
+            .level
+                background $text-lll
+                color #fff
+                border-radius 30px
+                padding 0 15px
+                line-height 24px
+                font-size 14px
+                margin-left 10px
             .name
                 color $text-l
                 font-weight bold
@@ -190,9 +166,15 @@ export default {
                 font-size 14px
                 margin-top 10px
         .right
-            border-radius 30px
-            color #ffffff
-            line-height 30px
-            font-weight bold
-            width 100px
+            .btn
+                border-radius 30px
+                color #ffffff
+                line-height 30px
+                font-weight bold
+                width 100px
+            .edit
+                display block
+                color $text-lll
+                font-size 14px
+                margin-top 10px
 </style>

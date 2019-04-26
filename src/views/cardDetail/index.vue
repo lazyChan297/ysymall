@@ -37,10 +37,10 @@
                 <span class="label">地址</span>
                 <textarea name="" id="" cols="30" rows="10" v-model="address"></textarea>
             </div>
-            <div class="cell">
+            <!-- <div class="cell">
                 <span class="label">备注</span>
                 <input type="text">
-            </div>
+            </div> -->
         </div>
         <div class="submit" @click="submit">点击生成名片</div>
     </div>
@@ -48,6 +48,7 @@
 <script>
     import Qs from 'qs'
     import {validPhone} from '@/common/js/validated'
+    import {mapGetters} from 'vuex'
     export default {
         data(){
             return {
@@ -63,7 +64,11 @@
             }
         },
         mounted(){
-            this.getCard()
+            let params = Qs.stringify({
+                name:this.userInfo.nickname,
+                mobile:this.userInfo.mobile
+            })
+            this.getCard(params)
         },
         methods:{
             getCard(params){
@@ -113,6 +118,11 @@
                 })
                 this.getCard(params)
             }
+        },
+        computed:{
+            ...mapGetters([
+                'userInfo'
+            ])
         }
     }
 </script>
@@ -152,8 +162,8 @@
                 height 100px
                 align-items baseline
     .submit
-        background linear-gradient(180deg,rgba(100,229,198,1) 0%,rgba(41,206,166,1) 100%)
-        box-shadow 0px 4px 7px 0px rgba(41,206,166,0.47)
+        background:linear-gradient(180deg,rgba(0,132,255,1) 0%,rgba(69,165,255,1) 100%);
+        box-shadow:0px 4px 7px 0px rgba(163,206,255,0.76)
         border-radius 5px
         color #fff
         font-weight bold

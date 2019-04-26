@@ -8,7 +8,7 @@ export const friendsListMixin = {
                 loading:false,
                 nomore:false,
                 page:1, //初始搜索页码
-                number:1 //每页返回数据
+                number:10 //每页返回数据
             }
         }
     },

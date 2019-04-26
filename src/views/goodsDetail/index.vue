@@ -1,43 +1,49 @@
 <template>
     <div class="goodsDetail-wrapper">
-        <section v-if="goodsDetail" class="goodsDetail-container">
-            <swiper :options="swiperOption" v-if="goodsDetail.thumbnail_img">
-                <swiper-slide  v-for="(img,index) in goodsDetail.thumbnail_img" :key="index">
-                    <img v-lazy="img" alt="" class="slideImg">
-                </swiper-slide>
-            </swiper>
-            <!-- <span>{{textarr.indexOf(1)}}</span> -->
-            <!-- <span>{{custom_option_names.indexOf('color')}}</span> -->
-            <div class="price-container" v-if="goodsDetail.price_info">
-                <span class="price bold">
-                    ¥{{goodsDetail.price_info.special_price?goodsDetail.price_info.special_price.value:goodsDetail.price_info.price.value}}
-                </span>
-                <span class="oldprice" v-show="goodsDetail.price_info.special_price">原价：￥{{goodsDetail.price_info.price.value}}</span>
-            </div>
-            <div class="desc-container">
-                <p class="name bold">{{goodsDetail.name}}</p>
-                <!-- <p class="desc">{{goodsDetail.desc}}</p> -->
-            </div>
-            <div class="title bold">详情页</div>
-            <div class="goodsDetail" v-if="goodsDetail.image_detail">
-                <img v-lazy="img" alt="" v-for="(img,imgindex) in goodsDetail.image_detail" class="goodsImg">
-            </div>
-            <div class="tabbar">
-                <div class="icon-container">
-                    <router-link to="/" tag="div">
-                        <div class="icon icon-gobackIndex"></div>
-                        <div class="text">首页</div>
-                    </router-link>
-                    <router-link to="/cart" tag="div">
-                        <div class="icon icon-shopcart"></div>
-                        <div class="text">购物车</div>
-                        <span class="cartLen" v-if="cartLen">{{cartLen}}</span>
-                    </router-link>
+
+        <div ref="goodsDetailScroll" class="goodsDetail-scroll">
+            
+            <section v-if="goodsDetail" class="goodsDetail-container">
+                <swiper :options="swiperOption" v-if="goodsDetail.thumbnail_img">
+                    <swiper-slide  v-for="(img,index) in goodsDetail.thumbnail_img" :key="index">
+                        <img v-lazy="img" alt="" class="slideImg">
+                    </swiper-slide>
+                </swiper>
+                <!-- <span>{{textarr.indexOf(1)}}</span> -->
+                <!-- <span>{{custom_option_names.indexOf('color')}}</span> -->
+                <div class="price-container" v-if="goodsDetail.price_info">
+                    <span class="price bold">
+                        ¥{{goodsDetail.price_info.special_price?goodsDetail.price_info.special_price.value:goodsDetail.price_info.price.value}}
+                    </span>
+                    <span class="oldprice" v-show="goodsDetail.price_info.special_price">原价：￥{{goodsDetail.price_info.price.value}}</span>
                 </div>
-                <div class="yellow bold" @click="showSlide(true)">加入购物车</div>
-                <div class="red bold" @click="showSlide(false)">购买</div>
+                <div class="desc-container">
+                    <p class="name bold">{{goodsDetail.name}}</p>
+                    <!-- <p class="desc">{{goodsDetail.desc}}</p> -->
+                </div>
+                <div class="title bold">详情页</div>
+                <div class="goodsDetail" v-if="goodsDetail.image_detail">
+                    <div v-for="(img,imgindex) in goodsDetail.image_detail"> 
+                        <img v-lazy="img" alt=""  class="goodsImg">
+                    </div> 
+                </div>
+            </section>
+        </div>
+        <div class="tabbar">
+            <div class="icon-container">
+                <router-link to="/" tag="div">
+                    <div class="icon icon-gobackIndex"></div>
+                    <div class="text">首页</div>
+                </router-link>
+                <router-link to="/cart" tag="div">
+                    <div class="icon icon-shopcart"></div>
+                    <div class="text">购物车</div>
+                    <span class="cartLen" v-if="cartLen">{{cartLen}}</span>
+                </router-link>
             </div>
-        </section>
+            <div class="yellow bold" @click="showSlide(true)">加入购物车</div>
+            <div class="red bold" @click="showSlide(false)">购买</div>
+        </div>
         <transition name="slide">
             <div class="slide-wrapper" v-show="isShow">
                 <div class="goods-content">
@@ -80,13 +86,12 @@
                 <div class="submit bold" @click="addGoodsToCart">{{submitText}}</div>
             </div>
         </transition>
-        <!-- <div class="suspension" @click="goBack">
-                <div class="icon icon-goindex"></div>
-        </div> -->
-        <div class="mask" v-show="isShow"></div>
+        <div class="mask" v-show="isShow" @click="isShow = false"></div>
     </div>
 </template>
 <script>
+const env = process.env.NODE_ENV
+import Scroll from '@/base/scroll/index'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import CartControl from '@/components/cartcontrol/index'
 import {mapGetters, mapMutations} from 'vuex'
@@ -130,7 +135,8 @@ export default {
     components: {
         swiper,
         swiperSlide,
-        CartControl
+        CartControl,
+        Scroll
     },
     created(){
         this.product_id = this.$route.params.id
@@ -170,21 +176,24 @@ export default {
                     this.default_img = this.goodsDetail.thumbnail_img[0]
                     // this.getCustomOptionAttr()
                     this._getCustomOptionAttr()
+                    this.$refs.goodsDetailScroll.refresh()
                     // 分享
-					this.$wechat.ready(() => {
-                        this.$wechat.onMenuShareTimeline({
-                            title: res.data.data.wechat.shareTimeline.title,
-                            link:res.data.data.wechat.shareTimeline.link,
-                            imgUrl: res.data.data.wechat.shareTimeline.imgUrl
-                        })
+                    if(env == 'production') {
+                        this.$wechat.ready(() => {
+                            this.$wechat.onMenuShareTimeline({
+                                title: res.data.data.wechat.shareTimeline.title,
+                                link:res.data.data.wechat.shareTimeline.link,
+                                imgUrl: res.data.data.wechat.shareTimeline.imgUrl
+                            })
 
-                        this.$wechat.onMenuShareAppMessage({
-                            title: res.data.data.wechat.shareAppMessage.title,
-                            link:res.data.data.wechat.shareAppMessage.link,
-                            imgUrl: res.data.data.wechat.shareAppMessage.imgUrl,
-                            desc:res.data.data.wechat.shareAppMessage.desc
+                            this.$wechat.onMenuShareAppMessage({
+                                title: res.data.data.wechat.shareAppMessage.title,
+                                link:res.data.data.wechat.shareAppMessage.link,
+                                imgUrl: res.data.data.wechat.shareAppMessage.imgUrl,
+                                desc:res.data.data.wechat.shareAppMessage.desc
+                            })
                         })
-                    })
+                    }
                 }
             })
         },
@@ -407,6 +416,12 @@ export default {
             for(let a in custom_option) {
                 if(a) {
                     let arrText = a.split('-')
+                    // if(custom_option[a].content) {
+                    //     arrText = [custom_option[a].content]
+                    // }
+                    // if(custom_option[a].volume) {
+                    //     arrText = [custom_option[a].volume]
+                    // }
                     let arrLen = arrText.length
                      let str = '',obj = {}
                     for(let b in arrText) {
@@ -430,7 +445,7 @@ export default {
                 this.custom_option_selected_attr = custom_option_arr[0].required = true
             }
             this.custom_option_attr = custom_option_arr
-
+            console.log(this.custom_option_attr)
         },
         // 处理视图显示
         getCustomOptionAttr() {
@@ -536,7 +551,7 @@ export default {
                         this.isShow = false
                         return
                     } else {
-                        window.location.href = global.serverHost + '/#/checkout/onepage/pay/payment'
+                        window.location.href = global.serverHost + '/checkout/onepage/pay/#/checkout/onepage/pay/'
                     }
                 }
             })
@@ -551,6 +566,10 @@ export default {
 <style lang="stylus" scoped>
     @import "../../common/stylus/variable.styl";
     @import "../../common/stylus/transition.styl";
+    /* scroll */
+    /* .wrapper
+        overflow scroll
+        height 100% */
     /* 悬浮框 */
     .suspension
         position fixed
@@ -562,6 +581,17 @@ export default {
         line-height 20px
         border 1px solid $green
         z-index 1
+    .goodsDetail-wrapper
+        position fixed
+        width 100%
+        background $bgcolor
+        height 100%
+        /* overflow scroll */
+        top 0
+        z-index 3
+        .goodsDetail-scroll
+            overflow: scroll;
+            height: 100%
     .goodsDetail-container
         padding-bottom 50px
     .price-container

@@ -1,54 +1,99 @@
 <template>
     <div class="userDetail-wrapper">
         <div class="avatar">
-            <img src="../../common/images/df_user.jpg" alt="" width="54" height="54">
+            <img :src="userInfo.avatar" alt="" width="54" height="54">
             <div class="text">
-                <p><span class="name bold">用户名</span></p>
+                <p><span class="name bold">{{userInfo.nickname}}</span></p>
                 <p class="account">
-                    <span class="date">绑定时间：2019-01-15 12:13:23</span>
-                    <span>下单绑定</span>
+                    <span class="date">绑定时间：{{userInfo.boundAt}}</span>
+                    <span></span>
                 </p>
             </div>
         </div>
         <section>
             <div class="cell">
                 <span>手机号</span>
-                <span>18677185478</span>
+                <span>{{userInfo.mobile}}</span>
             </div>
             <div class="cell">
                 <span>级别</span>
-                <span>17185478</span>
+                <span>{{getLevel(userInfo.level)}}</span>
             </div>
             <div class="cell">
-                <span>编号</span>
-                <span>18677185478</span>
+                <span>二度人脉</span>
+                <span>{{userInfo.friendsQuantity}}人</span>
             </div>
         </section>
         <section>
-            <router-link class="cell" to="/userOrders" tag="div">
+            <div class="cell">
                 <span>订单数量</span>
                 <div>
-                    <span>1</span>
-                    <div class="icon icon-link"></div>
+                    <span>{{userInfo.ordersQuantity}}</span>
+                    <!-- <div class="icon icon-link"></div> -->
                 </div>
-            </router-link>
+            </div>
             <div class="cell">
                 <span>成交额</span>
-                <span>¥39.80</span>
+                <span>¥{{userInfo.ordersAmount}}</span>
             </div>
         </section>
         <section>
             <div class="cell">
-                <span>首次登陆时间</span>
-                <span>2018年8月31日 14:32</span>
-            </div>
-            <div class="cell">
                 <span>最近访问网站时间</span>
-                <span>2018年8月31日 14:32</span>
+                <span>{{userInfo.lastVisit}}</span>
             </div>
         </section>
     </div>
 </template>
+<script>
+import Qs from 'qs'
+export default {
+    data(){
+        return {
+            sn:'',
+            userInfo:''
+        }
+    },
+    mounted(){
+        this.sn = this.$route.params.sn
+        this.getDetail(this.sn)
+    },
+    methods:{
+        getDetail(sn) {
+            console.log(sn)
+            let params = Qs.stringify({sn:sn})
+            this.$axios.post('/customer/service/get-one-friend-info',params).then((res)=>{
+                if(res.data.code === 200) {
+                    this.userInfo = res.data.data.info
+                }
+            })
+        },
+        getLevel(level){
+            switch(level){
+                case "member":
+                    return "普通会员";
+                    break;
+                case "vip":
+                    return "VIP";
+                    break;
+                case "generalAgent":
+                    return "总代";
+                    break;
+                case "countyAgent":
+                    return "区代";
+                    break;
+                case "cityAgent":
+                    return "市代";
+                    break;
+                case "provinceAgent":
+                    return "省代";
+                    break;
+            }
+        },
+    }
+    
+}
+</script>
 <style lang="stylus" scoped>
 @import "../../common/stylus/variable.styl";
 @import "../../common/css/media.css";

@@ -1,65 +1,94 @@
 <template>
-    <div class="wrapper">
-    <div class="index-wrapper">
-        <div>
-            <!-- inviter header -->
-            <div class="header" ref="header" v-if="headerInfo">
-                <div class="userInfo-container">
-                        <img :src="headerInfo.avatar" alt="" v-if="headerInfo.avatar">
-                        <div class="name bold" v-if="headerInfo.mobile">
-                            <span>{{headerInfo.nickname}}</span>
-                            <a class="icon icon-phone" :href="`tel:${headerInfo.mobile}`" ></a>
+    <div class="index-wrapper" ref="wrapper">
+        <div class="scroll-container" ref="indexscroll" :data="productList">
+            <div>
+                <!-- inviter header -->
+                <div class="header" ref="header" v-if="headerInfo">
+                    <div class="userInfo-container">
+                            <img :src="headerInfo.avatar" alt="" v-if="headerInfo.avatar">
+                            <div class="name bold" v-if="headerInfo.mobile">
+                                <span>{{headerInfo.nickname}}</span>
+                                <a class="icon icon-phone" :href="`tel:${headerInfo.mobile}`" ></a>
+                            </div>
+                            <div class="desc">邀请您参与社交电商</div>
+                            <div class="received-invite" @click="receivedInvite" v-if="headerInfo.mobile">接收邀请</div>
+                            <router-link class="received-invite" to="/login" v-else tag="div">绑定手机号码</router-link>
+                    </div>
+                </div>
+                <!-- tips -->
+                <div class="tips">
+                    <span class="icon icon-tips"></span>
+                    <span>所有商品买五送一,全场包邮！！！</span>
+                </div>
+                    <div :style="tabStyle" class="tab-container" ref="tabContainer">
+                        <!-- <ul class="category" :style="{width:tabContainerWidth}"> -->
+                        <ul class="category">
+                            <li 
+                                @click="switchTab(c,index)" 
+                                :class="{'active':currentTab==index}" 
+                                v-for="(c,index) in topCategories"
+                                :key="index"
+                                ref="tabItem"
+                                :style="{width:tabItemWidth}">
+                                <img :src="c.imgUrl" alt="">
+                                <span>{{c.name}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                <!-- 商品 -->
+                <div class="goodsList-wrapper">
+                        <div>
+                        <router-link :to="{path:`/goodsDetail/${g.product_id}`}" class="goodsItem" tag="div" v-for="(g,index) in productList">
+                            <img :src="g.image" alt="">
+                            <p class="name bold">{{g.name}}</p>
+                            <div>
+                                <span class="price bold">¥{{g.special_price.value?g.special_price.value:g.price.value}}</span>
+                                <span class="oldprice" v-if="g.special_price.value">¥{{g.price.value}}</span>
+                                <span class="oldprice" v-else></span>
+                            </div>
+                        </router-link>
                         </div>
-                        <div class="desc">邀请您参与社交电商</div>
-                        <div class="received-invite" @click="receivedInvite" v-if="headerInfo.mobile">接收邀请</div>
-                        <router-link class="received-invite" to="/login" v-else tag="div">绑定手机号码</router-link>
+                    </div>
+                <div class="suspension" @click="showExpress">
+                        <div class="icon icon-stop"></div>
+                        <span>公告</span>
+                </div>
+                
+            </div>
+        </div>
+        <router-view/>
+        <!-- tabbar -->
+        <tab-bar/>
+        <x-dialog v-model="isShowDialog">
+            <div class="confirm-container">
+                <div class="content" v-html="expressInfo"></div>
+                <div class="button-group">
+                    <div class="submit" @click="confirmDialog">确定</div>
+                    <!-- <div class="cancel">取消</div> -->
                 </div>
             </div>
-            <!-- tips -->
-            <div class="tips">
-                <span class="icon icon-tips"></span>
-                <span>所有商品买五送一,全场包邮！！！</span>
-            </div>
-            <div :style="tabStyle" class="tab-container" ref="tabContainer">
-                <!-- <ul class="category" :style="{width:tabContainerWidth}"> -->
-                <ul class="category">
-                    <li 
-                        @click="switchTab(c,index)" 
-                        :class="{'active':currentTab==index}" 
-                        v-for="(c,index) in topCategories"
-                        :key="index"
-                        ref="tabItem"
-                        :style="{width:tabItemWidth}">
-                        <img :src="c.imgUrl" alt="">
-                        <span>{{c.name}}</span>
-                    </li>
-                </ul>
-            </div>
-            <!-- 商品 -->
-            <goods-list :tab="currentTab" :productList="productList"/>
-            <div class="suspension" @click="showExpress">
-                    <div class="icon icon-stop"></div>
-                    <span>公告</span>
-            </div>
-            <!-- <x-dialog v-model="isShowDialog" hide-on-blur>
-                <div class="express">
-                    <div v-html="expressInfo"></div>
-                    <div class="cancel" @click="isShowDialog = false">确认</div>
-                </div>        
-            </x-dialog> -->
-        </div>
-    </div>
-    <!-- tabbar -->
-        <tab-bar/>
+        </x-dialog>
     </div>
 </template>
 <script>
+const env = process.env.NODE_ENV
 import TabBar from '@/components/tabBar/index'
-import GoodsList from '@/components/goodsList/index'
 import {mapGetters,mapMutations} from 'vuex'
-import Scroll from '@/base/scroll/index'
 import {XDialog} from 'vux'
 import Qs from 'qs'
+import Scroll from '@/base/scroll/index'
+// 阻止滚动时间
+const mo=function(e){e.preventDefault();};
+// 取消限制页面滚动
+function move(){
+        document.body.style.overflow='';//出现滚动条
+        document.removeEventListener("touchmove",mo,false);        
+}
+// 限制页面滚动
+function stop(){
+        document.body.style.overflow='hidden';        
+        document.addEventListener("touchmove",mo,false);//禁止页面滑动
+}
 const ICON_SRC = [
     'quanbu',
     'jiankang',
@@ -89,23 +118,33 @@ export default {
             tabItemWidth:'',
             tabContainerWidth:'',
             userSn:'',
-            headerInfo:null
+            headerInfo:null,
+            ready:global.ready
+        }
+    },
+    watch:{
+        '$route':(route)=>{
+            if(route.name !== 'index') {
+                this.$refs.wrapper.style.overflow = 'hidden'
+            } else {
+                this.$refs.wrapper.style.overflow = ''
+            }
         }
     },
     components: {
         TabBar,
-        GoodsList,
-        Scroll,
-        XDialog
+        XDialog,
+        Scroll
     },
     created() {
         this.hasInviter()
     },
     mounted() {
         // 监听滚动
-       addEventListener('scroll',this.handleScroll)
+        // addEventListener('scroll',this.handleScroll)
         // 获取停运信息
         this.getExpressInfo()
+        
     },
     computed:{
         ...mapGetters([
@@ -149,23 +188,29 @@ export default {
             this.tabItemWidth = iw + 'px'
             this.tabContainerWidth = num * (iw+4) + 'px'
         },
+        confirmDialog(){
+            this.isShowDialog = false
+        },
         // 打开物流停运窗口
         showExpress(){
-            let vuxAlert = document.getElementsByClassName('vux-alert')[0]
-            let alertContent = document.getElementsByClassName('weui-dialog__bd')[1]
-            alertContent.style.textAlign = 'left'
-            let expressInfo = this.expressInfo
-            let strArr = expressInfo.split('n')
-            let _str = ''
-            strArr.forEach((item,index)=>{
-                let len = item.length
-                item = item.substring(0,len-1)
-                item+="<br/>"
-                _str+=item
-            })
-            this.$vux.alert.show({
-                content:_str
-            })
+            //  ====使用微信原生confirm
+            // let vuxAlert = document.getElementsByClassName('vux-alert')[0]
+            // let alertContent = document.getElementsByClassName('weui-dialog__bd')[1]
+            // alertContent.style.textAlign = 'left'
+            // let expressInfo = this.expressInfo
+            // let strArr = expressInfo.split('n')
+            // let _str = ''
+            // strArr.forEach((item,index)=>{
+            //     let len = item.length
+            //     item = item.substring(0,len-1)
+            //     item+="<br/>"
+            //     _str+=item
+            // })
+            // this.$vux.alert.show({
+            //     content:_str
+            // })
+            //  ===样式优化版
+            this.isShowDialog = true
         },
         hasInviter(){
             let userSn = decodeURIComponent((new RegExp('[?|&]inviter='+'([^&;]+?)(&|#|;|$)').exec(location.href)||[,""])[1].replace(/\+/g,'%20'))||null;
@@ -188,6 +233,10 @@ export default {
         },
         switchTab(c,num){
             this.currentTab = Number(num)
+            let headerHeight = this.$refs.header && this.$refs.header.clientHeight
+            let tabContainerHeight = this.$refs.tabContainer && (this.$refs.tabContainer.clientHeight/2)
+            let listenerHeight = headerHeight
+            document.documentElement.scrollTop = document.body.scrollTop = listenerHeight
             if(!c._id) {
                 this.productList = this.allProdList
             } else {
@@ -221,21 +270,24 @@ export default {
                         this.headerInfo = res.data.customerInfoOnTop
                         // this.savaInviteInfo(res.data.customerInfoOnTop)
                     }
+                    this.$refs.indexscroll.refresh()
+                    if(env == 'production') {
                     // 分享
-					this.$wechat.ready(() => {
-                        this.$wechat.onMenuShareTimeline({
-                            title: res.data.wechat.shareTimeline.title,
-                            link:res.data.wechat.shareTimeline.link,
-                            imgUrl: res.data.wechat.shareTimeline.imgUrl
-                        })
+                        this.$wechat.ready(() => {
+                            this.$wechat.onMenuShareTimeline({
+                                title: res.data.wechat.shareTimeline.title,
+                                link:res.data.wechat.shareTimeline.link,
+                                imgUrl: res.data.wechat.shareTimeline.imgUrl
+                            })
 
-                        this.$wechat.onMenuShareAppMessage({
-                            title: res.data.wechat.shareAppMessage.title,
-                            link:res.data.wechat.shareAppMessage.link,
-                            imgUrl: res.data.wechat.shareAppMessage.imgUrl,
-                            desc:res.data.wechat.shareAppMessage.desc
+                            this.$wechat.onMenuShareAppMessage({
+                                title: res.data.wechat.shareAppMessage.title,
+                                link:res.data.wechat.shareAppMessage.link,
+                                imgUrl: res.data.wechat.shareAppMessage.imgUrl,
+                                desc:res.data.wechat.shareAppMessage.desc
+                            })
                         })
-                    })
+                    }
                 }
             })
         },
@@ -274,7 +326,7 @@ export default {
             this.$axios.get('/customer/service/get-notice').then((res)=>{
                 if(res.data.code === 200) {
                     // this.expressInfo = res.data.data.info.replace(/\n/g,"<br/>");
-                    this.expressInfo = res.data.data.info
+                    this.expressInfo = res.data.data.info.replace(/\\n/gm,"</br>")
                     this.isShowDialog = res.data.data.hasRead === false?true:false
                     if(!res.data.data.hasRead){
                         this.showExpress()
@@ -290,7 +342,11 @@ export default {
 </script>
 <style lang="stylus" scoped>
     @import '../../common/stylus/variable.styl';
+    @import '../../common/stylus/dialog.styl';
     @import '../../common/css/media.css';
+    /* 弹窗样式 */
+    .confirm-container .content
+        text-align left
     /* 悬浮框 */
     .suspension
         position fixed
@@ -319,17 +375,15 @@ export default {
             margin 10px auto
             border-radius 5px
     .tab-container
-        /* overflow scroll */
         background $bgcolor
     .scrollTab
         overflow hidden
-    /* .wrapper
+    .wrapper
         height 100%
-        overflow hidden */
     .index-wrapper
+        position relative
         height 100%
-        overflow-y hidden
-        /* 头像 */
+        /* overflow hidden */
         .header
             position relative
             background-size 100%
@@ -429,22 +483,66 @@ export default {
                 &.active
                     span
                         color $green
-                /* &.active
-                    span
-                        display inline-block
-                        color $green
-                        font-weight bold
-                        font-size 20px
-                        line-height 28px
-                        
-                        &:after
-                            content ''
-                            display block
-                            height 6px
-                            background rgba(0,132,255,1)
-                            box-shadow 0px 4px 8px 0px rgba(0,132,255,0.3)
-                            border-radius 3px */
-                /* &:last-child
-                    margin-right 20px */
+.goodsList-wrapper
+    padding-bottom 50px
+    padding 15px 15px 50px
+    font-size 0
+    text-align left
+    .goodsItem
+        display inline-block
+        width 47%
+        background #fff
+        /* margin 0 15px */
+        padding-bottom 10px
+        box-shadow 0px 2px 2px -1px rgba(129,131,140,0.1)
+        border-radius 8px
+        margin-bottom 15px
+        &:nth-child(odd)
+            margin-right 15px
+        img
+            display block
+            width 100%
+            border-top-left-radius 8px
+            border-top-right-radius 8px
+        .name
+            color $text-l
+            font-size 16px
+            margin 5px 0
+            line-height 22px
+            padding-left 10px
+            text-align left
+            white-space nowrap
+            overflow hidden
+            text-overflow ellipsis
+        .desc
+            color $text-ll
+            font-size 14px
+            line-height 20px
+            margin-bottom 10px
+            padding-left 10px
+            text-align left
+        &>div
+            display flex
+            align-items center
+            .price
+                color $red
+                font-size 16px
+                padding-left 10px
+            .oldprice
+                font-size 12px
+                color $text-lll
+                flex 1
+                margin-left 5px
+                text-decoration line-through
+                text-align left
+            .cart
+                border-radius 20px
+                border 3px solid $red
+                line-height 30px
+                font-size 14px
+                padding 0 15px
+                color $red
+                box-sizing border-box
+                margin-right 10px
                         
 </style>

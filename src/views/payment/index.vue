@@ -43,12 +43,13 @@
                 <span>¥{{cart_info.product_total}}</span>
             </div>
         </section>
-        <div class="textbox"><textarea name="" placeholder="选填：订单备注信息（50字以内）" id="" cols="30" rows="10"></textarea></div>
+        <div class="textbox"><textarea name="" placeholder="选填：订单备注信息（50字以内）" id="" cols="30" rows="10" font-size="150%"></textarea></div>
         <div class="large-green-button" @click="prePayment">去支付</div>
     </div>
 </template>
 <script>
 import Qs from 'qs'
+import {mapMutations} from 'vuex';
 export default {
     data(){
         return {
@@ -136,11 +137,18 @@ export default {
                                      address_id:this.addr.id})
           this.$axios.post('/checkout/onepage/submitorder',params).then((res)=>{
               if(res.data.code === 200) {
-                  this.payment(res.data.data.payargs)
+                  console.log(res.data.data)
+                  this.payment(res.data.data)
+              } else {
+                  this.$vux.toast.show({
+                      text:res.data.message,
+                      type: 'warn'
+                  })
               }
           })
         },
         payment(arg) {
+            let that = this
             this.$wechat.chooseWXPay({
                 timestamp: arg.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
                 nonceStr: arg.nonceStr, // 支付签名随机串，不长于 32 位
@@ -149,9 +157,22 @@ export default {
                 paySign: arg.paySign, // 支付签名
                 success: function (res) {
                     // 支付成功后的回调函数
+                    console.log(res)
+                    that.$vux.toast.show({
+                        text: '支付成功',
+                        type:'succes',
+                        time:1000
+                    })
+                    that.saveCartLen(0)
+                    let timer = setTimeout(() => {
+                        that.$router.push('/my')
+                    }, 1000);
                 }
             });
-        }
+        },
+        ...mapMutations({
+            saveCartLen: 'SAVE_CARTLEN'
+        })
     }
 }
 </script>

@@ -11,7 +11,14 @@ body,
 #app>div
     &:first-child
         background $bgcolor
-
+    
+.index-wrapper
+    &:-webkit-scrollbar
+        // display none
+        background red
+.index-wrapper::-webkit-scrollbar
+    // display none
+    background red
 input,textarea
     outline none
     resize none
@@ -65,3 +72,5 @@ textarea::-webkit-input-placeholder
     .weui-switch:checked
         border-color $green
         background-color $green
+    .vux-x-switch.weui-cell_switch
+        padding-right 0

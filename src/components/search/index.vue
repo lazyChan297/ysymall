@@ -33,7 +33,7 @@ export default {
             let reg = /^[0-9]*$/, regStr = /[^0-9]+/g
             // 当搜索手机号码时，大于7位才发送请求
             if(reg.test(newQuery)){
-                if(newQuery.length>=2){
+                if(newQuery.length>=7){
                     this.$emit('keywords', newQuery)
                 }
             } else if(newQuery.length>=2&&regStr.test(newQuery)) {
@@ -60,6 +60,7 @@ export default {
         height 40px
         padding-left 15px
         input
+            flex 1
             background #efefef
             margin-left 10px
 .checkMore

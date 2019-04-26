@@ -9,7 +9,7 @@
             </div>
         </div>
         <section>
-            <div class="my_rank">
+            <div class="my_rank" v-if="rankList.length">
                 <img :src="userInfo.avatar" alt="" width="30" height="30">
                 <span>您{{current_rank==1?'当前':'的'}}排名是第 {{my_rank}} 名</span>
                 <!-- <div class="icon icon-no1"></div> -->

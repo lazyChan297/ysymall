@@ -13,7 +13,7 @@
             <img src="../../common/images/applyvip_c.png" alt="" class="vipContent">
             <div class="addrInfo" @click="chooseAddr">
                 <div class="icon icon-location"></div>
-                <div class="content" v-if="addr">
+                <div class="content" v-if="addr.reciever">
                     <p class="mobile">{{addr.reciever}},{{addr.mobile}}</p>
                     <p class="addr">{{addr.details}}</p>
                 </div>

@@ -1,57 +1,143 @@
 <template>
     <div class="earnings-wrapper">
-        <!-- 折线图 -->
-        <!-- <div class="panel">
-            <p class="balance bold"> ¥4642.00</p>
+        
+        <div class="panel">
+            <div class="panel-linear">
+            <p class="balance bold"> ¥{{earnInfo.balance}}</p>
             <p class="desc">当前余额</p>
             <router-link tag="div" to="/withdrawal" class="put">提现</router-link>
+            </div>
             <div class="total-container">
                 <router-link tag="div" to="/earn">
-                    <p class="title bold">¥4642.00</p>
+                    <p class="title bold">¥{{earnInfo.income}}</p>
                     <p class="desc">全部收益</p>
                 </router-link>
                 <router-link to="/cash" tag="div">
-                    <p class="title bold">¥4642.00</p>
+                    <p class="title bold">¥{{earnInfo.withdraw}}</p>
                     <p class="desc">已提现金额</p>
                 </router-link>
             </div>
-            <p class="figure-title">一周收益曲线图</p>
-        </div> -->
+            <div class="figure-title-container">
+                <p class="figure-title">一周收益曲线图</p>
+            </div>
+            <!-- 折线图 -->
+            <schart :canvasId="canvasId" 
+                    :type="type" 
+                    :data="data" 
+                    :options="options" 
+                    :height="height"
+                    :width="width"></schart>
+        </div>
         <!-- 列表 -->
-        <!-- <div class="sheet">
+        <div class="sheet">
             <ul>
-                <li class="active">今日收益明细</li>
-                <li>今日支出明细</li>
+                <li @click="switchList(0)" :class="current_list_num==0?'active':''">今日收益明细</li>
+                <li @click="switchList(1)" :class="current_list_num==1?'active':''">今日支出明细</li>
             </ul>
             <div>
-                <ul>
-                    <li>
+                <ul v-if="current_list_num==0">
+                    <li v-for="(item,index) in current_list" :key="index">
                         <p>
                             <span>奖励到账提醒</span>
-                            <span>2019-01-16 16:17:42</span>
+                            <span>{{item.boughtAt}}</span>
                         </p>
                         <div>
-                            <span class="num bold">￥3.00</span>
-                            <span>陈层(ID:2345656)购买缘生源相关商品，您获得3级内奖励。</span>
+                            <span class="num bold">￥{{item.amount}}</span>
+                            <span>{{item.buyer.nickname}}购买缘生源相关商品，您获得3级内奖励。</span>
+                        </div>
+                    </li>
+                </ul>
+                <ul v-else>
+                    <li v-for="(item,index) in current_list" :key="index">
+                        <p>
+                            <span>提现时间</span>
+                            <span>{{item.withdrawnAt}}</span>
+                        </p>
+                        <div>
+                            <span class="num bold">￥{{item.amount}}</span>
+                            <div>
+                                <div class="orderdate">到账时间:{{item.toAccountAt}}</div>
+                            </div>
                         </div>
                     </li>
                 </ul>
             </div>
-        </div> -->
-        <p style="padding-top:100px">该页面正在开发中～敬请期待！</p>
+        </div>
+        <!-- <p style="padding-top:100px">该页面正在开发中～敬请期待！</p> -->
     </div>
 </template>
+
+<script>
+import Schart from 'vue-schart';
+export default {
+    data() {
+        return {
+            earnInfo:null,
+            current_list_num:0,//0收益1支出
+            current_list:null,
+            canvasId: 'myCanvas',
+            type: 'line',
+            height:200,
+            width:document.body.clientWidth,
+            data: [
+                {name: '周一', value: 1342},
+                {name: '周二', value: 2123},
+                {name: '周三', value: 1654},
+                {name: '周四', value: 1795},
+                {name: '周五', value: 1795},
+                {name: '周六', value: 1795},
+                {name: '周日', value: 1795},
+            ],
+            options: {
+                bgColor:'#0084ff',
+                axisColor:'#ffffff',
+                contentColor:"#ffffff",
+                fillColor:'#ffffff',
+                yEqual:5
+            }
+        }
+    },
+    components:{
+        Schart
+    },
+    mounted(){
+        this.getEarns()
+    },
+    methods:{
+        getEarns(){
+            this.$axios.post('/finance/income/overview').then((res)=>{
+                if(res.data.code === 200) {
+                    this.earnInfo = res.data.data
+                    if(this.current_list_num==0){
+                        this.current_list = this.earnInfo.todayIncomeList
+                    } else {
+                        this.current_list = this.earnInfo.todayExpenditureList
+                    }
+                }
+            })
+        },
+        switchList(n){
+            if(n==0){
+                this.current_list = this.earnInfo.todayIncomeList
+            } else {
+                this.current_list = this.earnInfo.todayExpenditureList
+            }
+            this.current_list_num = n
+        }
+    }
+}
+</script>
 <style lang="stylus" scoped>
 @import "../../common/stylus/variable.styl";
 @import "../../common/css/media.css";
 .earnings-wrapper
-    height inherit
     .panel
         height 70%
-        background linear-gradient(360deg,rgba(100,229,198,1) 0%,rgba(41,206,166,1) 100%)
-        padding-top 35px
         color #fff
         text-align center
+        .panel-linear
+            background:linear-gradient(360deg,rgba(0,132,255,100) 0%,rgba(69,165,255,100) 100%)
+            padding-top 35px
         .balance
             font-size 36px
             line-height 50px
@@ -63,9 +149,11 @@
             border-radius 30px
             border 1px solid #fff
             line-height 34px
-            margin 0 auto 10px
+            margin 0 auto
         .total-container
             display flex
+            background $green
+            padding-top 10px
             &>div
                 flex 1
                 height 60px
@@ -76,10 +164,12 @@
                     font-size 14px
                 &:first-child
                     border-right 1px solid #fff
+        .figure-title-container
+            background $green
+            padding 10px 15px 0
         .figure-title
             padding-top 10px
             border-top 1px solid #fff
-            margin 10px 15px 0
     .sheet
         background #fff
         padding-top 15px
@@ -123,5 +213,8 @@
                         color $red
                         font-size 20px
                         margin-right 50px
+                    .ordernum,.orderdate
+                        font-size 14px
+                        line-height 20px
 
 </style>
