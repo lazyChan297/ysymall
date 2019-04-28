@@ -270,7 +270,6 @@ export default {
                         this.headerInfo = res.data.customerInfoOnTop
                         // this.savaInviteInfo(res.data.customerInfoOnTop)
                     }
-                    this.$refs.indexscroll.refresh()
                     if(env == 'production') {
                     // 分享
                         this.$wechat.ready(() => {

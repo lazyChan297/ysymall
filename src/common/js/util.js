@@ -29,7 +29,8 @@ export function saveUUID(uuid){
 }
 
 export function getOpenid(url,flag){
-    alert('重启了项目')
+    console.log('get openid action....')
+    console.log(global.token)
     setTimeout(() => {
         window.location.reload()
      }, 30 *60 * 1000 )
@@ -42,38 +43,21 @@ export function getOpenid(url,flag){
     if(getUrlParms('uuid')) {
         saveUUID(getUrlParms('uuid'))
     }
-    console.log(urlObj)  
-    // alert('！！！！！！！！！！')
-    //  payment要做特别处理
-    let ispayment = false
-    let paymentUrl = ''
-    // console.log("href",urlObj.href)
-    // console.log("拼接的字符串",urlObj.protocol+'//'+urlObj.host+'/checkout/onepage/pay/#/checkout/onepage/pay/')
-    if(urlObj.href === urlObj.protocol+'//'+urlObj.host+'/checkout/onepage/pay/#/checkout/onepage/pay/') {
-        paymentUrl = urlObj.protocol+'//'+urlObj.host+'/checkout/onepage/pay/#/checkout/onepage/pay/'
-        ispayment = true
-    }
-    // console.log("paymentUrl",paymentUrl)
-    // console.log("url:",url)
-    // console.log("pageURL:",pageUrl)
-    // console.log("payment:",global.serverHost + '/checkout/onepage/pay/#/checkout/onepage/pay/')
+
     // 获取openid 判断是否绑定微信号 绑定后会自动进行微信登陆
     if((!global.token&&!getUrlParms('token')&&!getUrlParms('uuid'))||flag) {
-        // alert("第一次进来,没有token")
-        console.log(url)
-        //window.location.href = global.serverHost + '/customer/wechat/get-openid?url_before_login='+encodeURIComponent(url) 
+        console.log('no login')
+        
+        console.log(global.serverHost + '/customer/wechat/get-openid?url_before_login='+encodeURIComponent(url) )
+        window.location.href = global.serverHost + '/customer/wechat/get-openid?url_before_login='+encodeURIComponent(url) 
+        return false
     } else if(!global.token&&!getUrlParms('token')&&getUrlParms('uuid')) {
         // 未绑定微信 请求了openid 但是没有绑定微信不能自动登陆 需要手机+验证码 手动登陆
         return false
     } else if (url != pageUrl && url != global.serverHost + '/checkout/onepage/pay/#/checkout/onepage/pay/') {
-        // alert("获得了返回token的url,修改url")
+        console.log('come in')
         window.location.href = pageUrl
-        if(ispayment) {
-            console.log("是支付页,url不会")
-            window.location.href = urlObj.href
-        } else {
-            window.location.href = pageUrl
-        }   
+       return true
     }
     return true
 }

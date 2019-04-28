@@ -3,10 +3,10 @@
         <p class="title">提现金额</p>
         <div class="input-container">
             <span class="bold">¥</span>
-            <input type="text" v-model="account">
+            <input type='tel' v-model="account">
         </div>
-        <div class="desc">当前余额 ￥4642.00</div>
-        <div class="large-green-button" @click="submit">提现</div>
+        <!-- <div class="desc">当前余额 ￥4642.00</div> -->
+        <div class="large-green-button disabled" @click="submit">提现</div>
         <span class="tip">提现请注意： </span>
         <span class="tip">每日最多提现10次； </span>
         <span class="tip">每笔金额≥￥1.00并且≤￥500.00元； </span>
@@ -26,13 +26,23 @@ export default {
         return {
             isShowDialog: false,
             dialog: {
-                text: 'sfsdsffs'
+                text: '暂时不能提现'
             },
-            account: null
+            account: null,
+            cansubmit:false
         }
     },
     components: {
         XDialog
+    },
+    watch:{
+        account(val){
+            if(val>0){
+                this.cansubmit = true
+            } else {
+                this.cansubmit = false
+            }
+        }
     },
     methods: {
         showDialog() {
@@ -42,10 +52,11 @@ export default {
             this.isShowDialog = false
         },
         submit() {
-            let valid = validAccount(this.account)
-            if (valid) {
-                this.isShowDialog = true
-            }
+            this.isShowDialog = true
+            // let valid = validAccount(this.account)
+            // if (valid) {
+            //     this.isShowDialog = true
+            // }
         },
         confirm() {
             this.hideDialog()
@@ -103,6 +114,7 @@ export default {
         margin-left 10px
         color $text-l
         font-weight bold
+        min-width 0
 .desc
     color $text-lll
     line-height 40px
@@ -114,5 +126,7 @@ export default {
     margin-left 15px
     color $text-lll
     line-height 20px
-
+.disabled
+    background $text-lll
+    box-shadow 0px 4px 7px 0px $text-lll
 </style>

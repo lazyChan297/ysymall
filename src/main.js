@@ -28,7 +28,7 @@ Vue.use(AlertPlugin)
 Vue.use(AjaxPlugin)
 Vue.use(InfiniteScroll)
 // let vConsole = new VConsole()
-
+console.log('!')
 // 服务器地址
 if (process.env.NODE_ENV === 'development') {
   global.serverHost = ''
@@ -53,6 +53,7 @@ global.uuid = wsCache.get('uuid')
 // 获取openid 通过返回的token和uuid判断用户是否登陆和绑定微信
 let url = window.location.href
 let isBoundWechat = getOpenid(url)
+// let isBoundWechat = false
 
 // axios
 Vue.prototype.$axios = axios
@@ -107,7 +108,7 @@ if(global.token || wsCache.get('token') ){
 }
 
 // 白名单
-const whiteList = ['index','cart','goodsDetail','login','inviteConfirm','rank','applyVip']
+const whiteList = ['index','cart','goodsDetail','login','inviteConfirm','rank','payment']
 // router
 router.beforeEach((to, from, next) => {
   if (to.meta.title) {

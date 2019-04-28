@@ -21,12 +21,10 @@
                 <p class="figure-title">一周收益曲线图</p>
             </div>
             <!-- 折线图 -->
-            <schart :canvasId="canvasId" 
-                    :type="type" 
-                    :data="data" 
-                    :options="options" 
-                    :height="height"
-                    :width="width"></schart>
+            <ve-line :data="chartData" :extend="extend" :colors="colors" v-if="chartData.rows.length"></ve-line>
+            <div class="empty-line" v-else>暂无收益</div>
+            
+           
         </div>
         <!-- 列表 -->
         <div class="sheet">
@@ -71,10 +69,23 @@
 </template>
 
 <script>
-import Schart from 'vue-schart';
+// import Schart from 'vue-schart';
+import VeLine from 'v-charts/lib/line.common'
+// import {VLine,VChart,VScale,VTooltip,VPoint} from 'vux'
 export default {
     data() {
+        this.extend = {
+            series: {
+                label: {
+                    normal: {
+                        show: true
+                    }
+                }
+            }
+        }
+        this.colors = ['#fff']
         return {
+            line_onready:false,
             earnInfo:null,
             current_list_num:0,//0收益1支出
             current_list:null,
@@ -94,17 +105,24 @@ export default {
         }
     },
     components:{
-        Schart
+        VeLine
     },
     mounted(){
         this.getEarns()
-        this.getIncomeLine()
+        
     },
     methods:{
         getEarns(){
             this.$axios.post('/finance/income/overview').then((res)=>{
                 if(res.data.code === 200) {
                     this.earnInfo = res.data.data
+                    let rows = []
+                    let list = res.data.data.lastSevenDays
+                    list.forEach((item,index)=>{
+                        rows.push({'日期': item.weekDay, '收益': item.amount})
+                    })
+                    this.chartData = {columns: ['日期', '收益'],
+                        rows: rows}
                     if(this.current_list_num==0){
                         this.current_list = this.earnInfo.todayIncomeList
                     } else {
@@ -120,71 +138,6 @@ export default {
                 this.current_list = this.earnInfo.todayExpenditureList
             }
             this.current_list_num = n
-        },
-        getIncomeLine(){
-            this.$axios.post('/finance/income/all').then((res)=>{
-                if(res.data.code === 200) {
-                    this.data = this.formatIncomeLine(res.data.data.incomeList)
-                }
-            })
-        },
-        formatIncomeLine(data){
-            let incomeList = []
-            data.forEach((item,index)=>{
-                let obj = {}
-                obj['value'] = item.amount
-                obj['name'] = this.formatDay(item.boughtAt)
-                incomeList.push(obj)
-            })
-            return incomeList
-        },
-        formatDay(day){
-            let _day = new Date(day).getDay(),
-                today = new Date().getDay()
-            switch(_day){
-                case 1:
-                    if(1==today){
-                        return "今日"
-                    } else {
-                        return "周一";
-                    }
-                case 2:
-                    if(2==today){
-                        return "今日"
-                    } else {
-                        return "周二";
-                    }
-                case 3:
-                    if(3==today){
-                        return "今日"
-                    } else {
-                        return "周三";
-                    }
-                case 4:
-                    if(4==today){
-                        return "今日"
-                    } else {
-                        return "周四";
-                    }
-                case 5:
-                   if(5==today){
-                        return "今日"
-                    } else {
-                        return "周五";
-                    }
-                case 6:
-                    if(6==today){
-                        return "今日"
-                    } else {
-                        return "周六";
-                    }
-                case 0:
-                    if(0==today){
-                        return "今日"
-                    } else {
-                        return "周日";
-                    }
-            }
         }
     }
 }
@@ -192,9 +145,19 @@ export default {
 <style lang="stylus" scoped>
 @import "../../common/stylus/variable.styl";
 @import "../../common/css/media.css";
+/* 折线图样式 */
+.ve-line
+    background $green
+.empty-line
+    background $green
+    color #fff
+    height 100px
+    line-height 100px
 .earnings-wrapper
+    background #fff !important
+    height 100%
     .panel
-        height 70%
+        /* height 70% */
         color #fff
         text-align center
         .panel-linear
@@ -230,7 +193,7 @@ export default {
             background $green
             padding 10px 15px 0
         .figure-title
-            padding-top 10px
+            padding 10px 0
             border-top 1px solid #fff
     .sheet
         background #fff
@@ -244,6 +207,7 @@ export default {
             li
                 flex 1
                 color $green
+                font-size 14px
                 &.active
                     background $green
                     color #fff
@@ -282,4 +246,5 @@ export default {
         height 50px
         line-height 50px
         color $text-ll
+        font-size 14px
 </style>
