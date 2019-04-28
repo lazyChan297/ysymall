@@ -20,18 +20,19 @@ export function checkToken () {
 
 export function saveToken(token){
     let wsCache = new webStorageCache()
-    wsCache.set('token',token,{exp : 3*60*1})
+    wsCache.set('token',token,{exp : 30*60*1})
 }
 
 export function saveUUID(uuid){
     let wsCache = new webStorageCache()
-    wsCache.set('uuid',uuid,{exp: 3*60*1})
+    wsCache.set('uuid',uuid,{exp: 30*60*1})
 }
 
 export function getOpenid(url,flag){
+    alert('重启了项目')
     setTimeout(() => {
         window.location.reload()
-     }, 3 *60 * 1000 )
+     }, 30 *60 * 1000 )
     let urlObj = urls.parse(url)
     let pageUrl = urlObj.protocol + '//' + urlObj.host + '/' + urlObj.hash
     // 登陆过且绑定了微信
@@ -46,29 +47,30 @@ export function getOpenid(url,flag){
     //  payment要做特别处理
     let ispayment = false
     let paymentUrl = ''
-    console.log(urlObj.href)
-    console.log(urlObj.href === urlObj.protocol+'//'+urlObj.host+'/checkout/onepage/pay/#/checkout/onepage/pay/')
+    // console.log("href",urlObj.href)
+    // console.log("拼接的字符串",urlObj.protocol+'//'+urlObj.host+'/checkout/onepage/pay/#/checkout/onepage/pay/')
     if(urlObj.href === urlObj.protocol+'//'+urlObj.host+'/checkout/onepage/pay/#/checkout/onepage/pay/') {
         paymentUrl = urlObj.protocol+'//'+urlObj.host+'/checkout/onepage/pay/#/checkout/onepage/pay/'
         ispayment = true
     }
-    console.log("url:",url)
-    console.log("pageURL:",pageUrl)
-    console.log("payment:",global.serverHost + '/checkout/onepage/pay/#/checkout/onepage/pay/')
+    // console.log("paymentUrl",paymentUrl)
+    // console.log("url:",url)
+    // console.log("pageURL:",pageUrl)
+    // console.log("payment:",global.serverHost + '/checkout/onepage/pay/#/checkout/onepage/pay/')
     // 获取openid 判断是否绑定微信号 绑定后会自动进行微信登陆
     if((!global.token&&!getUrlParms('token')&&!getUrlParms('uuid'))||flag) {
         // alert("第一次进来,没有token")
         console.log(url)
-        window.location.href = global.serverHost + '/customer/wechat/get-openid?url_before_login='+encodeURIComponent(url) 
+        //window.location.href = global.serverHost + '/customer/wechat/get-openid?url_before_login='+encodeURIComponent(url) 
     } else if(!global.token&&!getUrlParms('token')&&getUrlParms('uuid')) {
         // 未绑定微信 请求了openid 但是没有绑定微信不能自动登陆 需要手机+验证码 手动登陆
         return false
     } else if (url != pageUrl && url != global.serverHost + '/checkout/onepage/pay/#/checkout/onepage/pay/') {
-        alert("获得了返回token的url,修改url")
-        // window.location.href = pageUrl
+        // alert("获得了返回token的url,修改url")
+        window.location.href = pageUrl
         if(ispayment) {
-            alert("是支付页,url不会")
-            window.location.href = paymentUrl
+            console.log("是支付页,url不会")
+            window.location.href = urlObj.href
         } else {
             window.location.href = pageUrl
         }   

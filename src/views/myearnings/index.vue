@@ -35,7 +35,7 @@
                 <li @click="switchList(1)" :class="current_list_num==1?'active':''">今日支出明细</li>
             </ul>
             <div>
-                <ul v-if="current_list_num==0">
+                <ul v-if="current_list_num==0&&current_list.length">
                     <li v-for="(item,index) in current_list" :key="index">
                         <p>
                             <span>奖励到账提醒</span>
@@ -46,8 +46,10 @@
                             <span>{{item.buyer.nickname}}购买缘生源相关商品，您获得3级内奖励。</span>
                         </div>
                     </li>
+                    
                 </ul>
-                <ul v-else>
+                <div v-else-if="current_list_num==0&&!current_list.length" class="empty">暂无数据</div>
+                <ul v-else-if="current_list_num==1&&current_list.length>0">
                     <li v-for="(item,index) in current_list" :key="index">
                         <p>
                             <span>提现时间</span>
@@ -61,6 +63,7 @@
                         </div>
                     </li>
                 </ul>
+                <div v-else class="empty">暂无数据</div>
             </div>
         </div>
         <!-- <p style="padding-top:100px">该页面正在开发中～敬请期待！</p> -->
@@ -79,15 +82,8 @@ export default {
             type: 'line',
             height:200,
             width:document.body.clientWidth,
-            data: [
-                {name: '周一', value: 1342},
-                {name: '周二', value: 2123},
-                {name: '周三', value: 1654},
-                {name: '周四', value: 1795},
-                {name: '周五', value: 1795},
-                {name: '周六', value: 1795},
-                {name: '周日', value: 1795},
-            ],
+            inconmeLine:null,
+            data: [],
             options: {
                 bgColor:'#0084ff',
                 axisColor:'#ffffff',
@@ -102,6 +98,7 @@ export default {
     },
     mounted(){
         this.getEarns()
+        this.getIncomeLine()
     },
     methods:{
         getEarns(){
@@ -123,6 +120,71 @@ export default {
                 this.current_list = this.earnInfo.todayExpenditureList
             }
             this.current_list_num = n
+        },
+        getIncomeLine(){
+            this.$axios.post('/finance/income/all').then((res)=>{
+                if(res.data.code === 200) {
+                    this.data = this.formatIncomeLine(res.data.data.incomeList)
+                }
+            })
+        },
+        formatIncomeLine(data){
+            let incomeList = []
+            data.forEach((item,index)=>{
+                let obj = {}
+                obj['value'] = item.amount
+                obj['name'] = this.formatDay(item.boughtAt)
+                incomeList.push(obj)
+            })
+            return incomeList
+        },
+        formatDay(day){
+            let _day = new Date(day).getDay(),
+                today = new Date().getDay()
+            switch(_day){
+                case 1:
+                    if(1==today){
+                        return "今日"
+                    } else {
+                        return "周一";
+                    }
+                case 2:
+                    if(2==today){
+                        return "今日"
+                    } else {
+                        return "周二";
+                    }
+                case 3:
+                    if(3==today){
+                        return "今日"
+                    } else {
+                        return "周三";
+                    }
+                case 4:
+                    if(4==today){
+                        return "今日"
+                    } else {
+                        return "周四";
+                    }
+                case 5:
+                   if(5==today){
+                        return "今日"
+                    } else {
+                        return "周五";
+                    }
+                case 6:
+                    if(6==today){
+                        return "今日"
+                    } else {
+                        return "周六";
+                    }
+                case 0:
+                    if(0==today){
+                        return "今日"
+                    } else {
+                        return "周日";
+                    }
+            }
         }
     }
 }
@@ -216,5 +278,8 @@ export default {
                     .ordernum,.orderdate
                         font-size 14px
                         line-height 20px
-
+    .empty
+        height 50px
+        line-height 50px
+        color $text-ll
 </style>
