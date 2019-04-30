@@ -405,6 +405,14 @@ export default new Router({
       meta:{
         title: '申请总代理'
       }
+    },
+    {
+      path: '/checkAgent',
+      name: 'checkAgent',
+      component:()=>import('@/views/checkAgent/index'),
+      meta:{
+        title:'未开通合伙人地区查询'
+      }
     }
   ]
 })

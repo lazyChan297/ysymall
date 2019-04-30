@@ -176,7 +176,7 @@ export default {
                     this.default_img = this.goodsDetail.thumbnail_img[0]
                     // this.getCustomOptionAttr()
                     this._getCustomOptionAttr()
-                    this.$refs.goodsDetailScroll.refresh()
+                    // this.$refs.goodsDetailScroll.refresh()
                     // 分享
                     if(env == 'production') {
                         this.$wechat.ready(() => {
@@ -443,9 +443,9 @@ export default {
             if(custom_option_arr.length === 1) {
                 custom_option_arr[0].class = ' current '
                 this.custom_option_selected_attr = custom_option_arr[0].required = true
+                this.custom_option_selected_attr = {content:custom_option_arr[0].name}
             }
             this.custom_option_attr = custom_option_arr
-            console.log(this.custom_option_attr)
         },
         // 处理视图显示
         getCustomOptionAttr() {
@@ -529,6 +529,7 @@ export default {
         addGoodsToCart(){
             let valid = this.isSubmit()
             if(!valid) return
+            console.log(this.custom_option_selected_attr)
             let custom_option = JSON.stringify(this.custom_option_selected_attr)
             let params = Qs.stringify({
                 product_id: this.product_id,

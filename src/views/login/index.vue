@@ -94,6 +94,12 @@ export default {
             return true
         },
         submit(){
+            // let redirect = this.redirect?this.redirect:'/'
+            // let url = window.location.href
+            // let urlObj = urls.parse(url)
+            // let _url = urlObj.protocol + '//' + urlObj.host + '/#' + redirect
+            // console.log(_url)
+            // return false
             // let _url = urlObj.protocol + '//' + urlObj.host + '/#' + this.redirect + '?sn='+res.data.data.customerSn
             // let url = window.location.href
             // let urlObj = urls.parse(url)
