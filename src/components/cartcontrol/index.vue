@@ -1,7 +1,7 @@
 <template>
     <div class="cartcontrol-wrapper">
         <div class="icon icon-minus" @click.stop="minus"></div>
-        <div class="num">{{good.qty}}</div>
+        <input type="tel" v-model="good.qty" class="num"></input>
         <div class="icon icon-add" @click.stop="add"></div>
     </div>
 </template>
@@ -30,4 +30,6 @@
     .num
         color $text-l
         margin 0 10px
+        width 20px
+        text-align center
 </style>

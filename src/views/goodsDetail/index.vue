@@ -529,7 +529,13 @@ export default {
         addGoodsToCart(){
             let valid = this.isSubmit()
             if(!valid) return
-            console.log(this.custom_option_selected_attr)
+            if(this.goodsDetail.is_in_stock===2) {
+                this.$vux.toast.show({
+                    text:'当前商品库存不足',
+                    type:'warn'
+                })
+                return false;
+            }
             let custom_option = JSON.stringify(this.custom_option_selected_attr)
             let params = Qs.stringify({
                 product_id: this.product_id,

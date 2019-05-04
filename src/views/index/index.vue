@@ -487,6 +487,7 @@ export default {
     padding 15px 15px 50px
     font-size 0
     text-align left
+    background #fff
     .goodsItem
         display inline-block
         width 47%

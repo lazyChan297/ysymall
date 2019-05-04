@@ -1,14 +1,23 @@
 <template>
     <div class="order-wrapper">
         <div class="tab">
-            <router-link to="/order/index" class="tabItem" tag="div"><span>全部</span></router-link>
-            <router-link to="/order/wait" class="tabItem" tag="div"><span>待发货</span></router-link>
-            <router-link to="/order/already" class="tabItem" tag="div"><span>待收货</span></router-link>
-            <router-link to="/order/done" class="tabItem" tag="div"><span>已完结</span></router-link>
+            <router-link to="/order/all" class="tabItem" tag="div"><span>全部</span></router-link>
+            <router-link to="/order/unshipped" class="tabItem" tag="div"><span>待发货</span></router-link>
+            <router-link to="/order/shipped" class="tabItem" tag="div"><span>待收货</span></router-link>
+            <router-link to="/order/completed" class="tabItem" tag="div"><span>已完结</span></router-link>
         </div>
         <router-view></router-view>
     </div>
 </template>
+<script>
+export default {
+    data() {
+        return {
+
+        }
+    }
+}
+</script>
 <style lang="stylus" scoped>
 @import "../../common/stylus/variable.styl";
 .order-wrapper

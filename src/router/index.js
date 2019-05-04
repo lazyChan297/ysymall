@@ -99,32 +99,32 @@ export default new Router({
       redirect: '/order/index',
       children: [
         {
-          path: 'index',
-          name: 'index',
+          path: 'all',
+          name: 'all',
           component: orderList,
           meta: {
             title: '全部订单'
           }
         },
         {
-          path: 'wait',
-          name: 'wait',
+          path: 'unshipped',
+          name: 'unshipped',
           component: orderList,
           meta: {
             title: '待发货'
           }
         },
         {
-          path: 'already',
-          name: 'already',
+          path: 'shipped',
+          name: 'shipped',
           component: orderList,
           meta: {
             title: '已发货'
           }
         },
         {
-          path: 'done',
-          name: 'done',
+          path: 'completed',
+          name: 'completed',
           component: orderList,
           meta: {
             title: '已完结'
@@ -141,7 +141,7 @@ export default new Router({
       }
     },
     {
-      path: '/express',
+      path: '/express/:id',
       name: 'express',
       component: () => import('@/views/express/index'),
       meta: {
@@ -200,28 +200,28 @@ export default new Router({
       path: '/cash',
       name: 'cash',
       component: () => import('@/views/cash/index'),
-      redirect: '/cash/arrival',
+      // redirect: '/cash/arrival',
       meta: {
         title: '提现记录'
       },
-      children: [
-        {
-          path: 'arrival',
-          name: 'arrival',
-          component: cashList,
-          meta: {
-            title: '已到账'
-          }
-        },
-        {
-          path: 'non_arrival',
-          name: 'non_arrival',
-          component: cashList,
-          meta: {
-            title: '未到账'
-          }
-        }
-      ]
+      // children: [
+      //   {
+      //     path: 'arrival',
+      //     name: 'arrival',
+      //     component: cashList,
+      //     meta: {
+      //       title: '已到账'
+      //     }
+      //   },
+      //   {
+      //     path: 'non_arrival',
+      //     name: 'non_arrival',
+      //     component: cashList,
+      //     meta: {
+      //       title: '未到账'
+      //     }
+      //   }
+      // ]
     },
     {
       path: '/cashSuccess/:id',

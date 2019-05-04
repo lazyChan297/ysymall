@@ -9,19 +9,19 @@
             <router-link class="icon icon-setting" to="/setting"></router-link>
         </div>
         <ul class="order-tab">
-            <router-link to="/order/index" tag="li">
+            <router-link to="/order/all" tag="li">
                 <div class="icon icon-qbdd"></div>
                 <span>全部订单</span>
             </router-link>
-            <router-link to="/order/wait" tag="li">
+            <router-link to="/order/unshipped" tag="li">
                 <div class="icon icon-dfh"></div>
                 <span>待发货</span>
             </router-link>
-            <router-link to="/order/already" tag="li">
+            <router-link to="/order/shipped" tag="li">
                 <div class="icon icon-dsh"></div>
                 <span>待收货</span>
             </router-link>
-            <router-link to="/order/done" tag="li">
+            <router-link to="/order/completed" tag="li">
                 <div class="icon icon-ywc"></div>
                 <span>已完成</span>
             </router-link>
@@ -62,7 +62,7 @@
                 </div>
                 <div class="icon icon-link"></div>
             </router-link>
-            <router-link class="cell" to="/agentArea" tag="div">
+            <router-link class="cell" to="/checkAgent" tag="div">
                 <div>
                     <span class="icon icon-area"></span>
                     <span class="bold">代理区域</span>

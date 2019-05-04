@@ -2,17 +2,17 @@
     <div class="orderDetail-wrapper">
         <div class="cell">
             <label>状态</label>
-            <span>待收货</span>
+            <span>{{details.order_status_name}}</span>
         </div>
         <section class="update">
             <router-link to="/express" tag="div" class="express">
                 <div class="icon icon-car"></div>
                 <div class="text">
                     <p class="expressTxt">
-                        已揽件
+                        {{lastExpressInfo.context}}
                     </p>
                     <p class="date">
-                        2019/01/16 15:59:01
+                        {{lastExpressInfo.updatedAt}}
                     </p>
                 </div>
                 <div class="icon icon-link"></div>
@@ -21,10 +21,13 @@
                 <div class="icon icon-location"></div>
                 <div class="text">
                     <p class="user">
-                        收货人,18677185478
+                        {{details.reciever}},{{details.customer_telephone}}
                     </p>
                     <p class="addr">
-                        广西壮族自治区 南宁市 青秀区 民族大道131号会展中心航洋城
+                        {{details.customer_address_province}}
+                        {{details.customer_address_city}}
+                        {{details.customer_address_county}}
+                        {{details.customer_address_details}}
                     </p>
                 </div>
                 <div class="icon icon-link"></div>
@@ -32,48 +35,74 @@
         </section>
         <section class="goods-container">
             <div>
-                <div class="goods">
-                    <img src="../../common/images/1812.png" width="80" height="80" alt="">
+                <div class="goods" v-for="(item,index) in details.products">
+                    <img :src="item.image" width="80" height="80" alt="">
                     <div class="text">
                         <p>
-                            <span class="name bold">姜汁洗发露</span>
-                            <span class="price">¥39.80</span>
+                            <span class="name bold">{{item.name}}</span>
+                            <span class="price">¥{{item.price}}</span>
                         </p>
                         <p>
-                            <span class="desc">生姜艾叶萃取润发护发精华发根护理、净爽控油</span>
-                            <span class="quantity bold">x1</span>
+                            <span class="desc"></span>
+                            <span class="quantity bold">x{{item.qty}}</span>
                         </p>
                     </div>
                 </div>
             </div>
             <div class="cell">
                 <label for="">总计</label>
-                <span>¥39.80</span>
+                <span>¥{{details.subtotal}}</span>
             </div>
-            <div class="cell">
+            <!-- <div class="cell">
                 <label for="">运费</label>
                 <span>¥0</span>
-            </div>
+            </div> -->
             <div class="cell">
                 <label for="">实付款</label>
                 <span>¥39.80</span>
             </div>
         </section>
-        <textarea name="" placeholder="选填：订单备注信息（50字以内）" id="" cols="30" rows="10"></textarea>
         <section class="orderinfo">
-            <p>
+            <!-- <p>
                 订单编号：234576145 <span class="copy">复制</span>
-            </p>
+            </p> -->
             <p>
-                下单时间：2019/01/16 15:59:01
+                下单时间：{{details.created_at}}
             </p>
-            <p>
+            <!-- <p>
                 发货时间：2019/01/16 15:59:01
-            </p>
+            </p> -->
         </section>
-        <div class="large-green-button">确认收货</div>
+        <!-- <div class="large-green-button">确认收货</div> -->
     </div>
 </template>
+<script>
+import Qs from 'qs';
+export default {
+    data() {
+        return {
+            details:{},
+            lastExpressInfo:''
+        }
+    },
+    mounted() {
+        this.getDetail(this.$route.params.id)
+    },
+    methods:{
+        getDetail(id){
+            let params = Qs.stringify({
+                orderId:id
+            })
+            this.$axios.post('/customer/order/details',params).then((res)=>{
+                if(res.data.code === 200) {
+                    this.details = res.data.data.order
+                    this.lastExpressInfo = res.data.data.lastExpressInfo
+                }
+            })
+        }
+    }
+}
+</script>
 <style lang="stylus" scoped>
 @import "../../common/stylus/variable.styl";
 .update
@@ -84,6 +113,7 @@
     align-items center
     padding 10px 15px
     background #fff
+    text-align left
     .text 
         flex 1
         margin 0 10px
@@ -160,6 +190,7 @@ textarea
     color $text-lll
     padding 10px 15px
     line-height 22px
+    text-align left
     .copy
         border 1px solid $text-lll
         font-size 12px

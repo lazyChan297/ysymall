@@ -24,12 +24,9 @@ export const friendsListMixin = {
             this.$axios.post('/customer/service/search-friends',params).then((res)=>{
                 if(res.data.code === 200) {
                     this.ready = true
-                    // 原来已请求到的
-                    let friendsList = this.friendsList
-                    // 本次请求的
                     let _list = res.data.data.friendsInfo
                     // 合并数组
-                    this.friendsList = friendsList.concat(_list)
+                    this.friendsList = _list
                     // 如果本次请求到的为空则禁止滚动加载
                     if(!_list.length){
                         this.listParams.loading = false
@@ -44,7 +41,29 @@ export const friendsListMixin = {
             this.listParams.page = 1
             this.friendsList = []
             this.keywords = val
-            this.searchFriends()
+            let params = Qs.stringify({
+                page:this.listParams.page,
+                number:this.listParams.number,
+                keywords:this.keywords,
+                fromLevel:'member',//'需要的人脉的最低级别'
+                toLevel:this.checkType==='generalAgent'?'vip':'member'//'需要的人脉的最高级别'
+            })
+            this.$axios.post('/customer/service/search-friends',params).then((res)=>{
+                if(res.data.code === 200) {
+                    this.ready = true
+                    // 原来已请求到的
+                    let friendsList = this.friendsList
+                    // 本次请求的
+                    let _list = res.data.data.friendsInfo
+                    // 合并数组
+                    this.friendsList = friendsList.concat(_list)
+                    // 如果本次请求到的为空则禁止滚动加载
+                    if(!_list.length){
+                        this.listParams.loading = false
+                        this.listParams.nomore = true
+                    }
+                }
+            })
         },
         // 滚动加载更多
         loadMore(){

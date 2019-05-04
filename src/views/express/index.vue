@@ -3,26 +3,26 @@
         <section>
             <div class="cell">
                 <span>快递公司</span>
-                <span>中通</span>
+                <span>{{expressInfo.company}}</span>
             </div>
             <div class="cell">
                 <span>快递单号</span>
-                <span>151545461551545</span>
+                <span>{{expressInfo.no}}</span>
             </div>
         </section>
         <ul>
-            <li class="express">
-                <div class="icon icon-car"></div>
+            <li class="express" v-for="(item,index) in expressInfo.details" :key="index">
+                <div :class="index==0?'icon icon-car':'icon icon-dot'"></div>
                 <div class="text">
                     <p class="expressTxt">
-                        【南宁市】快件离开【南宁中转】已发往【南宁航洋分部】
+                        {{item.context}}
                     </p>
                     <p class="date">
-                        2019/01/16 15:59:01
+                        {{item.ftime}}
                     </p>
                 </div>
             </li>
-            <li class="express">
+            <!-- <li class="express">
                 <div class="icon-dot"></div>
                 <div class="text">
                     <p class="expressTxt">
@@ -32,8 +32,8 @@
                         2019/01/16 15:59:01
                     </p>
                 </div>
-            </li>
-            <li class="express">
+            </li> -->
+            <!-- <li class="express">
                 <div class="icon-dot"></div>
                 <div class="text">
                     <p class="expressTxt">
@@ -43,8 +43,8 @@
                         2019/01/16 15:59:01
                     </p>
                 </div>
-            </li>
-            <li class="express">
+            </li> -->
+            <!-- <li class="express">
                 <div class="icon-dot"></div>
                 <div class="text">
                     <p class="expressTxt">
@@ -54,10 +54,34 @@
                         2019/01/16 15:59:01
                     </p>
                 </div>
-            </li>
+            </li> -->
         </ul>
     </div>
 </template>
+<script>
+import Qs from 'qs';
+export default {
+    data(){
+        return {
+            expressInfo:''
+        }
+    },
+    mounted(){
+        this.order_id = this.$route.params.id
+        this.getExpress(this.order_id)
+    },
+    methods: {
+        getExpress(id) {
+            let params = Qs.stringify({orderId:id})
+            this.$axios.post('/customer/order/express-info',params).then((res)=>{
+                if(res.data.code === 200) {
+                    this.expressInfo = res.data.data
+                }
+            })
+        }
+    }
+}
+</script>
 <style lang="stylus" scoped>
 @import "../../common/stylus/variable.styl";
 .express-wrapper
@@ -71,6 +95,7 @@
             border-bottom 1px solid $line
     ul
         margin-top 10px
+        text-align left
         li
             display flex
             height 100px
