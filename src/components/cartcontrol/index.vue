@@ -1,11 +1,12 @@
 <template>
     <div class="cartcontrol-wrapper">
         <div class="icon icon-minus" @click.stop="minus"></div>
-        <input type="tel" v-model="good.qty" class="num"></input>
+        <input type="tel" v-model="good.qty" class="num" v-on:input="inputchange"></input>
         <div class="icon icon-add" @click.stop="add"></div>
     </div>
 </template>
 <script>
+    import {debounce} from '@/common/js/util';
     export default {
         props:{
             good: {
@@ -19,6 +20,9 @@
             },
             add() {
                 this.$emit('add')
+            },
+            inputchange(val) {
+                this.$emit('input',val.target.value)
             }
         }
     }

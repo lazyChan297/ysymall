@@ -8,7 +8,12 @@
                 <div>查询级别</div>
                 <div>{{level[0] || '请选择级别'}}</div>
             </div>
-            <div class="check-cell" @click="showAddress = true">
+            
+            <div class="check-cell" v-if="level[0]=='省级'">
+                <div>查询所在地区</div>
+                <div>中国</div>
+            </div>
+            <div class="check-cell" @click="showAddress = true" v-else>
                 <div>查询所在地区</div>
                 <div>{{districtInfo || '请选择地区'}}</div>
             </div>
@@ -53,7 +58,7 @@ export default {
             isShowLevel:false,
             agentDistricts:[],
             level:[],
-            levelList:[['省级','市级']],
+            levelList:[['省级','市级','区级']],
             showProvince: false,
             showAddress:false,
             showCity:false,
@@ -103,6 +108,12 @@ export default {
         levelChange(v){
             this.district = []
             if(v[0] === '省级') {
+                this.areaData = [{
+                    name:"中国",
+                    parant:"",
+                    value:0
+                }]
+            } else if(v[0] === '市级') {
                 this.areaData = provinceArray
             } else {
                 this.areaData = cityArray
@@ -126,7 +137,15 @@ export default {
                     let areaList = res.data.data.agentDistricts
                     let agentDistricts = []
                     for(let i in areaList) {
-                        for(let j in areaList[i]) {
+                        if(areaList[i] == "未开通" || areaList[i] == "已开通") {
+                            agentDistricts.push({
+                                province:i,
+                                city:'-',
+                                county:'-',
+                                status:areaList[i]
+                            })
+                        } else {
+                            for(let j in areaList[i]) {
                             if(areaList[i][j] != "未开通" && areaList[i][j] != "已开通") {
                                 for(let k in areaList[i][j]) {
                                     agentDistricts.push({
@@ -144,6 +163,8 @@ export default {
                                 })
                             }
                         }
+                        }
+                        
                     }
                     this.agentDistricts = agentDistricts
                     console.log(this.agentDistricts)

@@ -6,6 +6,7 @@
     </div>
 </template>
 <script>
+const env = process.env.NODE_ENV
 export default {
     data(){
         return {
@@ -14,6 +15,14 @@ export default {
     },
     mounted(){
         this.getQRcode()
+        if(env == 'production') {
+            // 禁止分享
+            this.$wechat.ready(() => {
+                this.$wechat.hideMenuItems({
+                    menuList: ['menuItem:share:appMessage','menuItem:share:timeline']
+                });
+            })
+        }
     },
     methods:{
         getQRcode(){

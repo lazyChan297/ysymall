@@ -28,6 +28,11 @@ let webpackConfig = {
       '@': resolve('src'),
     }
   },
+  externals: {
+    'vue': 'Vue',
+    'vue-router': 'VueRouter',
+    'vuex': 'Vuex'
+  },
   module: {
     rules: [
       {

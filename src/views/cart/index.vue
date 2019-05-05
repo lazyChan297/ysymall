@@ -11,7 +11,7 @@
                             <p class="desc">{{getOptionName(item.custom_option_info)}}</p>
                             <div>
                                 <div class="price bold">¥{{item.product_price}}</div>
-                                <cart-control :good="item" @minus="minusgoods(item)" @add="addgoods(item)"></cart-control>
+                                <cart-control :good="item" @minus="minusgoods(item)" @add="addgoods(item)" @input="inputChange($event,item)"></cart-control>
                             </div>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
 <script>
 import CartControl from '@/components/cartcontrol/index'
 import {mapGetters, mapMutations} from 'vuex'
-import Qs from 'qs'
+import Qs from 'qs';
 String.prototype.compare = function(str){
     //不区分大小写
     if(str.toLowerCase() == this.toLowerCase()){
@@ -48,6 +48,8 @@ String.prototype.compare = function(str){
         return "0"; // 错误
     }
 }
+var origin_products = {};
+let timer;
 export default {
     data(){
         return {
@@ -117,9 +119,12 @@ export default {
                         }
                         this.option_txt_arr = attr
                     }
-                    
                     this.ready = true
                     let len = goodslist === null?0:goodslist.length
+                    let origin_arr = res.data.data.cart_info.products
+                    for(let i in origin_arr) {
+                        origin_products[origin_arr[i].product_id] = origin_arr[i].qty
+                    }
                     this.saveCartLen(len)
                 }
             })
@@ -127,19 +132,34 @@ export default {
         minusgoods(good) {
             let _this = this
             if (good.qty > 1) {
-                good.qty--
+                good.qty--;
                 this.updateCart(good,"less_one")
             } else if(good.qty === 1){
                 this.$vux.confirm.show({
                     content:'是否从购物车删除该商品',
-                    onCancel () {
-                       
-                    },
                     onConfirm () {
                         _this.updateCart(good,"remove")
                     }
                 })
             }
+        },
+        inputChange(val,item) {
+            let qty = val - origin_products[item.product_id]
+            let params = Qs.stringify({
+                product_id:item.product_id,
+                custom_option:Qs.stringify(item.custom_option_info),
+                qty:qty
+            })
+            if (timer) {
+                clearTimeout(timer)
+            }
+            timer = setTimeout(() => {
+                this.$axios.post('/checkout/cart/add',params).then((res)=>{
+                    if(res.data.code === 200) {
+                        this.getCart()
+                    }
+                })
+            }, 1000)
         },
         addgoods(good) {
             good.qty++
