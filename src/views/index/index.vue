@@ -123,7 +123,7 @@ export default {
         }
     },
     watch:{
-        '$route':(route)=>{
+        '$route':function(route){
             if(route.name !== 'index') {
                 this.$refs.wrapper.style.overflow = 'hidden'
             } else {

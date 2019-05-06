@@ -4,7 +4,6 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import axios from 'axios'
-import VueAwesomeSwiper from 'vue-awesome-swiper'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import fastClick from 'fastclick'
@@ -143,7 +142,6 @@ router.afterEach((to,from) => {
   NProgress.done()
 })
 
-Vue.use(VueAwesomeSwiper)
 fastClick.attach(document.body)
 Vue.config.productionTip = false
 

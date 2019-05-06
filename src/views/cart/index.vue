@@ -144,16 +144,22 @@ export default {
             }
         },
         inputChange(val,item) {
-            let qty = val - origin_products[item.product_id]
             let params = Qs.stringify({
                 product_id:item.product_id,
                 custom_option:Qs.stringify(item.custom_option_info),
-                qty:qty
+                qty:val
             })
             if (timer) {
                 clearTimeout(timer)
             }
             timer = setTimeout(() => {
+                if(!val) {
+                    this.$vux.toast.show({
+                        text:"商品不能为0",
+                        type: 'warn'
+                    })
+                    return false
+                }
                 this.$axios.post('/checkout/cart/add',params).then((res)=>{
                     if(res.data.code === 200) {
                         this.getCart()
@@ -251,6 +257,8 @@ export default {
             box-sizing border-box
             border-radius 5px
             box-shadow 0px 2px 4px 0px rgba(0,0,0,0.05)
+            .icon-check,.icon-uncheck
+                min-width 20px
             .goods
                 display flex
                 text-align left

@@ -26,9 +26,9 @@
         </div>
         <ul class="list">
             <li v-for="(item,index) in agentDistricts" :key="index">
-                <div>{{item.province}}</div>
-                <div>{{item.city}}</div>
-                <div></div>
+                <div class="province">{{item.province}}</div>
+                <div class="city">{{item.city}}</div>
+                <div class="county">{{item.county}}</div>
                 <div>
                     <span class="status" :class="item.status=='已开通'?'active':''">{{item.status}}</span>
                 </div>
@@ -57,7 +57,7 @@ export default {
         return {
             isShowLevel:false,
             agentDistricts:[],
-            level:[],
+            level:['省级'],
             levelList:[['省级','市级','区级']],
             showProvince: false,
             showAddress:false,
@@ -103,6 +103,7 @@ export default {
     },
     mounted(){
         this.getDistricts()
+        this.checkAgent()
     },
     methods:{
         levelChange(v){
@@ -151,7 +152,7 @@ export default {
                                     agentDistricts.push({
                                         province:i,
                                         city:j,
-                                        county:areaList[i][j],
+                                        county:k,
                                         status:areaList[i][j][k]
                                     })
                                 }
@@ -167,7 +168,6 @@ export default {
                         
                     }
                     this.agentDistricts = agentDistricts
-                    console.log(this.agentDistricts)
                 } 
             })
         },
@@ -215,6 +215,13 @@ export default {
         &>div
             flex 1
             line-height 50px
+            &.province,
+            &.city,
+            &.county
+                width 100%
+                overflow hidden
+                text-overflow ellipsis
+                white-space nowrap
             .status
                 display inline-block
                 margin 0 auto

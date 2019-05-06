@@ -12,7 +12,8 @@
             <li class="item" v-for="(item,index) in list" :key="index">
                 <img v-lazy="item.avatar" alt="" width="54">
                 <div class="center">
-                    <div class="name">{{item.nickname}}<span class="level">{{getLevel(item.level)}}</span></div>
+                    <div class="name">{{item.nickname}}</div>
+                    <span class="level">{{getLevel(item.level)}}</span>
                     <div class="mobile">{{item.mobile}}</div>
                 </div>
                 <!-- 设置级别 -->
@@ -156,7 +157,6 @@ export default {
                 padding 0 15px
                 line-height 24px
                 font-size 14px
-                margin-left 10px
             .name
                 color $text-l
                 font-weight bold

@@ -4,10 +4,15 @@
         <div ref="goodsDetailScroll" class="goodsDetail-scroll">
             
             <section v-if="goodsDetail" class="goodsDetail-container">
-                <swiper :options="swiperOption" v-if="goodsDetail.thumbnail_img">
+                <!-- <swiper :options="swiperOption" v-if="goodsDetail.thumbnail_img">
                     <swiper-slide  v-for="(img,index) in goodsDetail.thumbnail_img" :key="index">
                         <img v-lazy="img" alt="" class="slideImg">
                     </swiper-slide>
+                </swiper> -->
+                <swiper v-if="goodsDetail.thumbnail_img" auto :aspect-ratio="414/667" dots-position="center">
+                    <swiper-item class="swiper-demo-img" v-for="(img,index) in goodsDetail.thumbnail_img" :key="index">
+                      <img :src="img" class="slideImg">
+                    </swiper-item>
                 </swiper>
                 <!-- <span>{{textarr.indexOf(1)}}</span> -->
                 <!-- <span>{{custom_option_names.indexOf('color')}}</span> -->
@@ -21,7 +26,7 @@
                     <p class="name bold">{{goodsDetail.name}}</p>
                     <!-- <p class="desc">{{goodsDetail.desc}}</p> -->
                 </div>
-                <div class="title bold">详情页</div>
+                <div class="title bold">商品详情</div>
                 <div class="goodsDetail" v-if="goodsDetail.image_detail">
                     <div v-for="(img,imgindex) in goodsDetail.image_detail"> 
                         <img v-lazy="img" alt=""  class="goodsImg">
@@ -92,26 +97,16 @@
 <script>
 const env = process.env.NODE_ENV
 import Scroll from '@/base/scroll/index'
-import { swiper, swiperSlide } from 'vue-awesome-swiper'
+import { Swiper,SwiperItem } from 'vux'
 import CartControl from '@/components/cartcontrol/index'
 import {mapGetters, mapMutations} from 'vuex'
-import Qs from 'qs'
+import Qs from 'qs';
 export default {
     data() {
         return {
             textarr:[1,2],
             product_id:null,
             goodsDetail:{},
-            // 幻灯片的配置项
-            swiperOption: {
-                notNextTick: true,
-                pagination: '.swiper-pagination',
-                paginationType : 'fraction',
-                paginationClickable: true,
-                loop: false,
-                autoplay: 0,
-                autoplayDisableOnInteraction: false      
-            },
             isShow: false,
             submitText: '',
             custom_option:[],                   // 产品的custom_option属性，传递过来的custom option，img和price都已经处理。
@@ -133,8 +128,8 @@ export default {
         }
     },
     components: {
-        swiper,
-        swiperSlide,
+        Swiper,
+        SwiperItem,
         CartControl,
         Scroll
     },

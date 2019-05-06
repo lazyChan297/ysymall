@@ -15,7 +15,7 @@
                         {{lastExpressInfo.updatedAt}}
                     </p>
                 </div>
-                <div class="icon icon-link"></div>
+               
             </router-link>
             <div class="userInfo">
                 <div class="icon icon-location"></div>
@@ -30,7 +30,6 @@
                         {{details.customer_address_details}}
                     </p>
                 </div>
-                <div class="icon icon-link"></div>
             </div>
         </section>
         <section class="goods-container">
