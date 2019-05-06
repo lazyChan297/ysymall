@@ -11,7 +11,6 @@ import store from './store/index'
 import Qs from 'qs'
 import webStorageCache from 'web-storage-cache'
 import { AlertPlugin, AjaxPlugin, ConfirmPlugin, ToastPlugin, LoadingPlugin } from 'vux'
-import 'swiper/dist/css/swiper.css'
 import "./common/stylus/index.styl"
 import {getOpenid} from '@/common/js/util'
 import VConsole from 'vconsole/dist/vconsole.min.js' //import vconsole
