@@ -473,6 +473,9 @@ export default {
 </script>
 <style lang="stylus" scoped>
     @import "../../common/stylus/variable.styl";
+    .confirm-container
+        .content
+            margin 40px 0
     .header
         background #fff
         margin-bottom 10px

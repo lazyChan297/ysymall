@@ -2,6 +2,12 @@
     <div class="index-wrapper" ref="wrapper">
         <div class="scroll-container" ref="indexscroll" :data="productList">
             <div>
+                <transition name="slideTop">
+                    <router-link to="/inviter" tag="div" class="set_inviter" v-show="isSlide">
+                        <div>您还没有邀请人,请<span class="red">点击设置</span></div>
+                        <div class="icon icon-close" @click.stop="isSlide = false"></div>
+                    </router-link>
+                </transition>
                 <!-- inviter header -->
                 <div class="header" ref="header" v-if="headerInfo">
                     <div class="userInfo-container">
@@ -38,7 +44,7 @@
                 <!-- 商品 -->
                 <div class="goodsList-wrapper">
                         <div>
-                        <router-link :to="{path:`/goodsDetail/${g.product_id}`}" class="goodsItem" tag="div" v-for="(g,index) in productList">
+                        <router-link :to="{path:`/goodsDetail/${g.product_id}`}" class="goodsItem" tag="div" v-for="(g,index) in productList" :key="index">
                             <img :src="g.image" alt="">
                             <p class="name bold">{{g.name}}</p>
                             <div>
@@ -77,18 +83,6 @@ import {mapGetters,mapMutations} from 'vuex'
 import {XDialog} from 'vux'
 import Qs from 'qs'
 import Scroll from '@/base/scroll/index'
-// 阻止滚动时间
-const mo=function(e){e.preventDefault();};
-// 取消限制页面滚动
-function move(){
-        document.body.style.overflow='';//出现滚动条
-        document.removeEventListener("touchmove",mo,false);        
-}
-// 限制页面滚动
-function stop(){
-        document.body.style.overflow='hidden';        
-        document.addEventListener("touchmove",mo,false);//禁止页面滑动
-}
 const ICON_SRC = [
     'quanbu',
     'jiankang',
@@ -119,7 +113,8 @@ export default {
             tabContainerWidth:'',
             userSn:'',
             headerInfo:null,
-            ready:global.ready
+            ready:global.ready,
+            isSlide:false
         }
     },
     watch:{
@@ -266,6 +261,9 @@ export default {
                     this.productList = this.allProdList
                     if(!inviter) {
                         this.headerInfo = this.userInfo
+                        if(!this.headerInfo.inviterNickname) {
+                            this.isSlide = true
+                        }
                     } else {
                         this.headerInfo = res.data.customerInfoOnTop
                         // this.savaInviteInfo(res.data.customerInfoOnTop)
@@ -343,6 +341,29 @@ export default {
     @import '../../common/stylus/variable.styl';
     @import '../../common/stylus/dialog.styl';
     @import '../../common/css/media.css';
+    /* 设置邀请人 */
+    .set_inviter
+        position absolute
+        display flex
+        top 0
+        left 0
+        width 100%
+        align-items center
+        line-height 40px
+        justify-content space-between
+        background #fff
+        padding 0 15px
+        z-index 1
+        text-align left
+        box-sizing border-box
+        .red
+            color $red
+            background #fff
+    /* 首页设置邀请人 */
+    .slideTop-enter, .slideTop-leave-to
+        transform translateY(-100%)
+    .slideTop-enter-active, .slideTop-leave-active
+        transition all 0.25s
     /* 弹窗样式 */
     .confirm-container .content
         text-align left

@@ -173,6 +173,14 @@ export default new Router({
       }
     },
     {
+      path: '/inviterList',
+      name: 'inviterList',
+      component: () => import('@/views/inviterList/index'),
+      meta:{
+        title: '绑定邀请人'
+      }
+    },
+    {
       path: '/myearnings',
       name: 'earnings',
       component: () => import('@/views/myearnings/index'),

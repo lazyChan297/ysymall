@@ -5,23 +5,49 @@
             <router-link tag="li" to="/cash/non_arrival">未到账</router-link>
         </ul>
         <router-view></router-view> -->
-        <ul class="sheet">
-            <router-link to="/cashSuccess/1" tag="li">
+        <ul class="sheet" v-if="list.length">
+            <router-link to="/cashSuccess/1" tag="li" v-for="(item,index) in list" :key="index">
                 <p>
                     <span>奖励到账提醒</span>
-                    <span>2019-01-16 16:17:42</span>
+                    <span>{{item.toAccountAt}]</span>
                 </p>
                 <div>
-                    <span class="num bold">￥3.00</span>
+                    <span class="num bold">￥{{item.amount}}</span>
                     <span>陈层(ID:2345656)购买缘生源相关商品，您获得3级内奖励。</span>
                 </div>
-                <p class="submit-container"><span></span><span class="submit">点击重新提交申请</span></p>
+                <!-- <p class="submit-container"><span></span><span class="submit">点击重新提交申请</span></p> -->
             </router-link>
         </ul>
+        <div v-else class="empty">暂无提现记录</div>
     </div>
 </template>
+<script>
+import Qs from 'qs';
+export default {
+    data() {
+        return {
+            list:[]
+        }
+    },
+    mounted() {
+        this.getList()
+    },
+    methods:{
+        getList(){
+            let params = Qs.stringify({page:1,number:10})
+            this.$axios.post('/finance/expenditure/all',params).then((res)=>{
+                if(res.data.code === 200) {
+                    this.list = res.data.data
+                }
+            })
+        }
+    }
+}
+</script>
 <style lang="stylus" scoped>
 @import "../../common/stylus/variable.styl";
+    .empty
+        padding 100px 0 0
     .cash-wrapper
         .tab
             line-height 40px

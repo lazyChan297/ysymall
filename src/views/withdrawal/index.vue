@@ -3,10 +3,10 @@
         <p class="title">提现金额</p>
         <div class="input-container">
             <span class="bold">¥</span>
-            <input type='tel' v-model="account">
+            <input type='tel' v-model="amount">
         </div>
         <!-- <div class="desc">当前余额 ￥4642.00</div> -->
-        <div class="large-green-button disabled" @click="submit">提现</div>
+        <div class="large-green-button" @click="submit" :class="amount>0?'':'disabled'">提现</div>
         <span class="tip">提现请注意： </span>
         <span class="tip">每日最多提现10次； </span>
         <span class="tip">每笔金额≥￥1.00并且≤￥500.00元； </span>
@@ -20,7 +20,8 @@
 </template>
 <script>
 import {XDialog} from 'vux'
-import {validAccount} from '@/common/js/validated'
+import {validAccount} from '@/common/js/validated';
+import Qs from 'qs';
 export default {
     data() {
         return {
@@ -28,7 +29,7 @@ export default {
             dialog: {
                 text: '暂时不能提现'
             },
-            account: null,
+            amount: '',
             cansubmit:false
         }
     },
@@ -50,13 +51,18 @@ export default {
         },
         hideDialog() {
             this.isShowDialog = false
+            this.$router.go(-1);
         },
         submit() {
-            this.isShowDialog = true
-            // let valid = validAccount(this.account)
-            // if (valid) {
-            //     this.isShowDialog = true
-            // }
+            let valid = validAccount(this.amount)
+            if (!valid) return false
+            let params = Qs.stringify({amount:this.amount})
+            this.$axios.post('/finance/expenditure/withdraw',params).then((res)=>{
+                if(res.data.code === 200) {
+                    this.dialog.text = res.data.message
+                    this.isShowDialog = true
+                }
+            })
         },
         confirm() {
             this.hideDialog()

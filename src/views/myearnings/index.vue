@@ -41,7 +41,7 @@
                         </p>
                         <div>
                             <span class="num bold">￥{{item.amount}}</span>
-                            <span>{{item.buyer.nickname}}购买缘生源相关商品，您获得3级内奖励。</span>
+                            <span v-if="item.info" class="info">{{item.info}}</span>
                         </div>
                     </li>
                     
@@ -231,14 +231,22 @@ export default {
                         display flex
                         align-items center
                         margin-top 10px
+                        &>div
+                            flex 1
+                            text-align right
                         span
                             &:last-child
                                 flex 1
-                                font-size 14px
+                                /* font-size 14px */
+                        .info
+                            font-size 14px
+                            text-align right
+                            line-height 22px
                     .num
                         color $red
                         font-size 20px
                         margin-right 50px
+                        text-align left
                     .ordernum,.orderdate
                         font-size 14px
                         line-height 20px
