@@ -91,22 +91,22 @@
                 </div>
                 <div class="icon icon-link"></div>
             </router-link>
-            <router-link class="cell" to="/applyVip" tag="div" v-if="userInfo.level==='member'">
+            <div class="cell" @click="applyVip" tag="div" v-if="userInfo.level==='member'">
                 <div>
                     <span class="icon icon-UpVip"></span>
                     <span class="bold">申请VIP</span>
                     
                 </div>
                 <div class="icon icon-link"></div>
-            </router-link>
-            <router-link class="cell" to="/applyAgent" tag="div" v-if="userInfo.level==='vip'||userInfo.level==='member'">
+            </div>
+            <div class="cell" @click="applyAgent" v-if="userInfo.level==='vip'||userInfo.level==='member'">
                 <div>
                     <span class="icon icon-UpAgent"></span>
                     <span class="bold">申请总代理</span>
                     
                 </div>
                 <div class="icon icon-link"></div>
-            </router-link>
+            </div>
         </section>
         <tab-bar/>
     </div>
@@ -135,6 +135,12 @@ export default {
                 // 总代只可以开通vip
                 this.$router.push('/vipList')
             }
+        },
+        applyVip(){
+            window.location.href = global.serverHost + '/checkout/onepage/pay/#/applyVip/'
+        },
+        applyAgent() {
+            window.location.href = global.serverHost + '/checkout/onepage/pay/#/applyAgent/'
         }
     }
 }

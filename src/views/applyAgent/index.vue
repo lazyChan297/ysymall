@@ -79,6 +79,7 @@ export default {
             })
         },
         submit(){
+            
             this.$axios.post('/customer/level/upgrade-to-general-agent').then((res)=>{
                 if(res.data.code === 200) {
                     if(res.data.data.needWechat) {
@@ -107,6 +108,10 @@ export default {
                         type:'succes',
                         time:1000
                     })
+                    let timer = setTimeout(() => {
+                        window.location.href = global.serverHost+ '#/my'
+                    }, 1000);
+                    
                 }
             });
         }

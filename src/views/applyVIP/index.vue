@@ -109,6 +109,9 @@ export default {
                         type:'succes',
                         time:1000
                     })
+                    let timer = setTimeout(() => {
+                        window.location.href = global.serverHost+ '#/my'
+                    }, 1000);
                 }
             });
         }

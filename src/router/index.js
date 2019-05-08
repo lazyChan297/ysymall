@@ -399,7 +399,7 @@ export default new Router({
       }
     },
     {
-      path:'/applyVip',
+      path:'/applyVip/',
       name:'applyVip',
       component:()=>import('@/views/applyVIP/index'),
       meta:{
@@ -407,7 +407,7 @@ export default new Router({
       }
     },
     {
-      path:'/applyAgent',
+      path:'/applyAgent/',
       name:'applyAgent',
       component:()=>import('@/views/applyAgent/index'),
       meta:{
