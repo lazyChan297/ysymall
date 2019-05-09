@@ -17,13 +17,17 @@
                     <!-- <div class="icon icon-link"></div> -->
                 </div>
             </div>
-            <!-- <router-link tag="div" to="/inviter" class="cell">
+            <router-link tag="div" to="/inviterList" class="cell" v-if="userInfo.level=='registered'">
                 <label>邀请人</label>
                 <div>
-                    <span>shbh</span>
+                    <span>{{userInfo.inviterNickname || '设置邀请人'}}</span>
                     <div class="icon icon-link"></div>
                 </div>
-            </router-link> -->
+            </router-link>
+            <div class="cell" v-else-if="userInfo.inviterNickname">
+                <label>邀请人</label>
+                <div>{{userInfo.inviterNickname}}</div>
+                </div>
             <div class="cell" @click="chooseAddr">
                 <label>收货地址</label>
                 <div class="icon icon-link"></div>
@@ -40,6 +44,7 @@ import {mapGetters} from 'vuex'
 import Qs from 'qs'
 export default {
     created(){
+        console.log("userInfo")
         console.log(this.userInfo)
     },
     computed:{
@@ -50,6 +55,9 @@ export default {
     methods:{
         getLevel(level){
             switch(level){
+                case('registered'):
+                    return "注册会员";
+                    break;
                 case('member'): 
                     return "会员";
                     break;

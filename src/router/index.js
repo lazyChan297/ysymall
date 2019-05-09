@@ -22,7 +22,7 @@ export default new Router({
       name: 'index',
       component: () => import('@/views/index/index'),
       meta: {
-        title: '首页',
+        title: '缘生源',
         keepAlive:true
       },
       children:[
@@ -31,7 +31,7 @@ export default new Router({
           name: 'goodsDetail',
           component: () => import('@/views/goodsDetail/index'),
           meta: {
-            title: '商品详情'
+            title: '缘生源-商品详情'
           }
         }
       ]

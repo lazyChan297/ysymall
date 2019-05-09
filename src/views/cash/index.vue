@@ -9,11 +9,11 @@
             <router-link to="/cashSuccess/1" tag="li" v-for="(item,index) in list" :key="index">
                 <p>
                     <span>奖励到账提醒</span>
-                    <span>{{item.toAccountAt}]</span>
+                    <span>{{item.appliedAt}}</span>
                 </p>
                 <div>
                     <span class="num bold">￥{{item.amount}}</span>
-                    <span>陈层(ID:2345656)购买缘生源相关商品，您获得3级内奖励。</span>
+                    <span>{{item.toAccountAt}}</span>
                 </div>
                 <!-- <p class="submit-container"><span></span><span class="submit">点击重新提交申请</span></p> -->
             </router-link>
@@ -89,7 +89,12 @@ export default {
             .num
                 color $red
                 font-size 20px
-                margin-right 50px
+                width 60%
+                overflow hidden
+                white-space nowrap
+                text-overflow ellipsis
+                display block
+                text-align left
             .submit-container
                 border-top 1px solid $line
                 padding-right 15px

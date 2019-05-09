@@ -9,7 +9,7 @@
                         <img v-lazy="img" alt="" class="slideImg">
                     </swiper-slide>
                 </swiper> -->
-                <swiper v-if="goodsDetail.thumbnail_img" auto :aspect-ratio="414/667" dots-position="center">
+                <swiper v-if="goodsDetail.thumbnail_img" dots-position="center" :height="slider_height">
                     <swiper-item class="swiper-demo-img" v-for="(img,index) in goodsDetail.thumbnail_img" :key="index">
                       <img :src="img" class="slideImg">
                     </swiper-item>
@@ -96,6 +96,7 @@
 </template>
 <script>
 const env = process.env.NODE_ENV
+const SCREEN_WIDTH = document.documentElement.clientWidth || document.body.clientWidth;
 import Scroll from '@/base/scroll/index'
 import { Swiper,SwiperItem } from 'vux'
 import CartControl from '@/components/cartcontrol/index'
@@ -104,6 +105,7 @@ import Qs from 'qs';
 export default {
     data() {
         return {
+            slider_height:SCREEN_WIDTH+"px",
             textarr:[1,2],
             product_id:null,
             goodsDetail:{},

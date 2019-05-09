@@ -29,7 +29,7 @@
                 <div class="province">{{item.province}}</div>
                 <div class="city">{{item.city}}</div>
                 <div class="county">{{item.county}}</div>
-                <div>
+                <div class="status_box">
                     <span class="status" :class="item.status=='已开通'?'active':''">{{item.status}}</span>
                 </div>
             </li>
@@ -222,6 +222,8 @@ export default {
                 overflow hidden
                 text-overflow ellipsis
                 white-space nowrap
+            &.status_box
+                text-align right
             .status
                 display inline-block
                 margin 0 auto
@@ -231,6 +233,7 @@ export default {
                 line-height 24px
                 padding 0 6px
                 background $text-lll
+                font-size 14px
             .active
                 background $green
 .footer

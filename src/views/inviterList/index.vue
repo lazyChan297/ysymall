@@ -81,6 +81,7 @@ export default {
                         text:'设置成功',
                         type:'success'
                     })
+                    window.location.href = global.serverHost + '#/setting'
                 } else {
                     this.$vux.toast.show({
                         text:res.data.message,

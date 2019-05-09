@@ -5,8 +5,8 @@
             <span class="bold">¥</span>
             <input type='tel' v-model="amount">
         </div>
-        <!-- <div class="desc">当前余额 ￥4642.00</div> -->
-        <div class="large-green-button" @click="submit" :class="amount>0?'':'disabled'">提现</div>
+        <div class="desc">当前余额 ￥{{balance}}</div>
+        <div class="large-green-button" @click="submit" :class="cansubmit?'':'disabled'">提现</div>
         <span class="tip">提现请注意： </span>
         <span class="tip">每日最多提现10次； </span>
         <span class="tip">每笔金额≥￥1.00并且≤￥500.00元； </span>
@@ -30,7 +30,9 @@ export default {
                 text: '暂时不能提现'
             },
             amount: '',
-            cansubmit:false
+            cansubmit:false,
+            balance:'',
+            disable:false
         }
     },
     components: {
@@ -38,12 +40,19 @@ export default {
     },
     watch:{
         account(val){
+            if(this.disable) {
+                this.cansubmit = false;
+                return false;
+            }
             if(val>0){
                 this.cansubmit = true
             } else {
                 this.cansubmit = false
             }
         }
+    },
+    mounted() {
+        this.getWithDrawal()
     },
     methods: {
         showDialog() {
@@ -53,8 +62,22 @@ export default {
             this.isShowDialog = false
             this.$router.go(-1);
         },
+        getWithDrawal() {
+            this.$axios.post('/finance/expenditure/withdraw').then((res)=>{
+                if(res.data.code !== 200) {
+                   this.$vux.toast.show({
+                       text:res.data.message,
+                       type:'warn',
+                       time:3000
+                   })
+                   this.disable = true
+                } else {
+                    this.balance = res.data.data.balance
+                }
+            })
+        },
         submit() {
-            let valid = validAccount(this.amount)
+            let valid = validAccount(this.amount)&&!this.disable
             if (!valid) return false
             let params = Qs.stringify({amount:this.amount})
             this.$axios.post('/finance/expenditure/withdraw',params).then((res)=>{
@@ -102,6 +125,7 @@ export default {
     line-height 40px
     padding-left 15px
     background #fff
+    text-align left
 .input-container
     display flex
     align-items center
@@ -126,12 +150,14 @@ export default {
     line-height 40px
     padding-left 15px
     background #fff
+    text-align left
 .tip
     display block
     font-size 14px
     margin-left 15px
     color $text-lll
     line-height 20px
+    text-align left
 .disabled
     background $text-lll
     box-shadow 0px 4px 7px 0px $text-lll

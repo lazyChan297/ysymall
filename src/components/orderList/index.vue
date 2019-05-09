@@ -14,7 +14,7 @@
                                     <span class="price">¥{{gitem.price}}</span>
                                 </p>
                                 <p>
-                                    <span class="desc">生姜艾叶萃取润发护发精华发根护理、净爽控油</span>
+                                    <span class="desc">{{getOptionName(gitem.custom_option_info)}}</span>
                                     <span class="quantity bold">x{{gitem.qty}}</span>
                                 </p>
                             </div>
@@ -36,6 +36,8 @@ export default {
         return{
             orderList:[],
             status:'',
+            custom_option_names:'',
+            option_txt_arr:[],
             listParams:{
                 loading:false,
                 nomore:false,
@@ -72,6 +74,15 @@ export default {
             })
             this.$axios.post(url,params).then((res)=>{
                 if(res.data.code === 200) {
+                    this.custom_option_names = res.data.data.orderList[0].products[0].custom_option_names
+                    // 保存可以转换为汉字的规格属性值
+                    if(this.custom_option_names) {
+                        let attr = []
+                        for(let i in this.custom_option_names) {
+                            attr.push(i)
+                        }
+                        this.option_txt_arr = attr
+                    }
                     if(res.data.data.orderList.length < this.listParams.number) {
                         this.listParams.nomore = true
                     }
@@ -81,6 +92,28 @@ export default {
                     this.orderList = ori_orderList.concat(orderList)
                 }
             })
+        },
+        // 获取商品规格
+        getOptionName(option){
+            let str = '',custom_option_names = this.custom_option_names,
+                option_txt_arr = this.option_txt_arr
+            for(let goodsOpt in option) {
+                for(let k in custom_option_names) {
+                   if(goodsOpt.toLowerCase() == k) {
+                       str += custom_option_names[k]+":"
+                       for(let v in custom_option_names) {
+                            if(v===option[goodsOpt]){
+                                str += custom_option_names[v]+";"
+                            } else if(option_txt_arr.indexOf(option[goodsOpt])==-1){
+                                str += option[goodsOpt] + ";"
+                                break;
+                           }
+                       } 
+                       break;
+                   }
+                } 
+            }
+            return str
         },
         handleScroll(){
             let scrollTop =  document.documentElement.scrollTop||document.body.scrollTop
@@ -134,6 +167,7 @@ export default {
                 .name
                     font-size 18px
                     margin-bottom 4px
+                    text-align left
                 .desc
                     color $text-ll
                     font-size 12px

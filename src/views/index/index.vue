@@ -3,7 +3,7 @@
         <div class="scroll-container" ref="indexscroll" :data="productList">
             <div>
                 <transition name="slideTop">
-                    <router-link to="/inviter" tag="div" class="set_inviter" v-show="isSlide">
+                    <router-link to="/inviterList" tag="div" class="set_inviter" v-show="isSlide">
                         <div>您还没有邀请人,请<span class="red">点击设置</span></div>
                         <div class="icon icon-close" @click.stop="isSlide = false"></div>
                     </router-link>

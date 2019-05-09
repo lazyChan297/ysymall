@@ -69,7 +69,10 @@
                 </div>
                 <div class="icon icon-link"></div>
             </router-link>
-            <div class="cell" to="/chooseLevel" @click="chooseLevel">
+            <div class="cell" 
+                 to="/chooseLevel" 
+                 @click="chooseLevel" 
+                 v-if="userInfo.level!='vip'&&userInfo.level!='registered'&&userInfo.level!='member'">
                 <div>
                     <span class="icon icon-vip"></span>
                     <span class="bold">开通VIP</span>

@@ -21,6 +21,8 @@
             <div class="date-container">
                 <div class="icon icon-date" @click="isShow = true" v-show="!value1"></div>
                 <datetime
+                    :min-year="min_year"
+                    :max-year="max_year"
                     v-model="value1"
                     format="YYYY-MM"
                     @on-change="onChange"></datetime>
@@ -57,7 +59,9 @@ export default {
             isShow: false,
             earnInfo:null,
             startedAt:'',
-            endedAt:''
+            endedAt:'',
+            min_year:new Date().getFullYear() - 1,
+            max_year: Number(new Date().getFullYear()) + 1
         }
     },
     components: {
