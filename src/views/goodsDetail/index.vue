@@ -557,6 +557,11 @@ export default {
                     } else {
                         window.location.href = global.serverHost + '/checkout/onepage/pay/#/checkout/onepage/pay/'
                     }
+                } else {
+                    this.$vux.toast.show({
+                        text:res.data.message,
+                        type:'warn'
+                    })
                 }
             })
         },
