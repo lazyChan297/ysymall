@@ -35,8 +35,11 @@
             <div>
                 <span class="label">级别有效期</span>
                 <div class="content" @click="showPopupDate('agent')">
-                    <span class="selected" v-if="agentStartedAt&&agentEndedAt">
+                    <!-- <span class="selected" v-if="agentStartedAt&&agentEndedAt">
                         {{agentStartedAt.replace(/-/g,'/')}}-{{agentEndedAt.replace(/-/g,'/')}}
+                    </span> -->
+                    <span class="selected" v-if="agentEndedAt">
+                        {{agentEndedAt.replace(/-/g,'/')}}
                     </span>
                     <span v-else>请选择有效期</span>
                 </div>
@@ -54,8 +57,11 @@
             <div @click="showPopupDate('vip')">
                 <span class="label">VIP有效期</span>
                 <div class="content">
-                    <span class="selected" v-if="vipStartedAt&&vipEndedAt">
+                    <!-- <span class="selected" v-if="vipStartedAt&&vipEndedAt">
                         {{vipStartedAt.replace(/-/g,'/')}}-{{vipEndedAt.replace(/-/g,'/')}}
+                    </span> -->
+                    <span class="selected" v-if="vipEndedAt">
+                        {{vipEndedAt.replace(/-/g,'/')}}
                     </span>
                     <span v-else>请选择有效期</span>
                 </div>
@@ -70,8 +76,11 @@
             <div @click="showPopupDate('general')">
                 <span class="label">总代有效期</span>
                 <div class="content">
-                    <span class="selected" v-if="generalAgentStartedAt&&generalAgentEndedAt">
+                    <!-- <span class="selected" v-if="generalAgentStartedAt&&generalAgentEndedAt">
                         {{generalAgentStartedAt.replace(/-/g,'/')}}-{{generalAgentEndedAt.replace(/-/g,'/')}}
+                    </span> -->
+                    <span class="selected" v-if="generalAgentEndedAt">
+                        {{generalAgentEndedAt.replace(/-/g,'/')}}
                     </span>
                     <span v-else>请选择有效期</span>
                 </div>
@@ -254,9 +263,13 @@ export default {
         },
         // 监听时间改变
         generalDateChange(val){
-            if(val.length==2) {
-                let frist = val[0],second = val[1]
-                let firstArr = val[0].split('-'), secondArr = second.split('-');
+            if(val.length==1) {
+                let year = new Date().getFullYear(),
+                    month = new Date().getMonth()<=9?'0'+(Number(new Date().getMonth())+1):Number(new Date().getMonth())+1,
+                    day = new Date().getDate();
+                let second = val[0]
+                // let firstArr = frist.split('/'), secondArr = second.split('-');
+                let firstArr = [year,month,day],secondArr = second.split('-');
                 // 有效期在同一年,
                 let valid = (firstArr[0]<secondArr[0]) || (firstArr[0]==secondArr[0]&&firstArr[1]<secondArr[1]) || (firstArr[0]==secondArr[0]&&firstArr[1]==secondArr[1]&&firstArr[2]<secondArr[2]) 
                 if(!valid) {
@@ -266,7 +279,7 @@ export default {
                         time:500
                     })
                     setTimeout(() => {
-                        this.isshowPopupDate = false
+                        // this.isshowPopupDate = false
                         this.validDate = []
                     }, 500);
                     
@@ -274,14 +287,17 @@ export default {
                 }
                 if(this.current_date == 'general') {
                     this.isshowPopupDate = false
-                    this.generalAgentStartedAt = val[0]
-                    this.generalAgentEndedAt = val[1]
+                    // this.generalAgentStartedAt = val[0]
+                    // this.generalAgentEndedAt = val[1]
+                    this.generalAgentEndedAt = val[0]
                 } else if (this.current_date == 'vip') {
-                    this.vipStartedAt = val[0]
-                    this.vipEndedAt = val[1]
+                    // this.vipStartedAt = val[0]
+                    // this.vipEndedAt = val[1]
+                    this.vipEndedAt = val[0]
                 } else if (this.current_date == 'agent') {
-                    this.agentStartedAt = val[0]
-                    this.agentEndedAt = val[1]
+                    // this.agentStartedAt = val[0]
+                    // this.agentEndedAt = val[1]
+                    this.agentEndedAt = val[0]
                 }
                 this.isshowPopupDate = false
                 this.validDate = []
@@ -382,15 +398,27 @@ export default {
                 this.showWarn("请选择地区")
                 return false
             }
-            if(!this.agentStartedAt){
+            // if(!this.agentStartedAt){
+            //     this.showWarn("请选择级别有效期")
+            //     return false
+            // }
+            if(!this.agentEndedAt){
                 this.showWarn("请选择级别有效期")
                 return false
             }
-            if(!this.vipStartedAt){
+            // if(!this.vipStartedAt){
+            //     this.showWarn("请选择VIP有效期")
+            //     return false
+            // }
+            if(!this.vipEndedAt){
                 this.showWarn("请选择VIP有效期")
                 return false
             }
-            if(!this.generalAgentStartedAt){
+            // if(!this.generalAgentStartedAt){
+            //     this.showWarn("请选择总代有效期")
+            //     return false
+            // }
+            if(!this.generalAgentEndedAt){
                 this.showWarn("请选择总代有效期")
                 return false
             }
@@ -431,17 +459,19 @@ export default {
                 payableAmount:this.payableAmount,
                 paidAmount:this.paidAmount,
                 districtId:this.districtId,
-                agentStartedAt:this.agentStartedAt,
+                // agentStartedAt:this.agentStartedAt,
+                agentStartedAt:"2019-05-04",
                 agentEndedAt:this.agentEndedAt,
-                vipStartedAt:this.vipStartedAt,
+                vipStartedAt:"2019-05-04",
                 vipEndedAt:this.vipEndedAt,
-                generalAgentStartedAt:this.generalAgentStartedAt,
+                generalAgentStartedAt:"2019-05-04",
                 generalAgentEndedAt:this.generalAgentEndedAt,
                 vipQuota:this.vipQuota,
                 generalAgentQuota:this.generalAgentQuota,
                 withdraw:Number(this.withdraw),
                 distribute:Number(this.distribute)
             })
+            // console.log(params)
             this.$axios.post('/customer/level/upgrade-step-one',params).then((res)=>{
                 if(res.data.code === 200) {
                     this.isShowDialog = true

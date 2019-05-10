@@ -217,7 +217,7 @@ section
                 span
                     font-size 14px
                     color $text-l
-                     -webkit-line-clamp 1
+                    -webkit-line-clamp 1
                     word-break break-all
                     display block
                     white-space nowrap

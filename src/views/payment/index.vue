@@ -17,7 +17,7 @@
             <div class="cell"><label>商城</label></div>
             <div class="goods-container">
                 <div class="goods" v-for="(item,index) in goodslist" :key="index">
-                    <img :src="item.imgUrl" width="80" height="80" alt="">
+                    <img :src="item.imgUrl" width="80" height="80" alt="" class="img">
                     <div class="text">
                         <p>
                             <span class="name bold">{{item.name}}</span>
@@ -157,7 +157,6 @@ export default {
                 paySign: arg.paySign, // 支付签名
                 success: function (res) {
                     // 支付成功后的回调函数
-                    console.log(res)
                     that.$vux.toast.show({
                         text: '支付成功',
                         type:'succes',
@@ -215,6 +214,9 @@ export default {
         text-align left
         &:last-child
             border-bottom 1px solid $line
+        .img
+            width 80px
+            height 80px
         .text 
             flex 1
             margin-left 10px

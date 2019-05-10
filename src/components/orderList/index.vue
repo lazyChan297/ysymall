@@ -9,13 +9,13 @@
                         <div class="goods">
                             <img :src="gitem.image" width="80" height="80" alt="">
                             <div class="text">
-                                <p>
+                                <div class="name_price">
                                     <span class="name bold">{{gitem.name}}</span>
                                     <span class="price">¥{{gitem.price}}</span>
-                                </p>
-                                <p>
-                                    <span class="desc">{{getOptionName(gitem.custom_option_info)}}</span>
-                                    <span class="quantity bold">x{{gitem.qty}}</span>
+                                </div>
+                                <p class="option_qty">
+                                    <span class="desc">{{getOptionName(gitem.custom_option_info,gitem.custom_option_names)}}</span>
+                                    <span class="quantity">x{{gitem.qty}}</span>
                                 </p>
                             </div>
                         </div>
@@ -74,15 +74,15 @@ export default {
             })
             this.$axios.post(url,params).then((res)=>{
                 if(res.data.code === 200) {
-                    this.custom_option_names = res.data.data.orderList[0].products[0].custom_option_names
-                    // 保存可以转换为汉字的规格属性值
-                    if(this.custom_option_names) {
-                        let attr = []
-                        for(let i in this.custom_option_names) {
-                            attr.push(i)
-                        }
-                        this.option_txt_arr = attr
-                    }
+                    // this.custom_option_names = res.data.data.orderList[0].products[0].custom_option_names
+                    // // 保存可以转换为汉字的规格属性值
+                    // if(this.custom_option_names) {
+                    //     let attr = []
+                    //     for(let i in this.custom_option_names) {
+                    //         attr.push(i)
+                    //     }
+                    //     this.option_txt_arr = attr
+                    // }
                     if(res.data.data.orderList.length < this.listParams.number) {
                         this.listParams.nomore = true
                     }
@@ -94,18 +94,23 @@ export default {
             })
         },
         // 获取商品规格
-        getOptionName(option){
-            let str = '',custom_option_names = this.custom_option_names,
-                option_txt_arr = this.option_txt_arr
+        getOptionName(option,opt){
+            let str = '',custom_option_names = opt
+            let option_txt_arr = []
+            for(let j in opt) {
+                option_txt_arr.push(j)
+            }
             for(let goodsOpt in option) {
                 for(let k in custom_option_names) {
                    if(goodsOpt.toLowerCase() == k) {
                        str += custom_option_names[k]+":"
                        for(let v in custom_option_names) {
-                            if(v===option[goodsOpt]){
+                            if(v==option[goodsOpt]){
                                 str += custom_option_names[v]+";"
+                                break;
                             } else if(option_txt_arr.indexOf(option[goodsOpt])==-1){
                                 str += option[goodsOpt] + ";"
+                                // console.log(option[goodsOpt])
                                 break;
                            }
                        } 
@@ -133,6 +138,7 @@ export default {
     @import "../../common/stylus/variable.styl";
     .order
         margin 0 15px 10px
+        paddind-bottom 10px
     .cell
         display flex
         justify-content space-between
@@ -159,15 +165,59 @@ export default {
             border-bottom 1px solid $line
         .text 
             flex 1
-            margin-left 10px
+            /* margin-left 10px */
+            padding 0 0 0 10px
+            box-sizing border-box
             padding-top 4px
-            &>p
+            .name_price
                 display flex
+                line-height 22px
+                flex 1
                 justify-content space-between
+                &>div
+                    flex 1
+                    display block
                 .name
                     font-size 18px
                     margin-bottom 4px
                     text-align left
+                    overflow hidden
+                    display -webkit-box
+                    text-overflow ellipsis
+                    -webkit-line-clamp 1
+                    -webkit-box-orient vertical
+            .option_qty
+                display flex
+                flex 1
+                justify-content space-between
+                align-items center
+                text-align left
+            .desc
+                color $text-ll
+                font-size 12px
+                max-width 200px
+                line-height 18px
+                text-align left
+            .quantity
+                color $text-ll
+            /* &>div
+                display flex
+                .name_price
+                    display flex
+                    flex 1
+                    justify-content space-between
+                .option_qty
+                    flex 1
+                    justify-content space-between
+                .name
+                    font-size 18px
+                    margin-bottom 4px
+                    text-align left
+                    display block
+                    text-overflow ellipsis
+                    overflow hidden
+                    white-space nowrap
+                    width 70%
                 .desc
                     color $text-ll
                     font-size 12px
@@ -175,7 +225,7 @@ export default {
                     line-height 18px
                     text-align left
                 .quantity
-                    color $text-lll
+                    color $text-lll */
     .check,.confirm
         font-size 14px
         text-align center

@@ -10,7 +10,7 @@
                 <div>还可开通：<span :class="level==='generalAgent'?'red':'green'">{{generalInfo.generalAgentLeft}}</span>人</div>
             </div>
             <li class="item" v-for="(item,index) in list" :key="index">
-                <img v-lazy="item.avatar" alt="" width="54">
+                <img v-lazy="item.avatar" alt="" class="avatar">
                 <div class="center">
                     <div class="name">{{item.nickname}}</div>
                     <span class="level">{{getLevel(item.level)}}</span>
@@ -146,6 +146,8 @@ export default {
         align-items center
         img
             border-radius 50%
+            width 54px
+            height 54px
         .center
             text-align left
             margin-left 10px

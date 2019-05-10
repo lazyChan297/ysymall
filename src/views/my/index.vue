@@ -1,7 +1,7 @@
 <template>
     <div class="my-wrapper">
         <div class="header">
-            <img :src="userInfo.avatar" alt="" width="70" height="70px">
+            <img v-lazy="userInfo.avatar" alt=""  class="avatar">
             <div class="text">
                 <p class="name bold">{{userInfo.nickname}}</p>
                 <p class="mobile">{{userInfo.mobile}}</p>
@@ -31,7 +31,7 @@
                 <span>二维码</span><span class="red">名片</span>
             </div>
             <div class="desc">一键打通社交网络，全方位展示自己</div>
-            <img src="../../common/images/qrcode.png" alt="" width="80">
+            <img src="../../common/images/qrcode.png" alt="" class="qrcode_img">
         </router-link>
         <section>
             <router-link class="cell" to="/myearnings" tag="div">
@@ -166,6 +166,8 @@ export default {
         img
             border-radius 50%
             border 2px solid #fff
+            height 70px
+            width 70px
         .text
             flex 1
             color #fff
@@ -228,6 +230,7 @@ export default {
             margin-left 15px
             margin-top 10px
         img
+            width 80px
             position absolute
             top 10px
             right 10px

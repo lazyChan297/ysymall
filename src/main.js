@@ -108,6 +108,7 @@ if(global.token || wsCache.get('token') ){
 const whiteList = ['index','cart','goodsDetail','login','inviteConfirm','rank','payment']
 // router
 router.beforeEach((to, from, next) => {
+  NProgress.start()
   if (to.meta.title) {
     document.title = to.meta.title
   }

@@ -39,7 +39,7 @@ export default {
         XDialog
     },
     watch:{
-        account(val){
+        amount(val){
             if(this.disable) {
                 this.cansubmit = false;
                 return false;
@@ -73,6 +73,7 @@ export default {
                    this.disable = true
                 } else {
                     this.balance = res.data.data.balance
+                    this.disable = false
                 }
             })
         },

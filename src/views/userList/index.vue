@@ -6,7 +6,7 @@
         </div>
         <ul v-if="vistors.visitorsInfo">
             <li v-for="(item,index) in vistors.visitorsInfo" :key="index">
-                <img :src="item.avatar" alt="" width="54" height="54">
+                <img :src="item.avatar" alt="" class="avatar">
                 <!-- <img src="../../common/images/default_pic.jpg" alt="" width="54" height="54"> -->
                 <div class="text">
                     <p>
@@ -121,6 +121,8 @@ ul>li
         border-bottom none
     img
         border-radius 50%
+        width 54px
+        height 54px
     .text 
         flex 1
         text-align left

@@ -261,7 +261,7 @@ export default {
                     this.productList = this.allProdList
                     if(!inviter) {
                         this.headerInfo = this.userInfo
-                        if(!this.headerInfo.inviterNickname) {
+                        if(!this.headerInfo.hasInviter) {
                             this.isSlide = true
                         }
                     } else {

@@ -6,17 +6,17 @@
         </ul>
         <router-view></router-view> -->
         <ul class="sheet" v-if="list.length">
-            <router-link to="/cashSuccess/1" tag="li" v-for="(item,index) in list" :key="index">
+            <li  v-for="(item,index) in list" :key="index">
                 <p>
                     <span>奖励到账提醒</span>
                     <span>{{item.appliedAt}}</span>
                 </p>
                 <div>
                     <span class="num bold">￥{{item.amount}}</span>
-                    <span>{{item.toAccountAt}}</span>
+                    <span>到账时间：{{item.toAccountAt}}</span>
                 </div>
                 <!-- <p class="submit-container"><span></span><span class="submit">点击重新提交申请</span></p> -->
-            </router-link>
+            </li>
         </ul>
         <div v-else class="empty">暂无提现记录</div>
     </div>
@@ -89,7 +89,7 @@ export default {
             .num
                 color $red
                 font-size 20px
-                width 60%
+                /* width 60% */
                 overflow hidden
                 white-space nowrap
                 text-overflow ellipsis

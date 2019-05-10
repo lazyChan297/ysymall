@@ -35,15 +35,15 @@
         <section class="goods-container">
             <div>
                 <div class="goods" v-for="(item,index) in details.products">
-                    <img :src="item.image" width="80" height="80" alt="">
+                    <img :src="item.image" class="img" alt="">
                     <div class="text">
                         <p>
                             <span class="name bold">{{item.name}}</span>
                             <span class="price">¥{{item.price}}</span>
                         </p>
                         <p>
-                            <span class="desc"></span>
-                            <span class="quantity bold">x{{item.qty}}</span>
+                            <span class="desc">{{getOptionName(item.custom_option_info,item.custom_option_names)}}</span>
+                            <span class="quantity">x{{item.qty}}</span>
                         </p>
                     </div>
                 </div>
@@ -98,6 +98,32 @@ export default {
                     this.lastExpressInfo = res.data.data.lastExpressInfo
                 }
             })
+        },
+        getOptionName(option,opt){
+            let str = '',custom_option_names = opt
+            let option_txt_arr = []
+            for(let j in opt) {
+                option_txt_arr.push(j)
+            }
+            for(let goodsOpt in option) {
+                for(let k in custom_option_names) {
+                   if(goodsOpt.toLowerCase() == k) {
+                       str += custom_option_names[k]+":"
+                       for(let v in custom_option_names) {
+                            if(v==option[goodsOpt]){
+                                str += custom_option_names[v]+";"
+                                break;
+                            } else if(option_txt_arr.indexOf(option[goodsOpt])==-1){
+                                str += option[goodsOpt] + ";"
+                                // console.log(option[goodsOpt])
+                                break;
+                           }
+                       } 
+                       break;
+                   }
+                } 
+            }
+            return str
         }
     }
 }
@@ -155,6 +181,9 @@ export default {
         display flex
         padding 15px 10px
         background #fff
+        img
+            width 80px
+            height 80px
         &:last-child
             border-bottom 1px solid $line
         .text 
@@ -164,16 +193,24 @@ export default {
             &>p
                 display flex
                 justify-content space-between
+                line-height 22px
                 .name
                     font-size 18px
+                    
                     margin-bottom 4px
+                    text-align left
+                    overflow hidden
+                    display -webkit-box
+                    text-overflow ellipsis
+                    -webkit-line-clamp 1
+                    -webkit-box-orient vertical
                 .desc
                     color $text-ll
                     font-size 12px
                     max-width 200px
                     line-height 18px
                 .quantity
-                    color $text-lll
+                    color $text-ll
 textarea
     height 80px
     width 100%
