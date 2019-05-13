@@ -1,5 +1,5 @@
 <template>
-    <div class="openListRecord-wrapper">
+    <div class="openListRecord-wrapper" v-if="ready">
         <ul v-if="recordList.length">
             <li v-for="(item,index) in recordList" :key="index">
                 <img :src="item.avatar" alt="" width="54">
@@ -21,7 +21,8 @@
 export default {
     data(){
         return {
-            recordList:null
+            recordList:null,
+            ready:global.ready
         }
     },
     created() {

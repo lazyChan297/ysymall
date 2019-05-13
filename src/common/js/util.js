@@ -29,6 +29,7 @@ export function saveUUID(uuid){
 }
 
 export function getOpenid(url,flag){
+    console.log(sessionStorage.getItem('alreadyOpen'))
     setTimeout(() => {
         window.location.reload()
      }, 30 *60 * 1000 )

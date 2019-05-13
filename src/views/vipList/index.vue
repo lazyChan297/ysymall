@@ -1,5 +1,5 @@
 <template>
-    <div v-show="ready">
+    <div v-if="ready">
         <div>
             <search :checkType="checkType" @keywords="handleKeyWords">
                 <user-list :level="checkType" :list="friendsList" :vipInfo="vipInfo" @loadMore="loadMore"></user-list>
@@ -18,7 +18,8 @@ export default {
             checkType:'vip',
             keywords:'',
             friendsList:[],
-            vipInfo:{}
+            vipInfo:{},
+            ready:global.ready
         }
     },
     components:{

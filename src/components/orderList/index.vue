@@ -32,67 +32,19 @@
 <script>
 import Qs from 'qs';
 export default {
+    props:{
+        orderList:{
+            type:Array
+        }
+    },
     data() {
         return{
-            orderList:[],
             status:'',
             custom_option_names:'',
             option_txt_arr:[],
-            listParams:{
-                loading:false,
-                nomore:false,
-                page:1, //初始搜索页码
-                number:10 //每页返回数据
-            }
-            
-        }
-    },
-    mounted(){
-        this.status = this.$route.name
-        this.getOrder(this.$route.name)
-        addEventListener('scroll',this.handleScroll)
-    },
-    watch:{
-        '$route':function(route){
-            this.status = route.name
-            this.orderList = []
-            this.listParams = {
-                loading:false,
-                nomore:false,
-                page:1, //初始搜索页码
-                number:10 //每页返回数据
-            }
-            this.getOrder(route.name)
         }
     },
     methods:{
-        getOrder(name) {
-            let url = `/customer/order/${name}`
-            let params = Qs.stringify({
-                page:this.listParams.page,
-                number:10
-            })
-            this.$axios.post(url,params).then((res)=>{
-                if(res.data.code === 200) {
-                    // this.custom_option_names = res.data.data.orderList[0].products[0].custom_option_names
-                    // // 保存可以转换为汉字的规格属性值
-                    // if(this.custom_option_names) {
-                    //     let attr = []
-                    //     for(let i in this.custom_option_names) {
-                    //         attr.push(i)
-                    //     }
-                    //     this.option_txt_arr = attr
-                    // }
-                    if(res.data.data.orderList.length < this.listParams.number) {
-                        this.listParams.nomore = true
-                    }
-                    this.listParams.page++;
-                    let ori_orderList = this.orderList,
-                        orderList = res.data.data.orderList
-                    this.orderList = ori_orderList.concat(orderList)
-                }
-            })
-        },
         // 获取商品规格
         getOptionName(option,opt){
             let str = '',custom_option_names = opt
@@ -119,26 +71,20 @@ export default {
                 } 
             }
             return str
-        },
-        handleScroll(){
-            let scrollTop =  document.documentElement.scrollTop||document.body.scrollTop
-            let windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
-            let scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
-            // 滚动到底部
-            if(scrollTop+windowHeight==scrollHeight){
-                if(!this.listParams.nomore) {
-                    this.getOrder(this.status)
-                }  
-            }   
         }
     }
 }
 </script>
 <style lang="stylus" scoped>
     @import "../../common/stylus/variable.styl";
+    .orderlist-wrapper
+        margin-top 50px
+        padding-top 10px
     .order
         margin 0 15px 10px
         paddind-bottom 10px
+        &:last-child
+            margin-bottom 0
     .cell
         display flex
         justify-content space-between

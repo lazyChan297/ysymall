@@ -20,7 +20,7 @@
 </template>
 <script>
 import {XDialog} from 'vux'
-import {validAccount} from '@/common/js/validated';
+// import {validAccount} from '@/common/js/validated';
 import Qs from 'qs';
 export default {
     data() {
@@ -60,7 +60,32 @@ export default {
         },
         hideDialog() {
             this.isShowDialog = false
-            this.$router.go(-1);
+            // this.$router.go(-1);
+        },
+        validAccount(account) {
+            let reg = /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/
+            if (!reg.test(account)) {
+                Vue.$vux.toast.show({
+                    text: '请输入正确的金额',
+                    type: 'warn'
+                })
+                return false
+            }
+            if (account <= 0) {
+                Vue.$vux.toast.show({
+                    text: '金额不能小于0',
+                    type: 'warn'
+                })
+                return false
+            }
+            if(account > 500) {
+                Vue.$vux.toast.show({
+                    text: '金额不能大于500',
+                    type: 'warn'
+                })
+                return false
+            }
+            return true
         },
         getWithDrawal() {
             this.$axios.post('/finance/expenditure/withdraw').then((res)=>{
@@ -78,17 +103,27 @@ export default {
             })
         },
         submit() {
-            let valid = validAccount(this.amount)&&!this.disable
+            let valid = this.validAccount(this.amount)&&!this.disable
             if (!valid) return false
+            this.isShowDialog = true
+            this.dialog.text = `确认提现<span style="color:#FF6A7C">${this.amount}</span>元到微信零钱吗?`
+            
+        },
+        confirm() {
             let params = Qs.stringify({amount:this.amount})
             this.$axios.post('/finance/expenditure/withdraw',params).then((res)=>{
                 if(res.data.code === 200) {
-                    this.dialog.text = res.data.message
-                    this.isShowDialog = true
+                    this.$vux.toast.show({
+                        text:res.data.message,
+                        type:'warn'
+                    })
+                } else {
+                    this.$vux.toast.show({
+                        text:res.data.message,
+                        type:'warn'
+                    })
                 }
             })
-        },
-        confirm() {
             this.hideDialog()
         }
     }
@@ -106,7 +141,7 @@ export default {
             .green
                 color $green
             .red
-                color #FF6659
+                color $red
         .submit
             color #fff
             background linear-gradient(180deg,rgba(100,229,198,1) 0%,rgba(41,206,166,1) 100%);

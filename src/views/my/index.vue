@@ -1,5 +1,5 @@
 <template>
-    <div class="my-wrapper">
+    <div class="my-wrapper" v-if="ready">
         <div class="header">
             <img v-lazy="userInfo.avatar" alt=""  class="avatar">
             <div class="text">
@@ -90,7 +90,7 @@
             <router-link class="cell" to="/levelList" tag="div" v-if="userInfo.isManager">
                 <div>
                     <span class="icon icon-level"></span>
-                    <span class="bold">设置级别</span>
+                    <span class="bold">开通合伙人</span>
                 </div>
                 <div class="icon icon-link"></div>
             </router-link>
@@ -118,6 +118,11 @@
 import TabBar from '@/components/tabBar/index';
 import {mapGetters} from 'vuex'
 export default {
+    data() {
+        return {
+            ready:global.ready
+        }
+    },
     created(){
     },
     components: {

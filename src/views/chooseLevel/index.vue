@@ -1,5 +1,5 @@
 <template>
-    <div class="vipLevel-wrapper">
+    <div class="vipLevel-wrapper" v-if="ready">
         <div class="header">
             <img src="../../common/images/viplevelbg.png" alt="">
             <p class="txt">{{getText()}}</p>
@@ -21,7 +21,8 @@ import {mapGetters} from 'vuex'
 export default {
     data(){
         return {
-            level:''
+            level:'',
+            ready:global.ready
         }
     },
     created(){

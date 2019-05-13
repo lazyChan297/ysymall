@@ -1,5 +1,5 @@
 <template>
-        <div v-show="ready" class="agentList-wrapper">
+        <div v-show="ready" class="agentList-wrapper" v-if="ready">
             <div class="agentList-wrapper">
                 <search :checkType="checkType" @keywords="handleKeyWords">
                     <user-list :level="checkType" :list="friendsList" :generalInfo="generalInfo" @loadMore="loadMore" :loading="listParams.listParams"></user-list>
@@ -19,7 +19,8 @@
                 checkType:'generalAgent',
                 keywords:'',
                 friendsList:[],
-                generalInfo:{}
+                generalInfo:{},
+                ready:global.ready
             }
         },
         components:{

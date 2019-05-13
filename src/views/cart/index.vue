@@ -119,7 +119,7 @@ export default {
                         }
                         this.option_txt_arr = attr
                     }
-                    this.ready = true
+                    this.ready = true && global.ready
                     let len = goodslist === null?0:goodslist.length
                     let origin_arr = res.data.data.cart_info.products
                     for(let i in origin_arr) {

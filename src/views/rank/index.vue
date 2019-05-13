@@ -1,5 +1,5 @@
 <template>
-    <div class="rank-wrapper">
+    <div class="rank-wrapper" v-if="ready">
         <div class="headers">
             <img src="../../common/images/rank_bg.png" alt="">
             <p class="interval" v-show="current_rank==1">倒计时: {{interval}}</p>
@@ -55,7 +55,8 @@ export default {
             my_rank:'',
             rankList:null,
             countdown:'',
-            interval:''
+            interval:'',
+            ready:global.ready
         }
     },
     components:{

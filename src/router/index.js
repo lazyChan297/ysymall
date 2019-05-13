@@ -93,44 +93,44 @@ export default new Router({
       }
     },
     {
-      path: '/order',
+      path: '/order/:name',
       name: 'order',
       component: () => import('@/views/order/index'),
-      redirect: '/order/index',
-      children: [
-        {
-          path: 'all',
-          name: 'all',
-          component: orderList,
-          meta: {
-            title: '全部订单'
-          }
-        },
-        {
-          path: 'unshipped',
-          name: 'unshipped',
-          component: orderList,
-          meta: {
-            title: '待发货'
-          }
-        },
-        {
-          path: 'shipped',
-          name: 'shipped',
-          component: orderList,
-          meta: {
-            title: '已发货'
-          }
-        },
-        {
-          path: 'completed',
-          name: 'completed',
-          component: orderList,
-          meta: {
-            title: '已完结'
-          }
-        }
-      ]
+      // redirect: '/order/index',
+      // children: [
+      //   {
+      //     path: 'all',
+      //     name: 'all',
+      //     component: orderList,
+      //     meta: {
+      //       title: '全部订单'
+      //     }
+      //   },
+      //   {
+      //     path: 'unshipped',
+      //     name: 'unshipped',
+      //     component: orderList,
+      //     meta: {
+      //       title: '待发货'
+      //     }
+      //   },
+      //   {
+      //     path: 'shipped',
+      //     name: 'shipped',
+      //     component: orderList,
+      //     meta: {
+      //       title: '已发货'
+      //     }
+      //   },
+      //   {
+      //     path: 'completed',
+      //     name: 'completed',
+      //     component: orderList,
+      //     meta: {
+      //       title: '已完结'
+      //     }
+      //   }
+      // ]
     },
     {
       path: '/orderDetail/:id',
@@ -344,7 +344,7 @@ export default new Router({
       name:'userLeve',
       component:()=>import('@/views/levelList/index'),
       meta:{
-        title:'设置级别'
+        title:'开通合伙人'
       }
     },
     {
@@ -361,7 +361,7 @@ export default new Router({
       name:'customLevel',
       component:()=>import('@/views/custom_level/index'),
       meta:{
-        title:'设置级别'
+        title:'开通合伙人'
       }
     },
     // 编辑代理信息

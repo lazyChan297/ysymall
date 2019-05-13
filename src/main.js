@@ -27,6 +27,15 @@ Vue.use(AjaxPlugin)
 Vue.use(InfiniteScroll)
 let vConsole = new VConsole()
 
+// 判断是否请求过get-openid
+if(!sessionStorage.getItem('alreadyOpen')) {
+  sessionStorage.setItem('alreadyOpen',1)
+  global.ready = false
+} else {
+  global.ready = true
+  // console.log(sessionStorage.getItem('alreadyOpen'))
+}
+
 // 服务器地址
 if (process.env.NODE_ENV === 'development') {
   global.serverHost = ''
@@ -51,7 +60,7 @@ global.uuid = wsCache.get('uuid')
 let url = window.location.href
 let isBoundWechat = getOpenid(url)
 // let isBoundWechat = false
-
+global.isBoundWechat = isBoundWechat
 // axios
 Vue.prototype.$axios = axios
 const instance = axios.create()

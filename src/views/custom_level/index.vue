@@ -242,7 +242,7 @@ export default {
             this.$axios.post('/customer/service/get-customer-info',params).then((res)=>{
                 if(res.data.code === 200) {
                    this.current_customer = res.data.data.customerInfo
-                    this.ready = true
+                    this.ready = true && global.ready
                 }
             })
         },

@@ -46,8 +46,9 @@
                     <span class="cartLen" v-if="cartLen">{{cartLen}}</span>
                 </router-link>
             </div>
-            <div class="yellow bold" @click="showSlide(true)">加入购物车</div>
-            <div class="red bold" @click="showSlide(false)">购买</div>
+            <div class="yellow bold" @click="showSlide(true)" v-if="goodsDetail.is_in_stock!=2">加入购物车</div>
+            <div class="red bold" @click="showSlide(false)" v-if="goodsDetail.is_in_stock!=2">购买</div>
+            <div class="gray bold" v-else>已售罄</div>
         </div>
         <transition name="slide">
             <div class="slide-wrapper" v-show="isShow">
@@ -656,6 +657,9 @@ export default {
         left 0
         bottom 0
         background #fff
+        .gray
+            background $text-lll
+            flex 0 0 66%
         .icon-container
             display flex
             &>div

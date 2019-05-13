@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="ready">
         <p class="title">邀请卡</p>
         <p class="desc">长按图片保存至相册</p>
         <img :src="posterUrl" alt="">
@@ -10,7 +10,8 @@ const env = process.env.NODE_ENV
 export default {
     data(){
         return {
-            posterUrl:''
+            posterUrl:'',
+            ready:global.ready
         }
     },
     mounted(){

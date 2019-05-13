@@ -1,6 +1,6 @@
 <template>
     <div class="userList-wrapper">
-        <div class="desc">
+        <div class="desc" v-if="vistors.count&&vistors.count.all">
             <span>客户数量：{{vistors.count.all}}</span>
             <span>今日新增客户：{{vistors.count.today}}</span>
         </div>
@@ -48,36 +48,35 @@
 </template>
 <script>
 export default {
+    props:{
+        vistors:{
+            type:Object
+        }
+    },
     data(){
         return {
-            vistors:null
         }
     },
     mounted(){
-        this.getlist(this.$route.name)
-    },
-    watch:{
-        '$route':function(route){
-            this.getlist(route.name)
-        }
+        // this.getlist(this.$route.name)
     },
     methods:{
-        getlist(type){
-            // 获取扫码客
-            let url = ''
-            if(type == 'inviter') {
-                url = '/customer/service/get-visitors'
-            } else if (type === 'customer') {
-                url = '/customer/service/get-scanners'
-            } else {
-                url = '/customer/service/get-first-layer-friends'
-            }
-            this.$axios.post(url).then((res)=>{
-                if(res.data.code === 200) {
-                    this.vistors = res.data.data
-                }
-            })
-        },
+        // getlist(type){
+        //     // 获取扫码客
+        //     let url = ''
+        //     if(type == 'inviter') {
+        //         url = '/customer/service/get-visitors'
+        //     } else if (type === 'customer') {
+        //         url = '/customer/service/get-scanners'
+        //     } else {
+        //         url = '/customer/service/get-first-layer-friends'
+        //     }
+        //     this.$axios.post(url).then((res)=>{
+        //         if(res.data.code === 200) {
+        //             this.vistors = res.data.data
+        //         }
+        //     })
+        // },
         formatTime(time){
             // 时
             let h = 0

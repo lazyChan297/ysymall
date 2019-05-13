@@ -1,5 +1,5 @@
 <template>
-    <div class="checkAgent_wrapper">
+    <div class="checkAgent_wrapper" v-if="ready">
         <div class="header">
             如果未选择任何省、市选项则系统会显示全国地区所有开通省级代理的状态列表，如果只悬着省信息则显示所辖市级代理开通状态，吐过两者皆悬着则显示该区域合伙人开通状态列表。
         </div>
@@ -73,7 +73,8 @@ export default {
             cityId:'',
             district:[],
             districtId:'',
-            cityDistrict:[]
+            cityDistrict:[],
+            ready:global.ready
         }
     },
     components:{
@@ -208,7 +209,7 @@ export default {
         flex 1
 .list
     background #fff
-    padding 0 15px
+    padding 0 15px 50px
     li
         display flex
         border-bottom 1px solid $line

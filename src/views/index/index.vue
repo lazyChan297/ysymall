@@ -1,5 +1,5 @@
 <template>
-    <div class="index-wrapper" ref="wrapper">
+    <div class="index-wrapper" ref="wrapper" v-if="ready">
         <div class="scroll-container" ref="indexscroll" :data="productList">
             <div>
                 <transition name="slideTop">
@@ -261,7 +261,7 @@ export default {
                     this.productList = this.allProdList
                     if(!inviter) {
                         this.headerInfo = this.userInfo
-                        if(!this.headerInfo.hasInviter) {
+                        if(!this.headerInfo.hasInviter&&global.isBoundWechat) {
                             this.isSlide = true
                         }
                     } else {
