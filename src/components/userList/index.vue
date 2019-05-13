@@ -20,7 +20,7 @@
                 <div class="right">
                     <div v-if="level==='level'" @click="setLevel(item)" class="btn">设置级别</div>
                     <div v-else @click="setLevel(item)">{{level==='vip'?"去开通VIP":'去开通总代'}}</div>
-                    <router-link class="edit" v-if="item.level==='countyAgent'||level==='cityAgent'||level==='provinceAgent'" :to="{path:`/editAgent/${item.sn}`}">编辑代理</router-link>
+                    <router-link class="edit" v-if="item.level==='countyAgent'||item.level==='cityAgent'||item.level==='provinceAgent'" :to="{path:`/editAgent/${item.sn}`}">编辑代理</router-link>
                 </div>
                 <!-- <div class="right" v-if="level==='level'" @click="setLevel(item)">设置级别</div>
                 <div class="right" v-else @click="setLevel(item)">{{level==='vip'?"去开通VIP":'去开通总代'}}</div> -->
