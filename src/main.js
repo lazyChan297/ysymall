@@ -142,6 +142,16 @@ router.afterEach((to,from) => {
   NProgress.done()
 })
 
+router.onError((error) => {
+  console.log('error')
+  const pattern = /Loading chunk (\d)+ failed/g;
+  const isChunkLoadFailed = error.message.match(pattern);
+  const targetPath = router.history.pending.fullPath;
+  if (isChunkLoadFailed) {
+   router.replace(targetPath);
+  }
+ });
+
 fastClick.attach(document.body)
 Vue.config.productionTip = false
 
