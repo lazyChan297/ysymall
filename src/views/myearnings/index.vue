@@ -1,133 +1,123 @@
 <template>
-    <div class="earnings-wrapper">
-        
-        <div class="panel">
-            <div class="panel-linear">
-            <p class="balance bold"> ¥{{earnInfo.balance}}</p>
-            <p class="desc">当前余额</p>
-            <router-link tag="div" to="/withdrawal" class="put">提现</router-link>
-            </div>
-            <div class="total-container">
-                <router-link tag="div" to="/earn">
-                    <p class="title bold">¥{{earnInfo.income}}</p>
-                    <p class="desc">全部收益</p>
-                </router-link>
-                <router-link to="/cash" tag="div">
-                    <p class="title bold">¥{{earnInfo.withdraw}}</p>
-                    <p class="desc">已提现金额</p>
-                </router-link>
-            </div>
-            <div class="figure-title-container">
-                <p class="figure-title">一周收益曲线图</p>
-            </div>
-            <!-- 折线图 -->
-            <ve-line :data="chartData" :extend="extend" :colors="colors" v-if="chartData.rows.length"></ve-line>
-            <div class="empty-line" v-else>暂无收益</div>
-            
-           
-        </div>
-        <!-- 列表 -->
-        <div class="sheet">
-            <ul>
-                <li @click="switchList(0)" :class="current_list_num==0?'active':''">今日收益明细</li>
-                <li @click="switchList(1)" :class="current_list_num==1?'active':''">今日支出明细</li>
-            </ul>
+    <div class="earnings-wrapper" v-if="ready">
+        <div class="header" v-if="earnInfo">
+            <p class="title">余额</p>
             <div>
-                <ul v-if="current_list_num==0&&current_list.length">
-                    <li v-for="(item,index) in current_list" :key="index">
-                        <p>
-                            <span>奖励到账提醒</span>
-                            <span>{{item.boughtAt}}</span>
-                        </p>
-                        <div>
-                            <span class="num bold">￥{{item.amount}}</span>
-                            <span v-if="item.info" class="info">{{item.info}}</span>
-                        </div>
-                    </li>
-                    
-                </ul>
-                <div v-else-if="current_list_num==0&&!current_list.length" class="empty">暂无数据</div>
-                <ul v-else-if="current_list_num==1&&current_list.length>0">
-                    <li v-for="(item,index) in current_list" :key="index">
-                        <p>
-                            <span>提现时间</span>
-                            <span>{{item.withdrawnAt}}</span>
-                        </p>
-                        <div>
-                            <span class="num bold">￥{{item.amount}}</span>
-                            <div>
-                                <div class="orderdate">到账时间:{{item.toAccountAt}}</div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-                <div v-else class="empty">暂无数据</div>
+                <div>
+                    <span class="symbol bold">¥</span>
+                    <span class="num bold">{{balance}}</span>
+                </div>
+                
+                <router-link  to="/withdrawal" tag="div" class="submit">
+                    提现
+                </router-link>
             </div>
         </div>
-        <!-- <p style="padding-top:100px">该页面正在开发中～敬请期待！</p> -->
+        <router-link tag="p" to="/cash" class="title-route" style="margin-top:0;border:none">
+            <span>提现记录</span><div class="icon icon-link"></div>
+        </router-link>
+        <p  class="title-route"><span>我的收益</span></p>
+        <ul class="total-container" v-if="earnInfo">
+            <li>
+                <p class="bold">¥{{earnInfo.todayIncome}}</p>
+                <p>今日收益</p>
+            </li>
+            <li>
+                <p class="bold">¥{{earnInfo.monthIncome}}</p>
+                <p>本月收益</p>
+            </li>
+            <li>
+                <p class="bold">¥{{earnInfo.totalIncome}}</p>
+                <p>全部收益</p>
+            </li>
+        </ul>
+        <div class="title-desc" v-if="earnInfo">
+            <span>本月收益：¥{{earnInfo.monthIncome}}</span>
+            <div class="date-container">
+                <div class="icon icon-date" @click="isShow = true" v-show="!value1"></div>
+                <datetime
+                    class="datetime"
+                    :min-year="min_year"
+                    :max-year="max_year"
+                    v-model="value1"
+                    format="YYYY-MM"
+                    @on-change="onChange"></datetime>
+            </div>
+        </div>
+        <div class="sheet">
+                <div>
+                    <ul v-if="earnInfo">
+                        <li v-for="(item,index) in earnInfo.incomeList" :key="index">
+                            <p>
+                                <span>奖励到账提醒</span>
+                                <span>{{item.boughtAt}}</span>
+                            </p>
+                            <div v-if="item.buyer">
+                                <span class="num bold">￥{{item.amount}}</span>
+                                <span>{{item.info}}</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <div v-else class="empty">暂无数据</div>
+                </div>
+            </div>
     </div>
 </template>
 
 <script>
-// import Schart from 'vue-schart';
-import VeLine from 'v-charts/lib/line.common'
-// import {VLine,VChart,VScale,VTooltip,VPoint} from 'vux'
+import { Group, Datetime, XButton} from 'vux';
+import Qs from 'qs';
 export default {
     data() {
-        this.extend = {
-            series: {
-                label: {
-                    normal: {
-                        show: true
-                    }
-                }
-            }
-        }
-        this.colors = ['#fff']
         return {
-            line_onready:false,
-            earnInfo:null,
-            current_list_num:0,//0收益1支出
-            current_list:null,
-            canvasId: 'myCanvas',
-            type: 'line',
-            height:200,
-            width:document.body.clientWidth,
-            inconmeLine:null,
-            data: [],
-            options: {
-                bgColor:'#0084ff',
-                axisColor:'#ffffff',
-                contentColor:"#ffffff",
-                fillColor:'#ffffff',
-                yEqual:5
-            }
+            earnInfo:'',
+            balance:'',
+            ready:global.ready,
+            value1: null,
+            maxYear: 2019,
+            isShow: true,
+            startedAt:'',
+            endedAt:'',
+            min_year:new Date().getFullYear() - 1,
+            max_year: Number(new Date().getFullYear()) + 1
         }
     },
     components:{
-        VeLine
+        Datetime,
+        XButton,
+        Group
     },
     mounted(){
+        this.getIncomeLine()
         this.getEarns()
-        
     },
     methods:{
+        onChange(val){
+            let month =Number(val.split('-')[1])
+            
+            let year = val.split('-')[0]
+            let startedAt = val+'-01'
+            
+            if(month+1>9&&month+1<=12) {
+                month = Number(month+1)
+            } else if(month+1>12) {
+                month = '01'
+                year = Number(year)+1
+            } else {
+                month = '0'+ Number(month+1)
+            }
+            let endedAt = year + '-' + month + '-01'
+            
+            let params = Qs.stringify({
+                startedAt:startedAt,
+                endedAt:endedAt
+            })
+            this.getIncomeLine(params)
+        },
         getEarns(){
             this.$axios.post('/finance/income/overview').then((res)=>{
                 if(res.data.code === 200) {
-                    this.earnInfo = res.data.data
-                    let rows = []
-                    let list = res.data.data.lastSevenDays
-                    list.forEach((item,index)=>{
-                        rows.push({'日期': item.weekDay, '收益': item.amount})
-                    })
-                    this.chartData = {columns: ['日期', '收益'],
-                        rows: rows}
-                    if(this.current_list_num==0){
-                        this.current_list = this.earnInfo.todayIncomeList
-                    } else {
-                        this.current_list = this.earnInfo.todayExpenditureList
-                    }
+                    this.balance = res.data.data.balance
                 }
             })
         },
@@ -138,6 +128,18 @@ export default {
                 this.current_list = this.earnInfo.todayExpenditureList
             }
             this.current_list_num = n
+        },
+        getIncomeLine(params){
+            this.$axios.post('/finance/income/all',params).then((res)=>{
+                if(res.data.code === 200) {
+                    if(params) {
+                        this.earnInfo.incomeList = res.data.data.incomeList
+                    } else {
+                        this.earnInfo = res.data.data
+                    }
+                    
+                }
+            })
         }
     }
 }
@@ -145,17 +147,111 @@ export default {
 <style lang="stylus" scoped>
 @import "../../common/stylus/variable.styl";
 @import "../../common/css/media.css";
-/* 折线图样式 */
-.ve-line
-    background $green
+/* datetime */
+.date-container
+    width 100px
+    text-align right
+.datetime
+    display block
+    width 100%
+    padding 0 !important
+    height 100%
 .empty-line
     background $green
     color #fff
     height 100px
     line-height 100px
 .earnings-wrapper
-    background #fff !important
     height 100%
+    .header
+        position relative
+        background-image url("../../common/images/earn_bg.png")
+        height 140px
+        padding-top 30px
+        background-size 100%
+        box-sizing border-box
+        text-align left
+        padding-left 20px
+        padding-right 15px
+        box-shadow:0px 5px 8px 0px rgba(163,206,255,0.76)
+        .title
+            color #fff
+            font-size 18px
+            margin-bottom 10px
+        &>div
+            display flex
+            line-height 50px
+            justify-content space-between
+        .symbol
+            color #fff
+            font-size 20px
+        .num 
+            font-size 36px
+            color #fff
+        .submit
+            background linear-gradient(180deg,rgba(255,255,255,1) 0%,rgba(221,236,252,1) 100%);
+            box-shadow 0px 4px 6px 0px rgba(0,0,0,0.2)
+            color $text-l
+            border-radius 30px
+            line-height 40px
+            height 40px
+            width 110px
+            text-align center
+    .title-route
+        display flex
+        align-items center
+        justify-content space-between
+        height 40px
+        line-height 40px
+        padding-left 15px
+        background #fff
+        text-align left
+        border-bottom 1px solid $line
+        padding-right 15px
+        margin-top 15px
+        span
+            &:before
+                content ''
+                display inline-block
+                width 4px
+                height 22px
+                background $green
+                vertical-align middle
+                margin-right 10px
+    /* 收益列表 */
+    .total-container
+        display flex
+        li
+            flex 1
+            text-align center
+            background #fff
+            padding 10px 0
+            p
+                &:first-child
+                    color $green
+                    line-height 28px
+                    font-size 20px
+                &:last-child
+                    color $text-lll
+                    margin-top 10px
+    .title-desc
+        line-height 30px
+        color $text-lll
+        font-size 14px
+        display flex
+        justify-content space-between
+        align-items center 
+        padding 0 15px
+        .date-container
+            position relative
+            height 30px
+            .vux-datetime
+                position absolute
+                right 0
+                top 0
+                text-align right
+                color $text-lll
+                line-height 30px
     .panel
         /* height 70% */
         color #fff
@@ -195,61 +291,35 @@ export default {
         .figure-title
             padding 10px 0
             border-top 1px solid #fff
+    /* 明细 */
     .sheet
         background #fff
-        padding-top 15px
-        &>ul
-            display flex
-            margin 0 78px 15px
-            line-height 40px
-            border 1px solid $green
-            border-radius 5px
-            li
-                flex 1
-                color $green
-                font-size 14px
-                &.active
-                    background $green
-                    color #fff
-                &:first-child
-                    text-align right
-                    padding-right 10px
-                &:last-child
-                    padding-left 10px
-                    text-align left
         &>div>ul>li
-                    border-top 1px solid $line
-                    padding 10px 15px
-                    &>p
-                        display flex
-                        justify-content space-between
-                        span
-                            &:last-child
-                                color $text-lll
-                                font-size 14px
-                    &>div
-                        display flex
-                        align-items center
-                        margin-top 10px
-                        &>div
-                            flex 1
-                            text-align right
-                        span
-                            &:last-child
-                                flex 1
-                                /* font-size 14px */
-                        .info
-                            font-size 14px
-                            text-align right
-                            line-height 22px
-                    .num
-                        color $red
-                        font-size 20px
-                        margin-right 50px
-                        text-align left
-                    .ordernum,.orderdate
+            border-bottom 1px solid $line
+            padding 10px 15px
+            &:last-child
+                border none
+            &>p
+                display flex
+                justify-content space-between
+                span
+                    &:last-child
+                        color $text-lll
+                        font-size 14px
+            &>div
+                display flex
+                align-items center
+                margin-top 10px
+                span
+                    &:last-child
+                        flex 1
                         font-size 14px
                         line-height 20px
+                        text-align right
+            .num
+                color $red
+                font-size 20px
+                margin-right 50px
     .empty
         height 50px
         line-height 50px

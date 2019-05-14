@@ -47,11 +47,12 @@
                         <router-link :to="{path:`/goodsDetail/${g.product_id}`}" class="goodsItem" tag="div" v-for="(g,index) in productList" :key="index">
                             <img :src="g.image" alt="">
                             <p class="name bold">{{g.name}}</p>
-                            <div>
+                            <div v-if="g.is_in_stock==1">
                                 <span class="price bold">¥{{g.special_price.value?g.special_price.value:g.price.value}}</span>
                                 <span class="oldprice" v-if="g.special_price.value">¥{{g.price.value}}</span>
                                 <span class="oldprice" v-else></span>
                             </div>
+                            <div v-else class="soldout"><span>已售罄</span></div>
                         </router-link>
                         </div>
                     </div>
@@ -139,7 +140,6 @@ export default {
         // addEventListener('scroll',this.handleScroll)
         // 获取停运信息
         this.getExpressInfo()
-        
     },
     computed:{
         ...mapGetters([
@@ -188,22 +188,6 @@ export default {
         },
         // 打开物流停运窗口
         showExpress(){
-            //  ====使用微信原生confirm
-            // let vuxAlert = document.getElementsByClassName('vux-alert')[0]
-            // let alertContent = document.getElementsByClassName('weui-dialog__bd')[1]
-            // alertContent.style.textAlign = 'left'
-            // let expressInfo = this.expressInfo
-            // let strArr = expressInfo.split('n')
-            // let _str = ''
-            // strArr.forEach((item,index)=>{
-            //     let len = item.length
-            //     item = item.substring(0,len-1)
-            //     item+="<br/>"
-            //     _str+=item
-            // })
-            // this.$vux.alert.show({
-            //     content:_str
-            // })
             //  ===样式优化版
             this.isShowDialog = true
         },
@@ -565,5 +549,8 @@ export default {
                 color $red
                 box-sizing border-box
                 margin-right 10px
-                        
+        .soldout
+            padding-left 10px
+            font-size 14px
+            color #adafb6
 </style>

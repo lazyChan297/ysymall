@@ -69,7 +69,7 @@
                 </div>
                 <div class="icon icon-link"></div>
             </router-link>
-            <div class="cell" 
+            <!-- <div class="cell" 
                  to="/chooseLevel" 
                  @click="chooseLevel" 
                  v-if="userInfo.level!='vip'&&userInfo.level!='registered'&&userInfo.level!='member'">
@@ -78,15 +78,28 @@
                     <span class="bold">开通VIP</span>
                 </div>
                 <div class="icon icon-link"></div>
-            </div>
-            <!-- 仅限公司人员操作 -->
-            <!-- <router-link class="cell" to="/customLevel" tag="div">
+            </div> -->
+            <router-link class="cell"
+                 tag="div"
+                 to="/vipList" 
+                 v-if="userInfo.level=='provinceAgent'||userInfo.level=='cityAgent'||userInfo.level=='countyAgent'||userInfo.level=='generalAgent'">
                 <div>
                     <span class="icon icon-vip"></span>
-                    <span class="bold">设置级别</span>
+                    <span class="bold">开通VIP</span>
                 </div>
                 <div class="icon icon-link"></div>
-            </router-link> -->
+            </router-link>
+            <router-link class="cell"
+                 tag="div"
+                 to="/agentList" 
+                 v-if="userInfo.level=='provinceAgent'||userInfo.level=='cityAgent'||userInfo.level=='countyAgent'">
+                <div>
+                    <span class="icon icon-agent"></span>
+                    <span class="bold">开通总代</span>
+                </div>
+                <div class="icon icon-link"></div>
+            </router-link>
+            <!-- 仅限公司人员操作 -->
             <router-link class="cell" to="/levelList" tag="div" v-if="userInfo.isManager">
                 <div>
                     <span class="icon icon-level"></span>

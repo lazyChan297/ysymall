@@ -79,9 +79,13 @@ export default {
                 if(res.data.code === 200) {
                     this.$vux.toast.show({
                         text:'设置成功',
-                        type:'success'
+                        type:'success',
+                        time:1000
                     })
-                    window.location.href = global.serverHost + '#/setting'
+                    let timer = setTimeout(()=>{
+                        window.location.href = global.serverHost + '#/setting'
+                    },1000)
+                    
                 } else {
                     this.$vux.toast.show({
                         text:res.data.message,

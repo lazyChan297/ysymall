@@ -39,7 +39,7 @@
                         </p>
                         <div v-if="item.buyer">
                             <span class="num bold">￥{{item.amount}}</span>
-                            <span>{{item.buyer.nickname}}购买缘生源相关商品，您获得3级内奖励。</span>
+                            <span>{{item.info}}</span>
                         </div>
                     </li>
                 </ul>

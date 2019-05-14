@@ -98,16 +98,7 @@ export default {
             // let url = window.location.href
             // let urlObj = urls.parse(url)
             // let _url = urlObj.protocol + '//' + urlObj.host + '/#' + redirect
-            // console.log(_url)
             // return false
-            // let _url = urlObj.protocol + '//' + urlObj.host + '/#' + this.redirect + '?sn='+res.data.data.customerSn
-            // let url = window.location.href
-            // let urlObj = urls.parse(url)
-            // console.log('redirect',this.redirect)
-            // console.log(urlObj)
-            // let _url = urlObj.protocol + '//' + urlObj.host + '/#' + this.redirect + '?sn=998877'
-            // console.log(global.serverHost + '/customer/wechat/get-user-info?url_before_login=' + encodeURIComponent(_url))
-            // window.location.href = global.serverHost + '/customer/wechat/get-user-info?url_before_login=' + encodeURIComponent(_url)
             let valid = this.valid()
             if(!valid) return
             let params = Qs.stringify({

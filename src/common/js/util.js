@@ -29,7 +29,6 @@ export function saveUUID(uuid){
 }
 
 export function getOpenid(url,flag){
-    console.log(sessionStorage.getItem('alreadyOpen'))
     setTimeout(() => {
         window.location.reload()
      }, 30 *60 * 1000 )
@@ -59,11 +58,16 @@ export function getOpenid(url,flag){
         window.location.href = global.serverHost + '/customer/wechat/get-openid?url_before_login='+encodeURIComponent(url) 
     } else if(!global.token&&!getUrlParms('token')&&getUrlParms('uuid')) {
         // 未绑定微信 请求了openid 但是没有绑定微信不能自动登陆 需要手机+验证码 手动登陆
+        // http://192.168.3.198:8090/#/http://192.168.3.198:8090/checkout/onepage/pay/?sn=4acTWX&token=uWrlHoSNDfCx6xlLLFxC_6TRGvwzlisf&uuid=b9db74a8-75fb-11e9-aac7-00163e08edb8
+        if(ispaypage) {
+            window.location.href = '#/login?redirect='+urlObj.pathname + urlObj.hash
+        }
         return false
     } else if (url != pageUrl && !ispaypage) {
         // 登陆过且绑定了微信
         window.location.href = pageUrl
     } else if(url != paymentUrl && ispaypage) {
+        console.log("here!!!!!!!!!!!!!!!!!")
         window.location.href = paymentUrl
     }
     return true

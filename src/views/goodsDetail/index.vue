@@ -144,7 +144,8 @@ export default {
     },
     computed:{
         ...mapGetters([
-            'cartLen'
+            'cartLen',
+            'userInfo'
         ])
     },
     mounted() {
@@ -534,6 +535,12 @@ export default {
                 })
                 return false;
             }
+            // console.log(this.userInfo)
+            // if(!this.userInfo.avatar){
+            //     this.$router.push('/login')
+            //     return false
+            // }
+            
             let custom_option = JSON.stringify(this.custom_option_selected_attr)
             let params = Qs.stringify({
                 product_id: this.product_id,

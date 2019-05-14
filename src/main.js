@@ -10,25 +10,27 @@ import fastClick from 'fastclick'
 import store from './store/index'
 import Qs from 'qs'
 import webStorageCache from 'web-storage-cache'
-import { AlertPlugin, AjaxPlugin, ConfirmPlugin, ToastPlugin, LoadingPlugin } from 'vux'
+// import { AlertPlugin, AjaxPlugin, ConfirmPlugin, ToastPlugin, LoadingPlugin } from 'vux'
 import "./common/stylus/index.styl"
 import {getOpenid} from '@/common/js/util'
 import VConsole from 'vconsole/dist/vconsole.min.js' //import vconsole
 import VueLazyLoad from 'vue-lazyload'
 import InfiniteScroll from 'vue-infinite-scroll'
 // 调用微信jssdk
-import { WechatPlugin } from 'vux'
+import { WechatPlugin, LoadingPlugin } from 'vux'
+import { getUrlParms } from './common/js/util';
 Vue.use(WechatPlugin)
-Vue.use(ToastPlugin)
+// Vue.use(ToastPlugin)
 Vue.use(LoadingPlugin)
-Vue.use(ConfirmPlugin)
-Vue.use(AlertPlugin)
-Vue.use(AjaxPlugin)
+// Vue.use(ConfirmPlugin)
+// Vue.use(AlertPlugin)
+// Vue.use(AjaxPlugin)
 Vue.use(InfiniteScroll)
 let vConsole = new VConsole()
 
 // 判断是否请求过get-openid
-if(!sessionStorage.getItem('alreadyOpen')) {
+if(!sessionStorage.getItem('alreadyOpen')&&!global.token&&getUrlParms('token')) {
+  console.log("第一次点进浏览器")
   sessionStorage.setItem('alreadyOpen',1)
   global.ready = false
 } else {
