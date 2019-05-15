@@ -35,14 +35,11 @@ export function getOpenid(url,flag){
     let urlObj = urls.parse(url)
     let pageUrl = urlObj.protocol + '//' + urlObj.host + '/' + urlObj.hash
     let paymentUrl = ''
-    if(urlObj.hash == '#/checkout/onepage/pay/') {
-        paymentUrl = urlObj.protocol +'//' + urlObj.host + urlObj.pathname + urlObj.hash
-    }
-    if(urlObj.hash == '#/applyVip/') {
-        paymentUrl = urlObj.protocol +'//' + urlObj.host + urlObj.pathname + urlObj.hash
-    }
-    if(urlObj.hash == '#/applyAgent/') {
-        paymentUrl = urlObj.protocol +'//' + urlObj.host + urlObj.pathname + urlObj.hash
+    // if(urlObj.hash == '#/checkout/onepage/pay/' || urlObj.hash == '#/applyVip/' || urlObj.hash == '#/applyAgent/') {
+    //     paymentUrl = urlObj.protocol +'//' + urlObj.host + urlObj.pathname + urlObj.hash
+    // }
+    if(urlObj.path.split('?')[0] == '/checkout/onepage/pay/') {
+        paymentUrl = urlObj.protocol +'//' + urlObj.host + urlObj.pathname + urlObj.hash.split('?')[0]
     }
     if(getUrlParms('token')){
         saveToken(getUrlParms('token'))
@@ -50,15 +47,19 @@ export function getOpenid(url,flag){
     if(getUrlParms('uuid')) {
         saveUUID(getUrlParms('uuid'))
     }
-    // 不是支付页
+    console.log("urlobj")
+    console.log(urlObj)
+    console.log("pageurl")
+    console.log(pageUrl)
+    console.log("paymentUrl")
+    console.log(paymentUrl)
+    // 判断是否是支付页
     let ispaypage = paymentUrl==''?false:true
-    // 获取openid 判断是否绑定微信号 绑定后会自动进行微信登陆 
-    // 当前url没有携带token且缓存中没有token
+    // 缓存中没有token或token过期
     if((!global.token&&!getUrlParms('token')&&!getUrlParms('uuid')) || flag) {
         window.location.href = global.serverHost + '/customer/wechat/get-openid?url_before_login='+encodeURIComponent(url) 
     } else if(!global.token&&!getUrlParms('token')&&getUrlParms('uuid')) {
-        // 未绑定微信 请求了openid 但是没有绑定微信不能自动登陆 需要手机+验证码 手动登陆
-        // http://192.168.3.198:8090/#/http://192.168.3.198:8090/checkout/onepage/pay/?sn=4acTWX&token=uWrlHoSNDfCx6xlLLFxC_6TRGvwzlisf&uuid=b9db74a8-75fb-11e9-aac7-00163e08edb8
+        // 如果是支付页必须先登陆
         if(ispaypage) {
             window.location.href = '#/login?redirect='+urlObj.pathname + urlObj.hash
         }
@@ -67,10 +68,26 @@ export function getOpenid(url,flag){
         // 登陆过且绑定了微信
         window.location.href = pageUrl
     } else if(url != paymentUrl && ispaypage) {
-        console.log("here!!!!!!!!!!!!!!!!!")
         window.location.href = paymentUrl
     }
     return true
+    // if(!global.token&&!getUrlParms('token')&&!getUrlParms('uuid') || flag) {
+    //     window.location.href = global.serverHost + '/customer/wechat/get-openid?url_before_login='+encodeURIComponent(url)
+    // } else {
+    //     console.log(1)
+    //     // 没绑定微信
+    //     if (!global.token&&!getUrlParms('token')&&getUrlParms('uuid')) {
+    //         if(ispaypage) {
+    //             window.location.href = '#/login?redirect='+urlObj.pathname + urlObj.hash
+    //         }
+    //         return false
+    //     } else if (url != pageUrl && !ispaypage) {
+    //         window.location.href = pageUrl
+    //     } else if (url != paymentUrl && ispaypage) {
+    //         window.location.href = paymentUrl
+    //     }
+    // }
+    // return true
 }
 // 节流函数，防止input时频繁触发请求
 export function debounce(func, delay) {

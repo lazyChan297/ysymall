@@ -15,28 +15,27 @@ import "./common/stylus/index.styl"
 import {getOpenid} from '@/common/js/util'
 import VConsole from 'vconsole/dist/vconsole.min.js' //import vconsole
 import VueLazyLoad from 'vue-lazyload'
-import InfiniteScroll from 'vue-infinite-scroll'
 // 调用微信jssdk
-import { WechatPlugin, LoadingPlugin } from 'vux'
+import { WechatPlugin, LoadingPlugin,ToastPlugin,AlertPlugin, AjaxPlugin,ConfirmPlugin} from 'vux'
 import { getUrlParms } from './common/js/util';
 Vue.use(WechatPlugin)
-// Vue.use(ToastPlugin)
 Vue.use(LoadingPlugin)
-// Vue.use(ConfirmPlugin)
-// Vue.use(AlertPlugin)
-// Vue.use(AjaxPlugin)
-Vue.use(InfiniteScroll)
+Vue.use(ToastPlugin)
+Vue.use(AjaxPlugin)
+Vue.use(ConfirmPlugin)
+Vue.use(AlertPlugin)
 let vConsole = new VConsole()
 
+global.ready = true
 // 判断是否请求过get-openid
-if(!sessionStorage.getItem('alreadyOpen')&&!global.token&&getUrlParms('token')) {
-  console.log("第一次点进浏览器")
-  sessionStorage.setItem('alreadyOpen',1)
-  global.ready = false
-} else {
-  global.ready = true
-  // console.log(sessionStorage.getItem('alreadyOpen'))
-}
+// if(!sessionStorage.getItem('alreadyOpen')&&!global.token&&getUrlParms('token')) {
+//   console.log("第一次点进浏览器")
+//   sessionStorage.setItem('alreadyOpen',1)
+//   global.ready = false
+// } else {
+//   global.ready = true
+//   // console.log(sessionStorage.getItem('alreadyOpen'))
+// }
 
 // 服务器地址
 if (process.env.NODE_ENV === 'development') {
@@ -70,6 +69,7 @@ instance.defaults.baseURL = ''
 instance.defaults.timeout = 10000
 instance.defaults.withCredentials = true
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+axios.defaults.headers['Access-Control-Allow-Origin'] = '*'
 axios.interceptors.request.use(config => {
   Vue.$vux.loading.show({
     text: '加载中'
@@ -155,6 +155,7 @@ router.afterEach((to,from) => {
 
 router.onError((error) => {
   console.log('error')
+  // alert('error')
   const pattern = /Loading chunk (\d)+ failed/g;
   const isChunkLoadFailed = error.message.match(pattern);
   const targetPath = router.history.pending.fullPath;

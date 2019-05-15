@@ -34,6 +34,7 @@
 <script>
 import Qs from 'qs';
 import {XDialog} from 'vux';
+import {mapMutations} from 'vuex';
 export default {
     data() {
         return {
@@ -82,8 +83,15 @@ export default {
                         type:'success',
                         time:1000
                     })
+
                     let timer = setTimeout(()=>{
-                        window.location.href = global.serverHost + '#/setting'
+                        this.$axios.post('/customer/service/get-customer-info').then((res)=>{
+                            if(res.data.code === 200) {
+                                this.saveUserInfo(res.data.data.customerInfo)
+                                window.location.href = global.serverHost + '#/setting'
+                            }
+                        })
+                        
                     },1000)
                     
                 } else {
@@ -104,7 +112,10 @@ export default {
         },
         hideConfirm() {
             this.isShowDialog = false
-        }
+        },
+        ...mapMutations({
+            saveUserInfo:'SAVE_USERINFO'
+        })
     }
 }
 </script>

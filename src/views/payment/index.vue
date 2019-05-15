@@ -99,6 +99,15 @@ export default {
                         attr.push(i)
                     }
                     this.option_txt_arr = attr
+                } else if (res.data.code === 150007) {
+                    this.$vue.toast.show({
+                        text:'购物车为空，请添加商品',
+                        type:'warn',
+                        time:1000
+                    })
+                    let timer = setTimeout(()=>{
+                        this.$router.push('/')
+                    },1000)
                 }
             })
         },
@@ -140,10 +149,15 @@ export default {
                   console.log(res.data.data)
                   this.payment(res.data.data)
               } else {
-                  this.$vux.toast.show({
-                      text:res.data.message,
-                      type: 'warn'
-                  })
+                this.$vux.toast.show({
+                    text: '支付失败请重新添加购物车',
+                    type:'warn',
+                    time:1000
+                })
+                this.saveCartLen(0)
+                let timer = setTimeout(() => {
+                    this.$router.push('/')
+                }, 1000);
               }
           })
         },
@@ -166,6 +180,9 @@ export default {
                     let timer = setTimeout(() => {
                         that.$router.push('/my')
                     }, 1000);
+                },
+                fail:function(res) {
+                    
                 }
             });
         },

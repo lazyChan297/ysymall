@@ -115,7 +115,7 @@ export default {
                 if(res.data.code === 200) {
                     this.$vux.toast.show({
                         text:res.data.message,
-                        type:'warn'
+                        type:'success'
                     })
                 } else {
                     this.$vux.toast.show({

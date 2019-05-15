@@ -52,7 +52,7 @@
                                 <span>奖励到账提醒</span>
                                 <span>{{item.boughtAt}}</span>
                             </p>
-                            <div v-if="item.buyer">
+                            <div>
                                 <span class="num bold">￥{{item.amount}}</span>
                                 <span>{{item.info}}</span>
                             </div>
@@ -79,7 +79,13 @@ export default {
             startedAt:'',
             endedAt:'',
             min_year:new Date().getFullYear() - 1,
-            max_year: Number(new Date().getFullYear()) + 1
+            max_year: Number(new Date().getFullYear()) + 1,
+            listParams:{
+                loading:false,
+                nomore:false,
+                page:1, //初始搜索页码
+                number:10 //每页返回数据
+            }
         }
     },
     components:{
@@ -88,7 +94,8 @@ export default {
         Group
     },
     mounted(){
-        this.getIncomeLine()
+        addEventListener('scroll',this.handleScroll)
+        this.getList()
         this.getEarns()
     },
     methods:{
@@ -96,7 +103,7 @@ export default {
             let month =Number(val.split('-')[1])
             
             let year = val.split('-')[0]
-            let startedAt = val+'-01'
+            this.startedAt = val+'-01'
             
             if(month+1>9&&month+1<=12) {
                 month = Number(month+1)
@@ -106,13 +113,15 @@ export default {
             } else {
                 month = '0'+ Number(month+1)
             }
-            let endedAt = year + '-' + month + '-01'
-            
+            this.endedAt = year + '-' + month + '-01'
+            this.listParams.page = 1
             let params = Qs.stringify({
-                startedAt:startedAt,
-                endedAt:endedAt
+                startedAt:this.startedAt,
+                endedAt:this.endedAt,
+                page:this.listParams.page,
+                number:this.listParams.number
             })
-            this.getIncomeLine(params)
+            this.getListByDate(params)
         },
         getEarns(){
             this.$axios.post('/finance/income/overview').then((res)=>{
@@ -121,25 +130,42 @@ export default {
                 }
             })
         },
-        switchList(n){
-            if(n==0){
-                this.current_list = this.earnInfo.todayIncomeList
-            } else {
-                this.current_list = this.earnInfo.todayExpenditureList
-            }
-            this.current_list_num = n
-        },
-        getIncomeLine(params){
+        getListByDate(params) {
             this.$axios.post('/finance/income/all',params).then((res)=>{
                 if(res.data.code === 200) {
-                    if(params) {
-                        this.earnInfo.incomeList = res.data.data.incomeList
-                    } else {
-                        this.earnInfo = res.data.data
+                    if(res.data.data.incomeList.length<this.listParams.number) {
+                        this.listParams.nomore = true
                     }
-                    
+                    let incomeList = this.earnInfo.incomeList?this.earnInfo.incomeList:[]
+                    this.earnInfo.incomeList = this.earnInfo.incomeList.concat(res.data.data.incomeList)
+
                 }
             })
+        },
+        getList(params){
+            this.$axios.post('/finance/income/all',params).then((res)=>{
+                if(res.data.code === 200) {
+                    this.earnInfo = res.data.data
+                }
+            })
+        },
+        handleScroll(){
+            let scrollTop =  document.documentElement.scrollTop||document.body.scrollTop
+            let windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+            let scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
+            // 滚动到底部
+            if(scrollTop+windowHeight==scrollHeight){
+                if(!this.listParams.nomore) {
+                    this.listParams.page++;
+                    let params = Qs.stringify({
+                        startedAt:this.startedAt,
+                        endedAt:this.endedAt,
+                        page:this.listParams.page,
+                        number:this.listParams.number
+                    })
+                    this.getListByDate(params)
+                }           
+            }   
         }
     }
 }

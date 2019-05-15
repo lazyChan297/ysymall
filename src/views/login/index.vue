@@ -53,6 +53,7 @@ export default {
     created(){
         this.redirect = this.$route.query.redirect
         console.log(this.redirect)
+        console.log(111)
     },
     methods: {
         getcode() {
@@ -94,11 +95,6 @@ export default {
             return true
         },
         submit(){
-            // let redirect = this.redirect?this.redirect:'/'
-            // let url = window.location.href
-            // let urlObj = urls.parse(url)
-            // let _url = urlObj.protocol + '//' + urlObj.host + '/#' + redirect
-            // return false
             let valid = this.valid()
             if(!valid) return
             let params = Qs.stringify({
@@ -107,12 +103,7 @@ export default {
                 type:TYPE
             })
             
-            this.$axios.post('/customer/login/mobile-captcha',params,{
-                // headers:{
-                //     'fecshop-uuid':'',
-                //     'access-token':''
-                // }
-            }).then((res)=>{
+            this.$axios.post('/customer/login/mobile-captcha',params).then((res)=>{
                 if(res.headers && res.data.code === 200) {
                     let wechatBound = res.data.data.wechatBound
                     // 没有绑定微信 引导用户微信授权
@@ -122,6 +113,9 @@ export default {
                         let redirect = this.redirect?this.redirect:'/'
                         // let redirect = '/'
                         let _url = urlObj.protocol + '//' + urlObj.host + '/#' + redirect + '?sn='+res.data.data.customerSn
+                        if(urlObj.pathname == '/checkout/onepage/pay/') {
+                            _url = urlObj.protocol + '//' + urlObj.host + urlObj.pathname +'#' + redirect + '?sn='+res.data.data.customerSn
+                        }
                         window.location.href = global.serverHost + '/customer/wechat/get-user-info?url_before_login=' + encodeURIComponent(_url)
                     } else {
                         this.$router.push(this.redirect)
