@@ -1,8 +1,8 @@
 <template>
-    <div class="applyVIP-wrapper">
+    <div class="applyVIP-wrapper" ref="wrapper" style="display: none;">
         <div class="headers">
-            <img src="../../common/images/vipbg.png" alt="" class="bg">
-            <img src="../../common/images/viplogo.png" alt="" width="80" class="logo">
+            <img src="../../common/images/vipbg.png" alt="" class="bg" onload="imgLoad">
+            <img src="../../common/images/viplogo.png" alt="" width="80" class="logo" onload="imgLoad">
             <div class="userInfo">{{userInfo.nickname}} | {{getLevel(userInfo.level)}}</div>
             <div class="account">
                 <p class="desc">申请VIP需要支付</p>
@@ -10,7 +10,7 @@
             </div>
         </div>
         <section>
-            <img src="../../common/images/applyvip_c.png" alt="" class="vipContent">
+            <img src="../../common/images/applyvip_c.png" alt="" class="vipContent" onload="imgLoad">
             <div class="addrInfo" @click="chooseAddr">
                 <div class="icon icon-location"></div>
                 <div class="content" v-if="addr.id">
@@ -30,7 +30,8 @@ import {mapGetters} from 'vuex'
 export default {
     data(){
         return{
-            addr:''
+            addr:'',
+            loadNum:0
         }
     },
     mounted(){
@@ -114,6 +115,12 @@ export default {
                     }, 1000);
                 }
             });
+        },
+        imgLoad() {
+            this.loadNum++
+            if(this.loadNum>=3) {
+                this.refs.wrapper.style.display = 'block';
+            }
         }
     },
     computed:{

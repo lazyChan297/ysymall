@@ -20,7 +20,7 @@ export default {
     data() {
         return {
             vistors:null,
-            current:'inviter',
+            current:'friends',
             ready:global.ready
         }
     },

@@ -17,20 +17,21 @@
             <span>提现记录</span><div class="icon icon-link"></div>
         </router-link>
         <p  class="title-route"><span>我的收益</span></p>
-        <ul class="total-container" v-if="earnInfo">
-            <li>
-                <p class="bold">¥{{earnInfo.todayIncome}}</p>
-                <p>今日收益</p>
-            </li>
-            <li>
-                <p class="bold">¥{{earnInfo.monthIncome}}</p>
-                <p>本月收益</p>
-            </li>
-            <li>
-                <p class="bold">¥{{earnInfo.totalIncome}}</p>
-                <p>全部收益</p>
-            </li>
-        </ul>
+
+        <div class="income_box" v-if="earnInfo">
+            <div>
+                <div class="text">全部收益</div>
+                <div class="num total">¥{{earnInfo.totalIncome}}</div>
+            </div>
+            <div>
+                <div class="text">本月收益</div>
+                <div class="num">¥{{earnInfo.monthIncome}}</div>
+            </div>
+            <div>
+                <div class="text">今日收益</div>
+                <div class="num">¥{{earnInfo.todayIncome}}</div>
+            </div>
+        </div>
         <div class="title-desc" v-if="earnInfo">
             <span>本月收益：¥{{earnInfo.monthIncome}}</span>
             <div class="date-container">
@@ -192,7 +193,6 @@ export default {
     .header
         position relative
         background-image url("../../common/images/earn_bg.png")
-        height 140px
         padding-top 30px
         background-size 100%
         box-sizing border-box
@@ -212,7 +212,7 @@ export default {
             color #fff
             font-size 20px
         .num 
-            font-size 36px
+            font-size 30px
             color #fff
         .submit
             background linear-gradient(180deg,rgba(255,255,255,1) 0%,rgba(221,236,252,1) 100%);
@@ -227,8 +227,8 @@ export default {
         display flex
         align-items center
         justify-content space-between
-        height 40px
-        line-height 40px
+        height 50px
+        line-height 50px
         padding-left 15px
         background #fff
         text-align left
@@ -245,21 +245,24 @@ export default {
                 vertical-align middle
                 margin-right 10px
     /* 收益列表 */
-    .total-container
-        display flex
-        li
-            flex 1
-            text-align center
-            background #fff
-            padding 10px 0
-            p
-                &:first-child
-                    color $green
-                    line-height 28px
-                    font-size 20px
-                &:last-child
-                    color $text-lll
-                    margin-top 10px
+    .income_box
+        background #fff
+        &>div
+            display flex
+            justify-content space-between
+            line-height 50px
+            padding 0 15px
+            border-top 1px solid $line
+            &:first-child
+                border none
+            .num
+                color $green
+                font-size 20px
+                font-weight bold
+            .total
+                color $red
+            .text
+                color $text-l
     .title-desc
         line-height 30px
         color $text-lll
@@ -297,20 +300,6 @@ export default {
             border 1px solid #fff
             line-height 34px
             margin 0 auto
-        .total-container
-            display flex
-            background $green
-            padding-top 10px
-            &>div
-                flex 1
-                height 60px
-                .title
-                    margin-top 10px
-                    line-height 28px
-                .desc
-                    font-size 14px
-                &:first-child
-                    border-right 1px solid #fff
         .figure-title-container
             background $green
             padding 10px 15px 0

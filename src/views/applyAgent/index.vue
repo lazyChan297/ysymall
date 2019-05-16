@@ -1,8 +1,8 @@
 <template>
-    <div class="applyAgent-wrapper">
+    <div class="applyAgent-wrapper" ref="wrapper" style="display: none;">
         <div class="headers">
-            <img src="../../common/images/agentbg.png" alt="" class="bg">
-            <img src="../../common/images/agentlogo.png" alt="" width="80" class="logo">
+            <img src="../../common/images/agentbg.png" alt="" class="bg" onload="imgLoad">
+            <img src="../../common/images/agentlogo.png" alt="" width="80" class="logo" onload="imgLoad">
             <div class="userInfo">{{userInfo.nickname}} | {{getLevel(userInfo.level)}}</div>
             <div class="account">
                 <p class="desc">申请总代理需要支付</p>
@@ -10,7 +10,7 @@
             </div>
         </div>
         <section>
-            <img src="../../common/images/applyagent_c.png" alt="" class="agentContent">
+            <img src="../../common/images/applyagent_c.png" alt="" class="agentContent" onload="imgLoad">
             <div class="addrInfo" @click="chooseAddr">
                 <div class="icon icon-location"></div>
                 <div class="content" v-if="addr.reciever">
@@ -114,6 +114,12 @@ export default {
                     
                 }
             });
+        },
+        imgLoad() {
+            this.loadNum++
+            if(this.loadNum>=3) {
+                this.refs.wrapper.style.display = 'block';
+            }
         }
     },
     computed:{

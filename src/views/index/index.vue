@@ -9,16 +9,20 @@
                     </router-link>
                 </transition>
                 <!-- inviter header -->
-                <div class="header" ref="header" v-if="headerInfo">
-                    <div class="userInfo-container">
-                            <img :src="headerInfo.avatar" alt="" v-if="headerInfo.avatar">
-                            <div class="name bold" v-if="headerInfo.mobile">
-                                <span>{{headerInfo.nickname}}</span>
-                                <a class="icon icon-phone" :href="`tel:${headerInfo.mobile}`" ></a>
-                            </div>
-                            <div class="desc">邀请您参与社交电商</div>
-                            <div class="received-invite" @click="receivedInvite" v-if="headerInfo.mobile">接收邀请</div>
-                            <router-link class="received-invite" to="/login" v-else tag="div">绑定手机号码</router-link>
+                <div class="header" ref="header">
+                    <div class="userInfo-container" v-if="headerInfo">
+                        <img :src="headerInfo.avatar" alt="" v-if="headerInfo.avatar">
+                        <div class="name bold" v-if="headerInfo.mobile">
+                            <span>{{headerInfo.nickname}}</span>
+                            <a class="icon icon-phone" :href="`tel:${headerInfo.mobile}`" ></a>
+                        </div>
+                        <div class="desc">邀请您参与社交电商</div>
+                        <div class="received-invite" @click="receivedInvite" v-if="headerInfo.mobile">接收邀请</div>
+                        <router-link class="received-invite" to="/login" v-else tag="div">绑定手机号码</router-link>
+                    </div>
+                    <div class="userInfo-container" v-else>
+                        <div class="desc">邀请您参与社交电商</div>
+                        <router-link class="received-invite" to="/login" tag="div">绑定手机号码</router-link>
                     </div>
                 </div>
                 <!-- tips -->
@@ -136,9 +140,6 @@ export default {
         this.hasInviter()
     },
     mounted() {
-        // 监听滚动
-        // addEventListener('scroll',this.handleScroll)
-        // 获取停运信息
         this.getExpressInfo()
     },
     computed:{
@@ -239,20 +240,33 @@ export default {
                     this.calculateWidth(data.topCategories.length+1)
                     let _id = this.topCategories[0]._id
                     this.formatProdList(this.topCategories,data.productList)
-                    // console.log(this.categoryList[_id])
                     this.allProdList = data.productList
-                    // this.productList = this.categoryList[_id]
                     this.productList = this.allProdList
-                    if(!inviter) {
-                        this.headerInfo = this.userInfo
-                        if(!this.headerInfo.hasInviter&&global.isBoundWechat) {
+                    if(this.userInfo) {
+                        if(this.userInfo.hasInviter) {
+                            this.headerInfo = this.userInfo
+                        } else {
+                            console.log(11)
+                            this.headerInfo = res.data.customerInfoOnTop
                             this.isSlide = true
                         }
                     } else {
-                        this.headerInfo = res.data.customerInfoOnTop
-                        // this.savaInviteInfo(res.data.customerInfoOnTop)
+                        if(this.userSn) {
+                            this.headerInfo = res.data.customerInfoOnTop
+                        }
                     }
+                    // if(!inviter) {
+                    //     this.headerInfo = this.userInfo
+                    //     if(!this.headerInfo.hasInviter&&global.isBoundWechat) {
+                    //         this.isSlide = true
+                    //     }
+                    // } else {
+                    //     this.headerInfo = res.data.customerInfoOnTop
+                    //     // this.savaInviteInfo(res.data.customerInfoOnTop)
+                    // }
                     if(env == 'production') {
+                    console.log(env)
+                    console.log(res.data.wechat)
                     // 分享
                         this.$wechat.ready(() => {
                             this.$wechat.onMenuShareTimeline({

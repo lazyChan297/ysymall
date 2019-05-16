@@ -158,6 +158,7 @@ export default {
         height 40px
         border-bottom 1px solid $line
         margin-bottom 28px
+        height 100%
         .iconbox
             flex 0 0 20px
         input

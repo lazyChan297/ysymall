@@ -261,34 +261,9 @@ export default new Router({
       component: () => import('@/views/friendship/index'),
       redirect: '/friendship/inviter',
       meta:{
-        keepAlive:true
-      },
-      children: [
-        {
-          path: 'inviter',
-          name: 'inviter',
-          component: userList,
-          meta: {
-            title: '访客'
-          }
-        },
-        {
-          path: 'customer',
-          name: 'customer',
-          component: userList,
-          meta: {
-            title: '扫码客'
-          }
-        },
-        {
-          path: 'friends',
-          name: 'friends',
-          component:userList,
-          meta:{
-            title:'人脉'
-          }
-        }
-      ]
+        keepAlive:true,
+        title:'人脉'
+      }
     },
     {
       path: '/userDetail/:sn',
