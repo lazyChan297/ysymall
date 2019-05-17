@@ -25,7 +25,7 @@ export default {
         }
     },
     mounted() {
-        this.getlist('inviter')
+        this.getlist('friends')
     },
     components:{
         UserList

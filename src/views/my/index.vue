@@ -141,6 +141,10 @@ export default {
     components: {
         TabBar
     },
+    beforeRouteEnter(to,from,next){
+        console.log(from)
+        next()
+    },
     computed:{
         ...mapGetters([
             'userInfo'

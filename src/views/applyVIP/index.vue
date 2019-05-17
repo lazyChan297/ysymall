@@ -1,8 +1,7 @@
 <template>
-    <div class="applyVIP-wrapper" ref="wrapper" style="display: none;">
+    <div class="applyVIP-wrapper" ref="wrapper" :style="{display:style}">
         <div class="headers">
-            <img src="../../common/images/vipbg.png" alt="" class="bg" onload="imgLoad">
-            <img src="../../common/images/viplogo.png" alt="" width="80" class="logo" onload="imgLoad">
+            <img src="../../common/images/viplogo.png" alt="" class="logo" @load="imgLoad">
             <div class="userInfo">{{userInfo.nickname}} | {{getLevel(userInfo.level)}}</div>
             <div class="account">
                 <p class="desc">申请VIP需要支付</p>
@@ -10,7 +9,7 @@
             </div>
         </div>
         <section>
-            <img src="../../common/images/applyvip_c.png" alt="" class="vipContent" onload="imgLoad">
+            <img src="../../common/images/applyvip_c.png" alt="" class="vipContent" @load="imgLoad">
             <div class="addrInfo" @click="chooseAddr">
                 <div class="icon icon-location"></div>
                 <div class="content" v-if="addr.id">
@@ -31,7 +30,8 @@ export default {
     data(){
         return{
             addr:'',
-            loadNum:0
+            loadNum:0,
+            style:''
         }
     },
     mounted(){
@@ -118,8 +118,8 @@ export default {
         },
         imgLoad() {
             this.loadNum++
-            if(this.loadNum>=3) {
-                this.refs.wrapper.style.display = 'block';
+            if(this.loadNum>=2) {
+                this.style = 'block';
             }
         }
     },
@@ -133,9 +133,13 @@ export default {
 <style lang="stylus" scoped>
 @import '../../common/stylus/variable.styl';
 .applyVIP-wrapper
+    display none
     background #fff !important
+    padding-bottom 20px
 .headers
     position relative
+    height 273px
+    background url("../../common/images/agentbg.png") no-repeat center
     .bg
         position absolute
         left 0
@@ -144,6 +148,7 @@ export default {
     .logo
         position relative
         margin 18px auto 0
+        width 100px
         z-index 1
     .userInfo
         position relative
@@ -154,7 +159,7 @@ export default {
     .account
         position relative
         background #ffffff
-        height 160px
+        height 168px
         border-radius 8px
         margin 0 15px
         padding-top 34px
@@ -178,7 +183,7 @@ export default {
             display inline-block
             vertical-align middle
 section
-    margin-top -15px
+    margin-top 0
     padding 0 15px
     background #ffffff
     .vipContent
@@ -210,6 +215,6 @@ section
     border-radius 5px
     color #fff
     font-weight bold
-    margin 20px 15px
+    margin 20px 15px 0
 </style>
 

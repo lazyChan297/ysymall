@@ -9,7 +9,7 @@
             </div>
         </div>
         <section>
-            <div class="my_rank" v-if="rankList.length">
+            <div class="my_rank" v-if="rankList&&rankList.length">
                 <img :src="userInfo.avatar" alt="" width="30" height="30">
                 <span>您{{current_rank==1?'当前':'的'}}排名是第 {{my_rank}} 名</span>
                 <!-- <div class="icon icon-no1"></div> -->
@@ -19,7 +19,7 @@
                 <span>用户</span>
                 <span>{{current_rank==1?'今日':'昨日'}}</span>
             </div>
-            <ul class="tb" v-if="rankList.length">
+            <ul class="tb" v-if="rankList&&rankList.length">
                 <li v-for="(item,index) in rankList" :key="index">
                     <div class="rank">
                         <div class="icon icon-no1" v-if="item.rankNo==1"></div>

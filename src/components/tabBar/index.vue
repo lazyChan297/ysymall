@@ -1,23 +1,23 @@
 <template>
     <div class="tabBar-wrapper">
-        <router-link to="/" tag="div">
+        <router-link to="/index" tag="div">
             <div class="icon icon-index"></div>
             <p class="bold">首页</p>
         </router-link>
-        <router-link to="/found" tag="div">
+        <router-link to="/found" tag="div" exact>
             <div class="icon icon-found"></div>
             <p class="bold">发现</p>
         </router-link>
-        <router-link to="/rank" tag="div">
+        <router-link to="/rank" tag="div" exact>
             <div class="icon icon-rank"></div>
             <p class="bold">竞赛</p>
         </router-link>
-        <router-link to="/cart" tag="div">
+        <router-link to="/cart" tag="div" exact>
             <div class="icon icon-cart"></div>
             <span class="cartNum" v-if="cartLen">{{cartLen}}</span>
             <p class="bold">购物车</p>
         </router-link>
-        <router-link to="/my" tag="div">
+        <router-link to="/my" tag="div" exact>
             <div class="icon icon-my"></div>
             <p class="bold">我的</p>
         </router-link>
@@ -55,7 +55,7 @@ export default {
                 height 24px
                 width 24px
                 margin-top 4px
-            &.router-link-exact-active
+            &.router-link-active
                 p
                     color $green
         .cartNum

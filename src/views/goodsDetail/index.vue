@@ -36,10 +36,10 @@
         </div>
         <div class="tabbar">
             <div class="icon-container">
-                <router-link to="/" tag="div">
+                <div @click="goBack">
                     <div class="icon icon-gobackIndex"></div>
                     <div class="text">首页</div>
-                </router-link>
+                </div>
                 <router-link to="/cart" tag="div">
                     <div class="icon icon-shopcart"></div>
                     <div class="text">购物车</div>
@@ -103,6 +103,7 @@ import { Swiper,SwiperItem } from 'vux'
 import CartControl from '@/components/cartcontrol/index'
 import {mapGetters, mapMutations} from 'vuex'
 import Qs from 'qs';
+var fullPath = ''
 export default {
     data() {
         return {
@@ -136,6 +137,10 @@ export default {
         CartControl,
         Scroll
     },
+    beforeRouteEnter(to,from, next){
+        fullPath = from.fullPath
+        next()
+    },
     created(){
         this.product_id = this.$route.params.id
         // this.product_id = '57bac5c6f656f2940a3bf570'
@@ -148,13 +153,14 @@ export default {
             'userInfo'
         ])
     },
-    mounted() {
-        
-    },
     methods: {
         // 返回首页
         goBack(){
-            this.$router.push({path:'/'})
+            if(fullPath == '/index') {
+                this.$router.go(-1)
+            } else {
+                this.$router.push({path:'/'})
+            }
         },
         hasInviter(id){
             let inviter = decodeURIComponent((new RegExp('[?|&]inviter='+'([^&;]+?)(&|#|;|$)').exec(location.href)||[,""])[1].replace(/\+/g,'%20'))||null;

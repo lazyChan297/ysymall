@@ -168,7 +168,7 @@ export default {
                     let timer = setTimeout(()=>{
                         this.$router.push({path:'/login'})
                     },1000) 
-                } else if (res.data.code=== 1000008){
+                } else {
                     this.$vux.toast.show({
                         text:res.data.message,
                         type:'warn'
@@ -246,8 +246,11 @@ export default {
                         if(this.userInfo.hasInviter) {
                             this.headerInfo = this.userInfo
                         } else {
-                            console.log(11)
-                            this.headerInfo = res.data.customerInfoOnTop
+                            if(this.userSn) {
+                                this.headerInfo = res.data.customerInfoOnTop
+                            } else {
+                                this.headerInfo = this.userInfo
+                            }
                             this.isSlide = true
                         }
                     } else {
@@ -255,18 +258,8 @@ export default {
                             this.headerInfo = res.data.customerInfoOnTop
                         }
                     }
-                    // if(!inviter) {
-                    //     this.headerInfo = this.userInfo
-                    //     if(!this.headerInfo.hasInviter&&global.isBoundWechat) {
-                    //         this.isSlide = true
-                    //     }
-                    // } else {
-                    //     this.headerInfo = res.data.customerInfoOnTop
-                    //     // this.savaInviteInfo(res.data.customerInfoOnTop)
-                    // }
                     if(env == 'production') {
-                    console.log(env)
-                    console.log(res.data.wechat)
+                    console.log(res.data)
                     // 分享
                         this.$wechat.ready(() => {
                             this.$wechat.onMenuShareTimeline({

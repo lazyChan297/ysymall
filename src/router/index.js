@@ -7,8 +7,8 @@ import orderList from '@/views/orderList/index'
 import cashList from '@/views/cashList/index'
 import userList from '@/views/userList/index'
 export default new Router({
-  // mode:'history',
   routes: [
+    {path: '*', redirect: '/index'},
     {
       path: '/login',
       name: 'login',
@@ -18,7 +18,7 @@ export default new Router({
       }
     },
     {
-      path: '/',
+      path: '/index',
       name: 'index',
       component: () => import('@/views/index/index'),
       meta: {
@@ -259,9 +259,7 @@ export default new Router({
       path: '/friendship',
       name: 'friendship',
       component: () => import('@/views/friendship/index'),
-      redirect: '/friendship/inviter',
       meta:{
-        keepAlive:true,
         title:'人脉'
       }
     },

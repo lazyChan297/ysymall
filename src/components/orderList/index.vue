@@ -1,32 +1,35 @@
 <template>
-    <div class="orderlist-wrapper">
-            <router-link tag="section" class="order" v-for="(item,index) in orderList" :key="index" :to="{path:`/orderDetail/${item.order_id}`}">
-                    <div class="cell">
-                        <label class="date">{{item.created_at}}</label>
-                        <span>{{item.order_status_name}}</span>
-                    </div>
-                    <div class="goods-container" v-for="(gitem,gindex) in item.products" :key="gindex">
-                        <div class="goods">
-                            <img :src="gitem.image" width="80" height="80" alt="">
-                            <div class="text">
-                                <div class="name_price">
-                                    <span class="name bold">{{gitem.name}}</span>
-                                    <span class="price">¥{{gitem.price}}</span>
+    <div class="orderlist-wrapper" v-if="ready">
+            <div v-if="orderList.length>0" class="list">
+                <router-link tag="section" class="order" v-for="(item,index) in orderList" :key="index" :to="{path:`/orderDetail/${item.order_id}`}">
+                        <div class="cell">
+                            <label class="date">{{item.created_at}}</label>
+                            <span>{{item.order_status_name}}</span>
+                        </div>
+                        <div class="goods-container" v-for="(gitem,gindex) in item.products" :key="gindex">
+                            <div class="goods">
+                                <img :src="gitem.image" width="80" height="80" alt="">
+                                <div class="text">
+                                    <div class="name_price">
+                                        <span class="name bold">{{gitem.name}}</span>
+                                        <span class="price">¥{{gitem.price}}</span>
+                                    </div>
+                                    <p class="option_qty">
+                                        <span class="desc">{{getOptionName(gitem.custom_option_info,gitem.custom_option_names)}}</span>
+                                        <span class="quantity">x{{gitem.qty}}</span>
+                                    </p>
                                 </div>
-                                <p class="option_qty">
-                                    <span class="desc">{{getOptionName(gitem.custom_option_info,gitem.custom_option_names)}}</span>
-                                    <span class="quantity">x{{gitem.qty}}</span>
-                                </p>
                             </div>
                         </div>
-                    </div>
-                    <div class="cell">
-                        <label></label>
-                        <div v-if="item.order_status=='completed'||item.order_status=='dispatched'">
-                            <router-link class="check" tag="span" :to="{path:`/express/${item.order_id}`}">查看物流</router-link>
+                        <div class="cell">
+                            <label></label>
+                            <div v-if="item.order_status=='completed'||item.order_status=='dispatched'">
+                                <router-link class="check" tag="span" :to="{path:`/express/${item.order_id}`}">查看物流</router-link>
+                            </div>
                         </div>
-                    </div>
-            </router-link>
+                </router-link>
+            </div>
+            <div v-else class="empty">暂无订单</div>
     </div>
 </template>
 <script>
@@ -35,6 +38,9 @@ export default {
     props:{
         orderList:{
             type:Array
+        },
+        ready:{
+            type:Boolean
         }
     },
     data() {
@@ -78,8 +84,12 @@ export default {
 <style lang="stylus" scoped>
     @import "../../common/stylus/variable.styl";
     .orderlist-wrapper
-        margin-top 50px
         padding-top 10px
+    .empty
+        margin-top 70px
+    .list
+        padding-top 50px
+        padding-bottom 10px
     .order
         margin 0 15px 10px
         paddind-bottom 10px

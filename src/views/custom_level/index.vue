@@ -103,7 +103,7 @@
                     <span class="label">允许提现</span>
                     <div class="content">
                         <group>
-                            <x-switch v-model="withdrawal" title="" @on-change="handleWithdrawal"></x-switch>
+                            <x-switch v-model="withdraw" title="" @on-change="handleWithdrawal"></x-switch>
                         </group>
                     </div>
                 </div>
@@ -308,7 +308,6 @@ export default {
         },
         handleAllowSettlement(val){
             this.distribute = val
-            
         },
         // 打开选择级别的弹框
         showPeriodPopup(period){
@@ -471,7 +470,6 @@ export default {
                 withdraw:Number(this.withdraw),
                 distribute:Number(this.distribute)
             })
-            // console.log(params)
             this.$axios.post('/customer/level/upgrade-step-one',params).then((res)=>{
                 if(res.data.code === 200) {
                     this.isShowDialog = true

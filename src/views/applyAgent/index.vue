@@ -1,8 +1,8 @@
 <template>
-    <div class="applyAgent-wrapper" ref="wrapper" style="display: none;">
+    <div class="applyAgent-wrapper" ref="wrapper" :style="{display:style}">
         <div class="headers">
-            <img src="../../common/images/agentbg.png" alt="" class="bg" onload="imgLoad">
-            <img src="../../common/images/agentlogo.png" alt="" width="80" class="logo" onload="imgLoad">
+            <!-- <img src="../../common/images/agentbg.png" alt="" class="bg" @load="imgLoad"> -->
+            <img src="../../common/images/agentlogo.png" alt=""  class="logo" @load="imgLoad">
             <div class="userInfo">{{userInfo.nickname}} | {{getLevel(userInfo.level)}}</div>
             <div class="account">
                 <p class="desc">申请总代理需要支付</p>
@@ -10,7 +10,7 @@
             </div>
         </div>
         <section>
-            <img src="../../common/images/applyagent_c.png" alt="" class="agentContent" onload="imgLoad">
+            <img src="../../common/images/applyagent_c.png" alt="" class="agentContent" @load="imgLoad">
             <div class="addrInfo" @click="chooseAddr">
                 <div class="icon icon-location"></div>
                 <div class="content" v-if="addr.reciever">
@@ -30,7 +30,9 @@ import {mapGetters} from 'vuex'
 export default {
     data(){
         return{
-            addr:''
+            addr:'',
+            style:'',
+            loadNum:0
         }
     },
     mounted(){
@@ -79,7 +81,6 @@ export default {
             })
         },
         submit(){
-            
             this.$axios.post('/customer/level/upgrade-to-general-agent').then((res)=>{
                 if(res.data.code === 200) {
                     if(res.data.data.needWechat) {
@@ -117,8 +118,8 @@ export default {
         },
         imgLoad() {
             this.loadNum++
-            if(this.loadNum>=3) {
-                this.refs.wrapper.style.display = 'block';
+            if(this.loadNum>=2) {
+                this.style = 'block';
             }
         }
     },
@@ -131,29 +132,34 @@ export default {
 </script>
 <style lang="stylus" scoped>
     @import '../../common/stylus/variable.styl';
-    .applyVIP-wrapper
+    .applyAgent-wrapper
         background #fff !important
+        display none
+        padding-bottom 20px
     .headers
         position relative
+        height 273px
+        background url("../../common/images/agentbg.png") no-repeat center
         .bg
             position absolute
             left 0
             width 100%
             z-index 0
         .logo
+            width 100px
             position relative
             margin 18px auto 0
             z-index 1
         .userInfo
             position relative
             margin-top 10px
-            margin-bottom 15px
+            margin-bottom 20px
             color #fff
             z-index 1
         .account
             position relative
             background #ffffff
-            height 160px
+            height 168px
             border-radius 8px
             margin 0 15px
             padding-top 34px
@@ -177,7 +183,7 @@ export default {
                 display inline-block
                 vertical-align middle
     section
-        margin-top -15px
+        margin-top 0
         padding 0 15px
         background #ffffff
         .agentContent
@@ -189,7 +195,7 @@ export default {
             background #ffffff
             border-top 1px solid $line
             border-bottom 1px solid $line
-            padding 10px 0
+            padding 15px 0
             .icon-location
                 margin-right 15px
             .content
@@ -201,7 +207,7 @@ export default {
                 .addr
                     color $text-lll
                     font-size 14px
-                    margin-top 2px
+                    margin-top 10px
     .submit
         line-height 50px
         background linear-gradient(180deg,rgba(0,132,255,1) 0%,rgba(69,165,255,1) 100%)
@@ -209,5 +215,5 @@ export default {
         border-radius 5px
         color #fff
         font-weight bold
-        margin 20px 15px
+        margin 20px 15px 0
 </style>

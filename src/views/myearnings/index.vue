@@ -42,26 +42,27 @@
                     :max-year="max_year"
                     v-model="value1"
                     format="YYYY-MM"
-                    @on-change="onChange"></datetime>
+                    @on-confirm="onConfirm"></datetime>
             </div>
         </div>
         <div class="sheet">
-                <div>
-                    <ul v-if="earnInfo">
-                        <li v-for="(item,index) in earnInfo.incomeList" :key="index">
-                            <p>
-                                <span>奖励到账提醒</span>
-                                <span>{{item.boughtAt}}</span>
-                            </p>
-                            <div>
-                                <span class="num bold">￥{{item.amount}}</span>
-                                <span>{{item.info}}</span>
-                            </div>
-                        </li>
-                    </ul>
-                    <div v-else class="empty">暂无数据</div>
-                </div>
+            <div v-if="earnInfo.incomeList.length">
+                <ul v-if="earnInfo">
+                    <li v-for="(item,index) in earnInfo.incomeList" :key="index">
+                        <p>
+                            <span>奖励到账提醒</span>
+                            <span>{{item.boughtAt}}</span>
+                        </p>
+                        <div>
+                            <span class="num bold">￥{{item.amount}}</span>
+                            <span>{{item.info}}</span>
+                        </div>
+                    </li>
+                </ul>
+                <div v-else class="empty">暂无数据</div>
             </div>
+            <div v-else class="empty">暂无收益</div>
+        </div>
     </div>
 </template>
 
@@ -100,7 +101,7 @@ export default {
         this.getEarns()
     },
     methods:{
-        onChange(val){
+        onConfirm(val){
             let month =Number(val.split('-')[1])
             
             let year = val.split('-')[0]
@@ -122,6 +123,7 @@ export default {
                 page:this.listParams.page,
                 number:this.listParams.number
             })
+            console.log(params)
             this.getListByDate(params)
         },
         getEarns(){
@@ -137,8 +139,7 @@ export default {
                     if(res.data.data.incomeList.length<this.listParams.number) {
                         this.listParams.nomore = true
                     }
-                    let incomeList = this.earnInfo.incomeList?this.earnInfo.incomeList:[]
-                    this.earnInfo.incomeList = this.earnInfo.incomeList.concat(res.data.data.incomeList)
+                    this.earnInfo.incomeList = res.data.data.incomeList
 
                 }
             })
@@ -336,8 +337,10 @@ export default {
                 font-size 20px
                 margin-right 50px
     .empty
-        height 50px
-        line-height 50px
+        height 80px
+        line-height 80px
         color $text-ll
         font-size 14px
+        border-top 1px solid $line
+        background $bgcolor
 </style>

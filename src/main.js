@@ -154,13 +154,13 @@ router.afterEach((to,from) => {
 })
 
 router.onError((error) => {
-  console.log('error')
-  // alert('error')
   const pattern = /Loading chunk (\d)+ failed/g;
   const isChunkLoadFailed = error.message.match(pattern);
   const targetPath = router.history.pending.fullPath;
   if (isChunkLoadFailed) {
+    // alert(error.message)
    router.replace(targetPath);
+  //  location.reload();
   }
  });
 

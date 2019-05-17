@@ -1,19 +1,12 @@
 <template>
     <div class="order-wrapper" v-if="ready">
-        <!-- <div class="tab">
-            <router-link to="/order/all" class="tabItem" tag="div"><span>全部</span></router-link>
-            <router-link to="/order/unshipped" class="tabItem" tag="div"><span>待发货</span></router-link>
-            <router-link to="/order/shipped" class="tabItem" tag="div"><span>待收货</span></router-link>
-            <router-link to="/order/completed" class="tabItem" tag="div"><span>已完结</span></router-link>
-        </div> -->
         <div class="tab">
             <div class="tabItem" @click="switchTab('all')" :class="current=='all'?'active':''"><span>全部</span></div>
             <div class="tabItem" @click="switchTab('unshipped')" :class="current=='unshipped'?'active':''"><span>待发货</span></div>
             <div class="tabItem" @click="switchTab('shipped')" :class="current=='shipped'?'active':''"><span>待收货</span></div>
             <div class="tabItem" @click="switchTab('completed')" :class="current=='completed'?'active':''"><span>已完结</span></div>
         </div>
-        <!-- <router-view></router-view> -->
-        <order-list :orderList="orderList"></order-list>
+        <order-list :orderList="orderList" :ready="ready"></order-list>
     </div>
 </template>
 <script>
@@ -64,15 +57,6 @@ export default {
             })
             this.$axios.post(url,params).then((res)=>{
                 if(res.data.code === 200) {
-                    // this.custom_option_names = res.data.data.orderList[0].products[0].custom_option_names
-                    // // 保存可以转换为汉字的规格属性值
-                    // if(this.custom_option_names) {
-                    //     let attr = []
-                    //     for(let i in this.custom_option_names) {
-                    //         attr.push(i)
-                    //     }
-                    //     this.option_txt_arr = attr
-                    // }
                     if(res.data.data.orderList.length < this.listParams.number) {
                         this.listParams.nomore = true
                     }
@@ -80,6 +64,8 @@ export default {
                     let ori_orderList = this.orderList,
                         orderList = res.data.data.orderList
                     this.orderList = ori_orderList.concat(orderList)
+                    // this.orderList = []
+                    this.ready = true
                 }
             })
         },

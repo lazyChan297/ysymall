@@ -24,7 +24,7 @@
             <div>县区</div>
             <div>状态</div>
         </div>
-        <ul class="list">
+        <ul class="list" :style="{padding:style}">
             <li v-for="(item,index) in agentDistricts" :key="index">
                 <div class="province">{{item.province}}</div>
                 <div class="city">{{item.city}}</div>
@@ -74,7 +74,8 @@ export default {
             district:[],
             districtId:'',
             cityDistrict:[],
-            ready:global.ready
+            ready:global.ready,
+            style:''
         }
     },
     components:{
@@ -169,6 +170,11 @@ export default {
                         
                     }
                     this.agentDistricts = agentDistricts
+                    if(agentDistricts.length>5) {
+                        this.style = '0 15px 50px';
+                    } else {
+                        this.style = '0 15px 0';
+                    }
                 } 
             })
         },
@@ -209,7 +215,7 @@ export default {
         flex 1
 .list
     background #fff
-    padding 0 15px 50px
+    padding 0 15px 0
     li
         display flex
         border-bottom 1px solid $line
