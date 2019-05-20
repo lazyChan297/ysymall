@@ -12,7 +12,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/': {
-        target: env == 'production' ? 'https://caomeng.me' : 'http://fappserver.caomeng.me/',
+        target: 'http://fappserver.caomeng.me/',//测试服务器
+        // target: 'https://appserver.ysyysy.com',
         changeOrigin: true,
         pathRewrite: {
           '^/': ''
@@ -53,8 +54,8 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: String(parseInt(new Date().getTime() / 1000)),
-    assetsPublicPath: 'http://fimg.caomeng.me/',
-
+    assetsPublicPath: 'http://fimg.caomeng.me/', //测试服务器
+    // assetsPublicPath: 'http://img.ysyysy.com',  // 生产服务器
     /**
      * Source Maps
      */

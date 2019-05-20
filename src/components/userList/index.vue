@@ -1,6 +1,6 @@
 <template>
     <div class="userList-wrapper" :class="level==='generalAgent'?'agent':'vip'">
-        <ul class="list">
+        <ul class="list" v-if="list.length>0">
             <div class="list-title" v-if="vipInfo">
                 <div>已开通：<span :class="level==='generalAgent'?'red':'green'">{{vipInfo.vipUsed}}</span>人</div>
                 <div>还可开通：<span :class="level==='generalAgent'?'red':'green'">{{vipInfo.vipLeft}}</span>人</div>
@@ -18,14 +18,13 @@
                 </div>
                 <!-- 设置级别 -->
                 <div class="right">
-                    <div v-if="level==='level'" @click="setLevel(item)" class="btn">设置级别</div>
+                    <div v-if="level==='level'" @click="setLevel(item)" class="btn">开通合伙人</div>
                     <div v-else @click="setLevel(item)">{{level==='vip'?"去开通VIP":'去开通总代'}}</div>
-                    <router-link class="edit" v-if="item.level==='countyAgent'||item.level==='cityAgent'||item.level==='provinceAgent'" :to="{path:`/editAgent/${item.sn}`}">编辑代理</router-link>
+                    <router-link class="edit" v-if="item.level==='countyAgent'||item.level==='cityAgent'||item.level==='provinceAgent'" :to="{path:`/editAgent/${item.sn}`}">编辑合伙人</router-link>
                 </div>
-                <!-- <div class="right" v-if="level==='level'" @click="setLevel(item)">设置级别</div>
-                <div class="right" v-else @click="setLevel(item)">{{level==='vip'?"去开通VIP":'去开通总代'}}</div> -->
             </li>
         </ul>
+        <div class="empty" v-else>{{empty}}</div>
     </div>
 </template>
 <script>
@@ -38,6 +37,9 @@ export default {
         }
     },
     props:{
+        empty:{
+            type:String
+        },
         level:{
             type:String
         },
@@ -109,6 +111,10 @@ export default {
 </script>
 <style lang="stylus" scoped>
 @import "../../common/stylus/variable.styl";
+.empty
+    font-size 14px
+    padding-top 100px
+    color $text-lll
 /* VIP */
 .vip
     .right
@@ -139,11 +145,13 @@ export default {
             background transparent
     .item
         display flex
-        margin 23px 15px
+        margin 23px 15px 0
         border-bottom 1px solid #efefef
         padding-bottom 23px
         padding-top 10px
         align-items center
+        &:last-child
+            border none
         img
             border-radius 50%
             width 54px
@@ -153,16 +161,21 @@ export default {
             margin-left 10px
             flex 1
             .level
+                display inline-block
                 background $text-lll
                 color #fff
                 border-radius 30px
                 padding 0 15px
                 line-height 24px
                 font-size 14px
+                margin-bottom 4px
+            .level + .mobile
+                margin-top 0
             .name
                 color $text-l
                 font-weight bold
                 font-size 18px
+                margin-bottom 4px
             .mobile
                 color $text-ll
                 font-size 14px

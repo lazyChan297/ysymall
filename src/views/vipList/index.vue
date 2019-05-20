@@ -2,7 +2,12 @@
     <div v-if="ready">
         <div>
             <search :checkType="checkType" @keywords="handleKeyWords">
-                <user-list :level="checkType" :list="friendsList" :vipInfo="vipInfo" @loadMore="loadMore"></user-list>
+                <user-list 
+                    :level="checkType" 
+                    :list="friendsList" 
+                    :vipInfo="vipInfo" 
+                    @loadMore="loadMore"
+                    :empty="empty"></user-list>
             </search>
         </div>
     </div>

@@ -1,5 +1,5 @@
 <template>
-        <div class="customeLevel-wrapper">
+        <div class="customeLevel-wrapper" v-if="agentInfo">
             <div class="header">
                 <div class="userinfo">
                     <div>
@@ -10,7 +10,7 @@
                         <div class="mobile">手机号:{{agentInfo.mobile}}</div>
                     </div>
                 </div>
-                <div class="relationship" v-if="agentInfo.inviterNickname">
+                <div class="relationship">
                     <div>
                         <span>邀请人</span>
                         <span>{{agentInfo.inviterNickname}}</span>
@@ -84,7 +84,7 @@
                         </div>
                     </div>
             </div>
-            <div class="submit" @click="submit">编辑代理信息</div>
+            <div class="submit" @click="submit">编辑合伙人</div>
             <!-- 选择级别 -->
             <popup-picker :data="levelList" v-show="isShowLevelPopup"  :show.sync="isShowLevelPopup" @on-change="levelChange" v-model="agentRegion"></popup-picker>
             <!-- 选择有效期 -->
@@ -102,10 +102,20 @@
             <!-- 弹框 -->
             <x-dialog v-model="isShowDialog">
                 <div class="confirm-container">
-                    <div class="content">{{dialog_content}}</div>
+                    <div class="title bold">确认编辑级别</div>
+                    <div class="confirm-content">
+                        <div class="desc">请进行手机验证:</div>
+                        <div class="cell">
+                            <div class="mobile">{{getMobile()}}</div>
+                            <div class="getcode" @click="getcode" :class="canSubmit?'':'disabled'">{{button_text}}</div>
+                        </div>
+                        <div class="cell">
+                            <input type="tel" placeholder="请输入验证码" v-model="captcha">
+                        </div>
+                    </div>
                     <div class="button-group">
-                        <div class="submit" @click="confirmDialog">{{dialog_confirm_btn}}</div>
-                        <!-- <div class="cancel">取消</div> -->
+                        <div class="submit" @click="confirmDialog">确定</div>
+                        <div class="cancel" @click="isShowDialog = false">取消</div>
                     </div>
                 </div>
             </x-dialog>
@@ -126,6 +136,7 @@
     export default {
         data(){
             return {
+                captcha:'',
                 newAgentInfo:null,//需要提交的修改信息
                 dialog_content:'',
                 dialog_confirm_btn:'',
@@ -175,7 +186,10 @@
                 withdraw:true,//允许提现
                 allowSettlement:false,
                 current_date:'',
-                origin_districtInfo:''
+                origin_districtInfo:'',
+                canSubmit:true,
+                button_text:'发送验证码',
+                reset:60
             }
         },
         components:{
@@ -188,7 +202,6 @@
             XDialog
         },
         mounted(){
-            this.getDistricts()
             this.getCustomerInfo(this.$route.params.sn)
         },
         methods:{
@@ -200,6 +213,7 @@
                 this.$axios.post('/manager/agent/get-agent-info',params).then((res)=>{
                     if(res.data.code === 200) {
                         this.agentInfo = res.data.data
+                        this.getDistricts(this.agentInfo.level)
                         let agentDistricts = this.agentInfo.agentDistricts
                         this.origin_districtId = agentDistricts[agentDistricts.length-1]
                         let districtInfo = []
@@ -209,6 +223,35 @@
                         this.origin_districtInfo = value2name(districtInfo, this.addressData)
                     }
                 })
+            },
+            getcode() {
+                if(!this.canSubmit) {
+                    return false
+                }
+                let params = Qs.stringify({
+                    mobile:this.userInfo.mobile,
+                    type:10
+                })
+                this.$axios.post('/customer/service/send-sms',params).then((res)=>{
+                    if(res.data.code === 200) {
+                        let reset = 60
+                        let timer = setInterval(()=>{
+                            this.canSubmit = false
+                            reset--;
+                            this.button_text = `${reset}s`;
+                            if(reset==0) {
+                                this.canSubmit = true
+                                this.button_text = '发送验证码'
+                            }
+                        },1000)
+                    }
+                })
+            },
+            getMobile(){
+                var tel = this.userInfo.mobile;
+                tel = "" + tel;
+                var tel1 = tel.substr(0,3) + "****" + tel.substr(7)
+                return tel1
             },
             // 打开时间弹窗
             showPopupDate(type){
@@ -222,8 +265,40 @@
                 }
             },
             confirmDialog(){
-                this.isShowDialog = false
-                this.$router.go(-1)
+                if(!this.captcha) {
+                    this.$vux.toast.show({
+                        text:"请输入验证码",
+                        type:'warn'
+                    })
+                    return false
+                }
+                let params = Qs.stringify({
+                    sn:this.$route.params.sn.replace(/&/g, '&amp;'),
+                    newLevel:this.newAgentInfo&&this.newAgentInfo.level,
+                    newDistrictId:this.districtId,
+                    agentEndedAt:this.agentInfo.agentEndedAt,
+                    vipEndedAt:this.agentInfo.vipEndedAt,
+                    generalAgentEndedAt:this.agentInfo.generalAgentEndedAt,
+                    vipQuota:this.agentInfo.vipQuota,
+                    generalAgentQuota:this.agentInfo.generalAgentQuota,
+                    withdraw:Number(this.agentInfo.withdraw),
+                    captcha:this.captcha
+                })
+                this.$axios.post('/manager/agent/update',params).then((res)=>{
+                    if(res.data.code === 200) {
+                        this.isShowDialog = false
+                        this.$router.go(-1)
+                        this.$vux.toast.show({
+                            text:"编辑成功",
+                            type:'success'
+                        })
+                    } else {
+                        this.$vux.toast.show({
+                            text:res.data.message,
+                            type:'warn'
+                        })
+                    }
+                })
             },
             // 监听时间改变
             generalDateChange(val){
@@ -271,6 +346,7 @@
             },
             levelChange(e){
                 this.currentLevel = e[0]
+                this.newAgentInfo = {}
                 if(e[0] === '省级') {
                     this.newAgentInfo.level = 'provinceAgent'
                 } else if (e[0] === '市级') {
@@ -296,24 +372,33 @@
             popupCancel(){
                 this.isShowCalendar = false
             },
-            getDistricts(){
-                // this.$axios.get('/customer/service/get-districts').then((res)=>{
-                //     if(res.data.code) {
-                //         addrArray = res.data.data.districts
-                //         let _levelList = res.data.data.levels,levelList = []
-                //         _levelList.forEach((item,index)=>{
-                //             levelList.push(item.name)
-                //         })
-                //         this.addressData = res.data.data.districts
-                //         this.levelList = [levelList]
-                //     }
-                // })
+            getDistricts(level){
+                let n = level==='provinceAgent'?0:2
                 addrArray = districts.districts;
                 let _levelList = districts.levels,levelList = []
+                let addressData = []
                 _levelList.forEach((item,index)=>{
+                    if(item)
                     levelList.push(item.name)
                 })
-                this.addressData = districts.districts
+                if (level === 'provinceAgent') {
+                    addrArray.forEach(item => {
+                        if (item.parent == 0) {
+                            addressData.push(item)
+                        }
+                    })
+                    this.addressData = addressData
+                }else if (level === 'cityAgent') {
+                    addrArray.forEach((item) => {
+                        if (item.parent != 2) {
+                            addressData.push(item)
+                        }
+                    })
+                    this.addressData = addressData
+                }else {
+                    this.addressData = addrArray
+                }
+                // this.addressData = districts.districts
                 this.levelList = [levelList]
             },
             areaDetail (value) {
@@ -392,36 +477,7 @@
                 })
             },
             submit(){
-                let params = Qs.stringify({
-                    sn:this.$route.params.sn.replace(/&/g, '&amp;'),
-                    newLevel:this.newAgentInfo&&this.newAgentInfo.level,
-                    newDistrictId:this.districtId,
-                    agentEndedAt:this.agentInfo.agentEndedAt,
-                    vipEndedAt:this.agentInfo.vipEndedAt,
-                    generalAgentEndedAt:this.agentInfo.generalAgentEndedAt,
-                    vipQuota:this.agentInfo.vipQuota,
-                    generalAgentQuota:this.agentInfo.generalAgentQuota,
-                    withdraw:Number(this.agentInfo.withdraw)
-                })
-                this.$axios.post('/manager/agent/update',params).then((res)=>{
-                    if(res.data.code === 200) {
-                        this.isShowDialog = true
-                        this.dialog_content = "修改成功"
-                        this.dialog_confirm_btn = "确定"
-                        // this.$vux.toast.show({
-                        //     text:"修改成功",
-                        //     type:'success'
-                        // })
-                        // let timer = setTimeout(()=>{
-                        //     this.$router.go(-1)
-                        // },1000)
-                    } else {
-                        this.$vux.toast.show({
-                            text:res.data.message,
-                            type:'warn'
-                        })
-                    }
-                })
+                this.isShowDialog = true
             }
         },
         computed:{
@@ -442,6 +498,56 @@
     <style lang="stylus" scoped>
         @import "../../common/stylus/variable.styl";
         @import '../../common/stylus/dialog.styl';
+        .customeLevel-wrapper
+            padding-bottom 10px
+        .disabled
+            background $text-lll !important
+        .confirm-container
+            margin 0
+            padding 0
+            .title
+                height 72px
+                color #fff
+                line-height 72px
+                font-size 24px
+                background $green
+            .content
+                margin 40px 0
+            .cancel
+                line-height 50px
+            .confirm-content
+                padding 0 15px
+                .desc
+                    font-size 14px
+                    color $tetx-lll
+                    margin-top 27px
+                    text-align left
+                .cell
+                    display flex
+                    align-items center
+                    padding-top 10px
+                    .mobile
+                        flex 1
+                        background #f2f2f2
+                        line-height 40px
+                        border-radius 3px
+                        color $text-lll
+                        margin-right 10px
+                        text-align left
+                        padding-left 10px
+                    .getcode
+                        width 90px
+                        background $green
+                        color #fff
+                        line-height 40px
+                        border-radius 3px
+                        font-size 12px
+                    input
+                        background #f2f2f2
+                        line-height 40px
+                        border-radius 3px
+                        flex 1
+                        padding-left 10px
         .header
             background #fff
             margin-bottom 10px
@@ -508,7 +614,6 @@
             padding-right 15px
             h4
                 flex 1
-    
         .submit
             margin 10px 15px
             line-height 50px

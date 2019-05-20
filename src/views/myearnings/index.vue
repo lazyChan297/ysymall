@@ -46,8 +46,8 @@
             </div>
         </div>
         <div class="sheet">
-            <div v-if="earnInfo.incomeList.length">
-                <ul v-if="earnInfo">
+            <div >
+                <ul v-if="earnInfo.incomeList&&earnInfo.incomeList.length>0">
                     <li v-for="(item,index) in earnInfo.incomeList" :key="index">
                         <p>
                             <span>奖励到账提醒</span>
@@ -61,7 +61,7 @@
                 </ul>
                 <div v-else class="empty">暂无数据</div>
             </div>
-            <div v-else class="empty">暂无收益</div>
+            <!-- <div v-else class="empty">暂无收益</div> -->
         </div>
     </div>
 </template>
@@ -117,13 +117,13 @@ export default {
             }
             this.endedAt = year + '-' + month + '-01'
             this.listParams.page = 1
+            this.listParams.nomore = false
             let params = Qs.stringify({
                 startedAt:this.startedAt,
                 endedAt:this.endedAt,
                 page:this.listParams.page,
                 number:this.listParams.number
             })
-            console.log(params)
             this.getListByDate(params)
         },
         getEarns(){
@@ -136,9 +136,6 @@ export default {
         getListByDate(params) {
             this.$axios.post('/finance/income/all',params).then((res)=>{
                 if(res.data.code === 200) {
-                    if(res.data.data.incomeList.length<this.listParams.number) {
-                        this.listParams.nomore = true
-                    }
                     this.earnInfo.incomeList = res.data.data.incomeList
 
                 }
@@ -148,6 +145,16 @@ export default {
             this.$axios.post('/finance/income/all',params).then((res)=>{
                 if(res.data.code === 200) {
                     this.earnInfo = res.data.data
+                }
+            })
+        },
+        loadMore(params) {
+            this.$axios.post('/finance/income/all',params).then((res)=>{
+                if(res.data.code === 200) {
+                    if(res.data.data.incomeList.length<this.listParams.number) {
+                        this.listParams.nomore = true
+                    }
+                    this.earnInfo.incomeList = this.earnInfo.incomeList.concat(res.data.data.incomeList)
                 }
             })
         },
@@ -165,10 +172,13 @@ export default {
                         page:this.listParams.page,
                         number:this.listParams.number
                     })
-                    this.getListByDate(params)
+                    this.loadMore(params)
                 }           
             }   
         }
+    },
+    destroyed() {
+        removeEventListener('scroll',this.handleScroll)
     }
 }
 </script>

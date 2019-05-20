@@ -2,7 +2,12 @@
         <div v-show="ready" class="agentList-wrapper" v-if="ready">
             <div class="agentList-wrapper">
                 <search :checkType="checkType" @keywords="handleKeyWords">
-                    <user-list :level="checkType" :list="friendsList" :generalInfo="generalInfo" @loadMore="loadMore" :loading="listParams.listParams"></user-list>
+                    <user-list :level="checkType" 
+                               :list="friendsList" 
+                               :generalInfo="generalInfo" 
+                               @loadMore="loadMore" 
+                               :loading="listParams.listParams"
+                               :empty="empty"></user-list>
                 </search>
             </div>
             <!-- <div v-else class="empty">暂无数据</div> -->

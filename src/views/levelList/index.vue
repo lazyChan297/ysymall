@@ -1,7 +1,7 @@
 <template>
         <div>
             <search :checkType="checkType" @keywords="handleKeyWords">
-                <user-list :level="checkType" :list="friendsList" @loadMore="loadMore"></user-list>
+                <user-list :level="checkType" :list="friendsList" @loadMore="loadMore" :empty="empty"></user-list>
             </search>
         </div>
     </template>
@@ -20,7 +20,8 @@
                     nomore:false,
                     page:1, //初始搜索页码
                     number:10 //每页返回数据
-                }
+                },
+                empty:''
             }
         },
         components:{
@@ -34,7 +35,7 @@
                     number:this.listParams.number,
                     keywords:this.keywords,
                     fromLevel:'member',//'需要的人脉的最低级别'
-                    toLevel:'cityAgent'//'需要的人脉的最高级别'
+                    toLevel:'provinceAgent'//'需要的人脉的最高级别'
                 })
                 this.$axios.post('/customer/service/search-customers',params).then((res)=>{
                     if(res.data.code === 200) {
@@ -44,6 +45,7 @@
                             if(!this.friendsList.length){
                                 this.listParams.loading = false
                                 this.listParams.nomore = true
+                                this.empty = '没有查询到您所输入的用户'
                             }
                         
                     }
@@ -56,7 +58,11 @@
                 this.listParams.page = 1
                 this.friendsList = []
                 this.keywords = val
-                this.searchFriends()
+                if(val){
+                    this.searchFriends()
+                } else {
+                    this.empty = null
+                }
             },
             // 滚动加载
             loadMore(){

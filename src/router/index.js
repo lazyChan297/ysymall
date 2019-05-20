@@ -343,7 +343,7 @@ export default new Router({
       name: 'editAgent',
       component: ()=>import('@/views/editAgent/index'),
       meta:{
-        title: '编辑代理信息'
+        title: '编辑合伙人'
       }
     },
     {

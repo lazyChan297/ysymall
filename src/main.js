@@ -42,9 +42,9 @@ if (process.env.NODE_ENV === 'development') {
   global.serverHost = ''
 } else {
   // 生产服务器
-  global.serverHost = "http://fappserver.caomeng.me"
+  // global.serverHost = "http://appserver.ysyysy.com"
   // 测服务器
-  //  global.serverHost = "https://ceshi100.caomeng.me"
+   global.serverHost = "http://fappserver.caomeng.me"
 }
 
 // 图片懒加载
@@ -153,16 +153,16 @@ router.afterEach((to,from) => {
   NProgress.done()
 })
 
-router.onError((error) => {
-  const pattern = /Loading chunk (\d)+ failed/g;
-  const isChunkLoadFailed = error.message.match(pattern);
-  const targetPath = router.history.pending.fullPath;
-  if (isChunkLoadFailed) {
-    // alert(error.message)
-   router.replace(targetPath);
-  //  location.reload();
-  }
- });
+// router.onError((error) => {
+//   const pattern = /Loading chunk (\d)+ failed/g;
+//   const isChunkLoadFailed = error.message.match(pattern);
+//   const targetPath = router.history.pending.fullPath;
+//   if (isChunkLoadFailed) {
+//     // alert(error.message)
+//    router.replace(targetPath);
+//   //  location.reload();
+//   }
+//  });
 
 fastClick.attach(document.body)
 Vue.config.productionTip = false

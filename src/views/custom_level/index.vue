@@ -116,7 +116,7 @@
                     </div>
                 </div>
         </div>
-        <div class="submit" @click="submit">开通级别</div>
+        <div class="submit" @click="submit">开通合伙人</div>
         <!-- 选择级别 -->
         <popup-picker :data="levelList" v-show="isShowLevelPopup"  :show.sync="isShowLevelPopup" @on-change="levelChange" v-model="agentRegion"></popup-picker>
         <!-- 选择有效期 -->
@@ -134,10 +134,20 @@
         <!-- dialog -->
         <x-dialog v-model="isShowDialog">
             <div class="confirm-container">
-                <div class="content">{{dialog_content}}</div>
+                <div class="title bold">确认开通级别</div>
+                <div class="confirm-content">
+                    <div class="desc">请进行手机验证:</div>
+                    <div class="cell">
+                        <div class="mobile">{{getMobile()}}</div>
+                        <div class="getcode" @click="getcode" :class="canSubmit?'':'disabled'">{{button_text}}</div>
+                    </div>
+                    <div class="cell">
+                        <input type="tel" placeholder="请输入验证码" v-model="captcha">
+                    </div>
+                </div>
                 <div class="button-group">
                     <div class="submit" @click="confirmDialog">确定</div>
-                    <!-- <div class="cancel">取消</div> -->
+                    <div class="cancel" @click="isShowDialog = false">取消</div>
                 </div>
             </div>
         </x-dialog>
@@ -158,6 +168,7 @@ let addrArray = []
 export default {
     data(){
         return {
+            captcha:'',
             ready:false,
             isShowDialog:false,
             dialog_content:'',
@@ -203,7 +214,10 @@ export default {
             distribute:false,
             withdraw:null,//允许提现
             allowSettlement:false,
-            current_date:''
+            current_date:'',
+            canSubmit:true,
+            button_text:'发送验证码',
+            reset:60
         }
     },
     components:{
@@ -216,22 +230,6 @@ export default {
         XDialog
     },
     mounted(){
-        // this.$vux.confirm.show({
-        //     title: '提示',
-        //     content: '成功开通',
-        //     onShow () {
-        //     console.log('plugin show')
-        //     },
-        //     onHide () {
-        //     console.log('plugin hide')
-        //     },
-        //     onCancel () {
-        //     console.log('plugin cancel')
-        //     },
-        //     onConfirm () {
-        //     console.log('plugin confirm')
-        //     }
-        // })
         this.getDistricts()
         this.getCustomerInfo(this.$route.params.sn)
     },
@@ -246,9 +244,79 @@ export default {
                 }
             })
         },
+        getcode() {
+            if(!this.canSubmit) {
+                return false
+            }
+            let params = Qs.stringify({
+                mobile:this.userInfo.mobile,
+                type:10
+            })
+            this.$axios.post('/customer/service/send-sms',params).then((res)=>{
+                if(res.data.code === 200) {
+                    let reset = 60
+                    let timer = setInterval(()=>{
+                        this.canSubmit = false
+                        reset--;
+                        this.button_text = `${reset}s`;
+                        if(reset==0) {
+                            this.canSubmit = true
+                            this.button_text = '发送验证码'
+                        }
+                    },1000)
+                }
+            })
+        },
+        getMobile(){
+            var tel = this.userInfo.mobile;
+            tel = "" + tel;
+            var tel1 = tel.substr(0,3) + "****" + tel.substr(7)
+            return tel1
+        },
         confirmDialog(){
-            this.isShowDialog = false
-            this.$router.go(-1)
+            if(!this.captcha) {
+                this.$vux.toast.show({
+                    text:"请输入验证码",
+                    type:'warn'
+                })
+                return false
+            }
+            let params = Qs.stringify({
+                sn:this.current_customer.sn,
+                toLevel:this.level,
+                payableAmount:this.payableAmount,
+                paidAmount:this.paidAmount,
+                districtId:this.districtId,
+                // agentStartedAt:this.agentStartedAt,
+                // agentStartedAt:"2019-05-04",
+                agentEndedAt:this.agentEndedAt,
+                // vipStartedAt:"2019-05-04",
+                vipEndedAt:this.vipEndedAt,
+                // generalAgentStartedAt:"2019-05-04",
+                generalAgentEndedAt:this.generalAgentEndedAt,
+                vipQuota:this.vipQuota,
+                generalAgentQuota:this.generalAgentQuota,
+                withdraw:Number(this.withdraw),
+                distribute:Number(this.distribute),
+                captcha:this.captcha
+            })
+            this.$axios.post('/customer/level/upgrade-step-one',params).then((res)=>{
+                if(res.data.code === 200) {
+                    this.isShowDialog = false
+                    this.$vux.toast.show({
+                        text:"开通成功",
+                        type:'warn'
+                    })
+                    let timer = setTimeout(()=>{
+                        this.$router.go(-1)
+                    },1000)
+                } else {
+                    this.$vux.toast.show({
+                        text:res.data.message,
+                        type:'warn'
+                    })
+                }
+            })
         },
         // 打开时间弹窗
         showPopupDate(type){
@@ -452,36 +520,7 @@ export default {
         submit(){
             let valid = this.validForm()
             if(!valid) return false
-            let params = Qs.stringify({
-                sn:this.current_customer.sn,
-                toLevel:this.level,
-                payableAmount:this.payableAmount,
-                paidAmount:this.paidAmount,
-                districtId:this.districtId,
-                // agentStartedAt:this.agentStartedAt,
-                // agentStartedAt:"2019-05-04",
-                agentEndedAt:this.agentEndedAt,
-                // vipStartedAt:"2019-05-04",
-                vipEndedAt:this.vipEndedAt,
-                // generalAgentStartedAt:"2019-05-04",
-                generalAgentEndedAt:this.generalAgentEndedAt,
-                vipQuota:this.vipQuota,
-                generalAgentQuota:this.generalAgentQuota,
-                withdraw:Number(this.withdraw),
-                distribute:Number(this.distribute)
-            })
-            this.$axios.post('/customer/level/upgrade-step-one',params).then((res)=>{
-                if(res.data.code === 200) {
-                    this.isShowDialog = true
-                    this.dialog_content = "开通成功"
-
-                } else {
-                    this.$vux.toast.show({
-                        text:res.data.message,
-                        type:'warn'
-                    })
-                }
-            })
+            this.isShowDialog = true
         }
     },
     computed:{
@@ -501,9 +540,54 @@ export default {
 </script>
 <style lang="stylus" scoped>
     @import "../../common/stylus/variable.styl";
+    .customeLevel-wrapper
+        padding-bottom 10px
+    .disabled
+        background $text-lll !important
     .confirm-container
+        .title
+            height 72px
+            color #fff
+            line-height 72px
+            font-size 24px
+            background $green
         .content
             margin 40px 0
+        .cancel
+            line-height 50px
+        .confirm-content
+            padding 0 15px
+            .desc
+                font-size 14px
+                color $tetx-lll
+                margin-top 27px
+                text-align left
+            .cell
+                display flex
+                align-items center
+                padding-top 10px
+                .mobile
+                    flex 1
+                    background #f2f2f2
+                    line-height 40px
+                    border-radius 3px
+                    color $text-lll
+                    margin-right 10px
+                    text-align left
+                    padding-left 10px
+                .getcode
+                    width 90px
+                    background $green
+                    color #fff
+                    line-height 40px
+                    border-radius 3px
+                    font-size 12px
+                input
+                    background #f2f2f2
+                    line-height 40px
+                    border-radius 3px
+                    flex 1
+                    padding-left 10px
     .header
         background #fff
         margin-bottom 10px
@@ -560,7 +644,7 @@ export default {
             flex 1
 
     .submit
-        margin 10px 15px
+        margin 10px 15px 0
         line-height 50px
         background linear-gradient(180deg,rgba(0,132,255,1) 0%,rgba(69,165,255,1) 100%)
         box-shadow 0px 4px 7px 0px rgba(0,132,255,0.3)

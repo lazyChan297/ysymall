@@ -35,10 +35,16 @@ export default {
             if(reg.test(newQuery)){
                 if(newQuery.length>=7){
                     this.$emit('keywords', newQuery)
+                } else {
+                    this.$emit('keywords', false)
                 }
-            } else if(newQuery.length>=2&&regStr.test(newQuery)) {
-                this.$emit('keywords', newQuery)
-            }
+            } else if(regStr.test(newQuery)) {
+                if(newQuery.length>=2) {
+                    this.$emit('keywords', newQuery)
+                } else {
+                    this.$emit('keywords', false)
+                }
+            } 
             
         },200))
     }

@@ -1,7 +1,7 @@
 <template>
     <div class="rank-wrapper" v-if="ready">
         <div class="headers">
-            <img src="../../common/images/rank_bg.png" alt="">
+            <img src="../../common/images/rank_bg.png" alt="" @load="imgload">
             <p class="interval" v-show="current_rank==1">倒计时: {{interval}}</p>
             <div class="tab-container">
                 <div :class="current_rank==1?'current_rank':''" @click="switchRank(1)"><span>今日排名</span></div>
@@ -63,10 +63,13 @@ export default {
         TabBar
     },
     mounted(){
-        this.getRank('today')
-        this.timer = null
+        
     },
     methods:{
+        imgload(){
+            this.getRank('today')
+            this.timer = null
+        },
         switchRank(n){
             this.current_rank = n
             if(n==1){
