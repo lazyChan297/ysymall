@@ -144,8 +144,8 @@ export default {
                 color $red
         .submit
             color #fff
-            background linear-gradient(180deg,rgba(100,229,198,1) 0%,rgba(41,206,166,1) 100%);
-            box-shadow 0px 4px 7px 0px rgba(41,206,166,0.47);
+            background linear-gradient(360deg,rgba(0,172,252,1) 0%,rgba(64,124,230,1) 100%)
+            box-shadow 0px 7px 10px -5px rgba(113,171,253,1)
             line-height 45px
             border-radius 5px
             margin 0 35px

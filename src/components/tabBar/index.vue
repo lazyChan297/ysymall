@@ -4,20 +4,20 @@
             <div class="icon icon-index"></div>
             <p class="bold">首页</p>
         </router-link>
-        <router-link to="/found" tag="div" exact>
+        <router-link to="/found" tag="div">
             <div class="icon icon-found"></div>
             <p class="bold">发现</p>
         </router-link>
-        <router-link to="/rank" tag="div" exact>
+        <router-link to="/rank" tag="div">
             <div class="icon icon-rank"></div>
             <p class="bold">竞赛</p>
         </router-link>
-        <router-link to="/cart" tag="div" exact>
+        <router-link to="/cart" tag="div">
             <div class="icon icon-cart"></div>
             <span class="cartNum" v-if="cartLen">{{cartLen}}</span>
             <p class="bold">购物车</p>
         </router-link>
-        <router-link to="/my" tag="div" exact>
+        <router-link to="/my" tag="div">
             <div class="icon icon-my"></div>
             <p class="bold">我的</p>
         </router-link>

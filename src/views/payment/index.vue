@@ -43,7 +43,7 @@
                 <span>¥{{cart_info.product_total}}</span>
             </div>
         </section>
-        <div class="textbox"><textarea name="" placeholder="选填：订单备注信息（50字以内）" id="" cols="30" rows="10" font-size="150%"></textarea></div>
+        <div class="textbox"><textarea name="" v-model="note" placeholder="选填：订单备注信息（50字以内）" id="" cols="30" rows="10" font-size="150%"></textarea></div>
         <div class="large-green-button" @click="prePayment">去支付</div>
     </div>
 </template>
@@ -57,7 +57,8 @@ export default {
             goodslist:[],
             cart_info:{},
             custom_option_names:null,
-            option_txt_arr:[]
+            option_txt_arr:[],
+            note:''
         }
     },
     created(){
@@ -143,10 +144,10 @@ export default {
           }
           let params = Qs.stringify({shipping_method:'free_shipping',
                                      payment_method:'wechatpay_standard',
-                                     address_id:this.addr.id})
+                                     address_id:this.addr.id,
+                                     note:this.note})
           this.$axios.post('/checkout/onepage/submitorder',params).then((res)=>{
               if(res.data.code === 200) {
-                  console.log(res.data.data)
                   this.payment(res.data.data)
               } else {
                 this.$vux.toast.show({

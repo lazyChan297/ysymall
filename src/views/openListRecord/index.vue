@@ -1,6 +1,6 @@
 <template>
     <div class="openListRecord-wrapper" v-if="ready">
-        <ul v-if="recordList.length">
+        <ul v-if="!isEmpty">
             <li v-for="(item,index) in recordList" :key="index">
                 <img :src="item.avatar" alt="" width="54">
                 <div>
@@ -17,34 +17,89 @@
         <div class="nomore" v-else>您没有开通记录~</div>
     </div>
 </template>
-<script> 
+<script>
+import Qs from 'qs'; 
 export default {
     data(){
         return {
-            recordList:null,
-            ready:global.ready
+            recordList:[],
+            ready:global.ready,
+            listParams:{
+                loading:false,
+                nomore:false,
+                page:1, //初始搜索页码
+                number:10 //每页返回数据
+            },
+            isEmpty:false
         }
     },
     created() {
         
     },
     mounted(){
-        this.getRecord(this.$route.params.type)
+        addEventListener('scroll',this.handleScroll)
+        this.getlist()
     },
     methods:{
-        getRecord(type){
-            let url = ''
-            if(type === 'level') {
-                url = '/customer/level/upgrade-records'
+        handleScroll() {
+            let scrollTop =  document.documentElement.scrollTop||document.body.scrollTop
+            let windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+            let scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
+            // 滚动到底部
+            if(scrollTop+windowHeight==scrollHeight){
+                if(!this.listParams.nomore) {
+                    this.getlist()
+                }  
+            }   
+        },
+        getlist(){
+            let type = this.$route.params.type
+            if(type == 'level') {
+                this.getRecordManager()   
             } else {
-                url = '/customer/level/upgrade-list'
+                this.getRecordUser()
             }
-            this.$axios.post(url).then((res)=>{
+        },
+        getRecordUser(){
+            let params = Qs.stringify({
+                page:this.listParams.page,
+                number:this.listParams.number,
+                level:this.$route.params.type
+            })
+            this.$axios.post('/customer/level/upgrade-list',params).then((res)=>{
                 if(res.data.code === 200) {
+                    if(!res.data.data.length) {
+                        this.isEmpty = true
+                    }
                     this.recordList = res.data.data
+                    this.listParams.page++;
+                    if(res.data.data.length<this.listParams.number) {
+                        this.listParams.nomore = true
+                    }
+                }
+            })
+        },
+        getRecordManager() {
+            let params = Qs.stringify({
+                page:this.listParams.page,
+                number:this.listParams.number
+            })
+            this.$axios.post('/customer/level/upgrade-records',params).then((res)=>{
+                if(res.data.code === 200) {
+                    if(!res.data.data.length) {
+                        this.isEmpty = true
+                    }
+                    this.recordList = this.recordList.concat(res.data.data)
+                    this.listParams.page++;
+                    if(res.data.data.length<this.listParams.number) {
+                        this.listParams.nomore = true
+                    }
                 }
             })
         }
+    },
+    destroyed() {
+        removeEventListener('scroll',this.handleScroll)
     }
 }
 </script>
