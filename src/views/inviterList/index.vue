@@ -22,7 +22,7 @@
         </ul>
         <x-dialog v-model="isShowDialog">
             <div class="confirm-container">
-                <div class="content">是否绑定该用户为邀请人？</div>
+                <div class="content">是否绑定{{inviterInfo.nickname}}为邀请人？</div>
                 <div class="button-group">
                     <div class="submit" @click="confirmSubmit">确定</div>
                     <div class="cancel" @click="confirmCancel">取消</div>
@@ -71,6 +71,8 @@ export default {
             this.$axios.post('/customer/service/search-customer-by-mobile',params).then((res)=>{
                 if(res.data.code === 200) {
                     this.inviterInfo = res.data.data
+                    console.log(1)
+                    console.log(this.inviterInfo)
                 }
             })
         },
@@ -143,11 +145,13 @@ export default {
     height 100%
     .item
         display flex
-        margin 23px 15px
+        margin 23px 15px 0
         border-bottom 1px solid #efefef
         padding-bottom 23px
         padding-top 10px
         align-items center
+        &:last-child
+            border none
         img
             border-radius 50%
         .center

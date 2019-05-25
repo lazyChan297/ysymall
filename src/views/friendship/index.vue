@@ -1,10 +1,5 @@
 <template>
     <div class="friendship-wrapper" v-if="ready">
-        <!-- <ul class="tab">
-            <router-link to="/friendship/inviter" tag="li">访客</router-link>
-            <router-link to="/friendship/customer" tag="li">扫码客</router-link>
-            <router-link to="/friendship/friends" tag="li">一度人脉</router-link>
-        </ul> -->
         <ul class="tab">
             <li @click="switchTab('friends')" :class="current=='friends'?'active':''">一度人脉</li>
             <li @click="switchTab('customer')" :class="current=='customer'?'active':''">扫码客</li>

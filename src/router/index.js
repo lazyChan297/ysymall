@@ -264,6 +264,14 @@ export default new Router({
       }
     },
     {
+      path:'/second_friendship/:sn',
+      name:'second_friendship',
+      component: () => import('@/views/secondFriendship/index'),
+      meta:{
+        title:'二度人脉'
+      }
+    },
+    {
       path: '/userDetail/:sn',
       name: 'userDetail',
       component: () => import('@/views/userDetail/index'),

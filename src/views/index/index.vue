@@ -141,6 +141,9 @@ export default {
     },
     mounted() {
         this.getExpressInfo()
+        if(this.userInfo.avatar) {
+            this.headerInfo = this.userInfo
+        }
     },
     computed:{
         ...mapGetters([

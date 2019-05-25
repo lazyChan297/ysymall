@@ -142,6 +142,7 @@
             justify-content space-between
             align-items center
             border-bottom 1px solid #efefef
+            height 50px
             line-height 50px
             .label
                 color $text-lll
@@ -149,6 +150,7 @@
                 color $text-l
                 text-align right
                 min-width 0
+                height 100%
                 flex 1
             textarea
                 flex 1

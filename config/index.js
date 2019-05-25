@@ -55,7 +55,7 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: String(parseInt(new Date().getTime() / 1000)),
     assetsPublicPath: 'http://fimg.caomeng.me/', //测试服务器
-    // assetsPublicPath: 'http://img.ysyysy.com',  // 生产服务器
+    // assetsPublicPath: 'http://img.ysyysy.com/',  // 生产服务器
     /**
      * Source Maps
      */

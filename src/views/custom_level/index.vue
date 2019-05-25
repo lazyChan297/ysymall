@@ -51,7 +51,7 @@
             <div>
                 <span class="label">赠送VIP数量</span>
                 <div class="content">
-                    <input type="text" placeholder="请输入赠送数量" v-model="vipQuota">
+                    <input type="tel" placeholder="请输入赠送数量" v-model="vipQuota">
                 </div>
             </div>
             <div @click="showPopupDate('vip')">
@@ -69,7 +69,7 @@
             <div>
                 <span class="label">赠送总代数量</span>
                 <div class="content">
-                   <input type="text" placeholder="请输入赠送数量" v-model="generalAgentQuota">
+                   <input type="tel" placeholder="请输入赠送数量" v-model="generalAgentQuota">
                 </div>
             </div>
             
@@ -90,13 +90,13 @@
                 <div>
                     <span class="label">应缴金额（元）</span>
                     <div class="content">
-                        <input type="text" v-model="payableAmount">
+                        <input type="tel" v-model="payableAmount">
                     </div>
                 </div>
                 <div>
                     <span class="label">实收金额</span>
                     <div class="content">
-                        <input type="text" v-model="paidAmount">
+                        <input type="tel" v-model="paidAmount">
                     </div>
                 </div>
                 <div>
@@ -264,6 +264,11 @@ export default {
                             this.button_text = '发送验证码'
                         }
                     },1000)
+                } else {
+                    this.$vux.show.toast({
+                        text:'验证码发送失败,请稍后再试！',
+                        type:'warn'
+                    })
                 }
             })
         },
@@ -628,12 +633,20 @@ export default {
                 border none
             .content
                 display flex
+                height 100%
+                line-height 50px
                 span
                     color $text-lll
                 .selected
                     color $text-l
                 input
                     text-align right
+                input::-webkit-input-placeholder,    
+                textarea::-webkit-input-placeholder       
+                    color $text-lll
+                    font-size 16px
+                .icon
+                    margin auto
             .label 
                 color $text-l
     .popup-header

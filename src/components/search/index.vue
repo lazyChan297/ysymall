@@ -3,7 +3,7 @@
         <div class="search-wrapper">
             <div class="searchBox">
                 <div class="icon icon-search"></div>
-                <input type="text" placeholder="输入手机号或昵称" v-model="keywords">
+                <input type="text" placeholder="输入手机号或昵称" v-model="keywords" ref="input">
             </div>
         </div>
         <slot></slot>
@@ -20,6 +20,10 @@ export default {
         checkType:{
             type:String,
             default:null
+        },
+        isFocus:{
+            type:Boolean,
+            default:true
         }
     },
     data(){
@@ -49,6 +53,7 @@ export default {
         },200))
     },
     mounted(){
+        this.$refs.input.focus()
     }
 }
 </script>
@@ -71,6 +76,7 @@ export default {
             flex 1
             background #efefef
             margin-left 10px
+            height 100%
 .checkMore
     position fixed
     display flex

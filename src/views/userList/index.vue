@@ -1,10 +1,10 @@
 <template>
     <div class="userList-wrapper">
-        <div class="desc" v-if="vistors.count&&vistors.count.all">
+        <div class="desc" v-if="vistors&&vistors.count">
             <span>客户数量：{{vistors.count.all}}</span>
             <span>今日新增客户：{{vistors.count.today}}</span>
         </div>
-        <ul v-if="vistors.visitorsInfo">
+        <ul v-if="vistors&&vistors.visitorsInfo">
             <li v-for="(item,index) in vistors.visitorsInfo" :key="index">
                 <img :src="item.avatar" alt="" class="avatar">
                 <!-- <img src="../../common/images/default_pic.jpg" alt="" width="54" height="54"> -->
@@ -30,7 +30,7 @@
                 <div class="invalid" v-if="item.validStatus==0"><div class="icon icon-valid"></div></div> 
             </li>
         </ul>
-        <ul v-if="vistors.friendsInfo">
+        <ul v-if="vistors&&vistors.friendsInfo">
             <router-link :to="{path:`/userDetail/${item.sn}`}" tag="li" v-for="(item,index) in vistors.friendsInfo" :key="index">
                 <img :src="item.avatar" alt="" width="54" height="54">
                 <div class="text">

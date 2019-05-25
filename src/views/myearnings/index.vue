@@ -98,7 +98,7 @@ export default {
     mounted(){
         addEventListener('scroll',this.handleScroll)
         this.getList()
-        this.getEarns()
+        // this.getEarns()
     },
     methods:{
         onConfirm(val){
@@ -137,7 +137,6 @@ export default {
             this.$axios.post('/finance/income/all',params).then((res)=>{
                 if(res.data.code === 200) {
                     this.earnInfo.incomeList = res.data.data.incomeList
-
                 }
             })
         },
@@ -145,6 +144,7 @@ export default {
             this.$axios.post('/finance/income/all',params).then((res)=>{
                 if(res.data.code === 200) {
                     this.earnInfo = res.data.data
+                    this.balance = res.data.data.balance
                 }
             })
         },

@@ -65,7 +65,7 @@
             <router-link class="cell" to="/checkAgent" tag="div">
                 <div>
                     <span class="icon icon-area"></span>
-                    <span class="bold">代理区域</span>
+                    <span class="bold">未开通合伙人地区</span>
                 </div>
                 <div class="icon icon-link"></div>
             </router-link>

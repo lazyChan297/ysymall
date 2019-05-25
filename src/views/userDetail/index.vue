@@ -11,18 +11,26 @@
             </div>
         </div>
         <section>
-            <div class="cell">
+            <a class="cell" :href="`tel:${userInfo.mobile}`">
                 <span>手机号</span>
-                <span>{{userInfo.mobile}}</span>
-            </div>
+                <div>
+                    <span>{{userInfo.mobile}}</span>
+                    <div class="icon icon-phone1" ></div>
+                </div>
+                
+            </a>
             <div class="cell">
                 <span>级别</span>
                 <span>{{getLevel(userInfo.level)}}</span>
             </div>
-            <div class="cell">
-                <span>二度人脉</span>
-                <span>{{userInfo.friendsQuantity}}人</span>
-            </div>
+            <router-link :to="{path:`/second_friendship/${userInfo.sn}`}" class="cell" tag="div">
+                    <span>二度人脉</span>
+                <div>
+                    <span>{{userInfo.friendsQuantity}}人</span>
+                    <div class="icon icon-link"></div>
+                </div>
+                
+            </router-link>
         </section>
         <section>
             <div class="cell">
@@ -60,7 +68,6 @@ export default {
     },
     methods:{
         getDetail(sn) {
-            console.log(sn)
             let params = Qs.stringify({sn:sn})
             this.$axios.post('/customer/service/get-one-friend-info',params).then((res)=>{
                 if(res.data.code === 200) {
@@ -138,12 +145,14 @@ section
         justify-content space-between
         line-height 50px
         border-bottom 1px solid $line
+        span
+            color $text-l
         &:last-child
             border none
         &>div
             display flex
             align-items center
             span
-                color $text-lll
-                margin-right 5px
+                color $text-l
+                margin-right 15px
 </style>

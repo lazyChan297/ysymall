@@ -24,7 +24,7 @@ Vue.use(ToastPlugin)
 Vue.use(AjaxPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(AlertPlugin)
-let vConsole = new VConsole()
+
 
 global.ready = true
 // 判断是否请求过get-openid
@@ -40,11 +40,13 @@ global.ready = true
 // 服务器地址
 if (process.env.NODE_ENV === 'development') {
   global.serverHost = ''
+  let vConsole = new VConsole()
 } else {
   // 生产服务器
   // global.serverHost = "http://appserver.ysyysy.com"
   // 测服务器
    global.serverHost = "http://fappserver.caomeng.me"
+   
 }
 
 // 图片懒加载
@@ -101,18 +103,20 @@ if(global.token || wsCache.get('token') ){
     if(res.data.code === 200) {
       let data = res.data.data
       store.commit('SAVE_USERINFO',data.customerInfo)
-      Vue.$vux.loading.hide()
-    }
-  })
-  // 获取购物车信息
-  Vue.prototype.$axios.get('/checkout/cart/index').then((res)=>{
-    if(res.data.code === 200) {
-        let data = res.data.data
-        if(data.cart_info) {
-          store.commit('SAVE_CARTLEN',data.cart_info.products.length)
+      // 获取购物车信息
+      Vue.prototype.$axios.get('/checkout/cart/index').then((res)=>{
+        if(res.data.code === 200) {
+            let data = res.data.data
+            if(data.cart_info) {
+              store.commit('SAVE_CARTLEN',data.cart_info.products.length)
+            }
+            Vue.$vux.loading.hide()
         }
+      })
+      
     }
   })
+  
 }
 
 // 白名单

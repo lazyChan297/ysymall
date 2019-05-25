@@ -33,7 +33,7 @@
             </router-link>
             <div class="cell" v-else-if="userInfo.hasInviter">
                 <label>邀请人</label>
-                <div>{{userInfo.inviterNickname}}</div>
+                <span>{{userInfo.inviterNickname}}</span>
             </div>
             <div class="cell" @click="chooseAddr">
                 <label>收货地址</label>
