@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51 (57462) - http://www.bohemiancoding.com/sketch -->
+    <title>Combined Shape Copy 3</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#0084FF" offset="0%"></stop>
+            <stop stop-color="#45A5FF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="首页-蓝色" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon-蓝色" transform="translate(-437.000000, -27.000000)" fill="url(#linearGradient-1)">
+            <path d="M451.608696,51 L451.608696,44.8246064 C451.608696,43.3838636 450.440743,42.2159108 449,42.2159108 C447.559257,42.2159108 446.391304,43.3838636 446.391304,44.8246064 L446.391304,51 L440,51 C438.343146,51 437,49.6568542 437,48 L437,36.728684 C437,35.7823428 437.446523,34.8914808 438.204707,34.3251609 L447.204707,27.6026808 C448.269451,26.8073783 449.730549,26.8073783 450.795293,27.6026808 L459.795293,34.3251609 C460.553477,34.8914808 461,35.7823428 461,36.728684 L461,48 C461,49.6568542 459.656854,51 458,51 L451.608696,51 Z" id="Combined-Shape-Copy-3"></path>
+        </g>
+    </g>
+</svg>

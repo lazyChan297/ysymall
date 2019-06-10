@@ -1,0 +1,84 @@
+@import "./reset.styl"
+@import "./variable.styl"
+@import "./icon.styl"
+
+html,
+body,
+#app
+    height 100%
+    color $text-l
+#app,
+#app>div
+    &:first-child
+        background $bgcolor
+    
+.index-wrapper
+    &:-webkit-scrollbar
+        // display none
+        background red
+.index-wrapper::-webkit-scrollbar
+    // display none
+    background red
+input,textarea
+    outline none
+    resize none
+    border none
+
+input::-webkit-input-placeholder,    
+textarea::-webkit-input-placeholder       
+        color $text-lll
+        font-size 14px
+// public class
+.bold
+    font-weight bold
+.yellow
+    background $yellow
+.red
+    background $red
+.large-green-button
+    line-height 50px
+    background linear-gradient(180deg,rgba(0,132,255,1) 0%,rgba(69,165,255,1) 100%);
+    box-shadow 0px 4px 7px 0px rgba(0,132,255,0.3)
+    border-radius 5px
+    color #fff
+    font-weight bold
+    text-align center
+    margin 10px 15px
+
+// 进度条
+#nprogress .bar
+    background $green
+#nprogress .spinner-icon
+    border-top-color $green
+    border-left-color $green
+
+// 弹框
+.index-wrapper
+    .weui-dialog>div:nth-child(2)
+        text-align left !important
+
+// 公司员工开通会员级别
+.customeLevel-wrapper
+    .vux-no-group-title
+        margin-top 0
+        &:before
+            content ''
+            display none
+            border none
+        &:after
+            content ''
+            display none
+            border none
+    .weui-switch:checked
+        border-color $green
+        background-color $green
+    .vux-x-switch.weui-cell_switch
+        padding-right 0
+// 收益时间的箭头隐藏
+.earnings-wrapper
+    .weui-cell_access
+        &:before
+            display none
+    .weui-cell_access .weui-cell__ft
+        &:after
+            display none

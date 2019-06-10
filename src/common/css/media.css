@@ -1,0 +1,28 @@
+/* 兼容iphone5 */
+@media screen and (max-width: 321px) {
+    .earnings-wrapper .sheet>ul {
+        margin: 0 40px 15px !important
+    }
+    .earnings-wrapper .date{
+        display: inline-block;
+        max-width: 140px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    .searchPage-wrapper .list-title{
+        padding: 0 10px;
+    }
+    .openListRecord-wrapper ul li img{
+        width: 40px;
+    }
+    .openListRecord-wrapper ul li .name{
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    /* .tab-container .category li{
+        margin:0 2px !important
+    } */
+}
