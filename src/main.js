@@ -27,7 +27,7 @@ Vue.use(AlertPlugin)
 
 
 global.ready = true
-// let vConsole = new VConsole()
+let vConsole = new VConsole()
 // 服务器地址
 if (process.env.NODE_ENV === 'development') {
   global.serverHost = ''
