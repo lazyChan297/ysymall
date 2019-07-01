@@ -22,6 +22,7 @@
 <script>
 import {mapMutations} from 'vuex'
 import {debounce} from '@/common/js/util'
+import Qs from 'qs'
 export default {
     data(){
         return {
@@ -57,20 +58,12 @@ export default {
     },
     methods:{
         setLevel(customer){
-            // let level = this.level ==='vip'?'vip':'总代';
-            // this.$vux.confirm.show({
-            //     content:`是否升级${customer.nickname}为${level}`,
-            //     onConfirm () {
-                   
-            //     }
-            // })
-            // return false
             this.saveCurrentCustomer(customer)
             if(this.level === 'level') {
                 this.$router.push(`/customLevel/open/${customer.sn}`)
             } else {
-                sessionStorage.setItem('customer',JSON.stringify(customer))
-                // this.$router.push(`/openDetail/${this.level}`)
+                customer["level"] = this.level
+                document.cookie = "customer="+encodeURI(JSON.stringify(customer),"utf-8")
                 window.location.href = global.serverHost + `/checkout/onepage/pay/#/openDetail/${this.level}/`
             }
         },
@@ -82,6 +75,13 @@ export default {
             if(scrollTop+windowHeight==scrollHeight){
                 this.$emit('loadMore')            
             }   
+        },
+        getCookie(name){
+            var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+            if(arr=document.cookie.match(reg))
+                return arr[2];
+            else
+            return null;
         },
         getLevel(level){
             switch(level){

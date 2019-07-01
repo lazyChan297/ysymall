@@ -10,6 +10,7 @@ import fastClick from 'fastclick'
 import store from './store/index'
 import Qs from 'qs'
 import webStorageCache from 'web-storage-cache'
+import urls from 'url'
 // import { AlertPlugin, AjaxPlugin, ConfirmPlugin, ToastPlugin, LoadingPlugin } from 'vux'
 import "./common/stylus/index.styl"
 import {getOpenid} from '@/common/js/util'
@@ -24,19 +25,16 @@ Vue.use(ToastPlugin)
 Vue.use(AjaxPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(AlertPlugin)
-
-
 global.ready = true
-let vConsole = new VConsole()
 // 服务器地址
 if (process.env.NODE_ENV === 'development') {
+  let vConsole = new VConsole()
   global.serverHost = ''
-  
 } else {
   // 生产服务器
-  // global.serverHost = "https://appserver.ysyysy.com"
+  global.serverHost = "https://appserver.ysyysy.com"
   // 测服务器
-   global.serverHost = "http://fappserver.caomeng.me"
+    // global.serverHost = "http://fappserver.caomeng.me"
    
 }
 
@@ -53,7 +51,6 @@ global.uuid = wsCache.get('uuid')
 // 获取openid 通过返回的token和uuid判断用户是否登陆和绑定微信
 let url = window.location.href
 let isBoundWechat = getOpenid(url)
-// let isBoundWechat = false
 global.isBoundWechat = isBoundWechat
 // axios
 Vue.prototype.$axios = axios
@@ -71,29 +68,39 @@ axios.interceptors.request.use(config => {
 }, err => {
   return Promise.reject(err)
 })
-
-axios.interceptors.response.use(response => {
-  Vue.$vux.loading.hide()
-  // 登陆超时
-  if(response.data.code === 1100003) {
-    let url = window.location.href
-    getOpenid(url,true)
-  }
-  return {data:response.data,headers:response.headers}
-})
 if(global.uuid || wsCache.get('uuid')) {
   axios.defaults.headers.common['Fecshop-Uuid'] = global.uuid || wsCache.get('uuid')
 }
 if(global.token || wsCache.get('token') ){
   axios.defaults.headers.common['Access-Token'] = global.token || wsCache.get('token')
-  Vue.$vux.loading.show({
-    text: '加载中'
-  })
+  // Vue.$vux.loading.show({
+  //   text: '加载中'
+  // })
+}
+
+axios.interceptors.response.use(response => {
+  Vue.$vux.loading.hide()
+  // 登陆超时
+  if(response.data.code === 1100003) {
+    global.token = ''
+    wsCache.set('token','')
+    let url = window.location.href
+    let urlObj = urls.parse(url)
+     url = urlObj.protocol + '//' + urlObj.host + '/' + urlObj.hash
+     window.location.href = url
+    // Vue.$vux.loading.show({
+    //   text:'登录中…'
+    // })
+  }
+  return {data:response.data,headers:response.headers}
+})
+if(global.token || wsCache.get('token') ){
   // 获取用户信息
   Vue.prototype.$axios.post('/customer/service/get-customer-info').then((res)=>{
     if(res.data.code === 200) {
       let data = res.data.data
       store.commit('SAVE_USERINFO',data.customerInfo)
+      global.hasInviter = data.customerInfo.hasInviter
       // 获取购物车信息
       Vue.prototype.$axios.get('/checkout/cart/index').then((res)=>{
         if(res.data.code === 200) {
@@ -107,11 +114,11 @@ if(global.token || wsCache.get('token') ){
       
     }
   })
-  
 }
 
+
 // 白名单
-const whiteList = ['index','cart','goodsDetail','login','inviteConfirm','rank','payment']
+const whiteList = ['index','cart','goodsDetail','login','inviteConfirm','rank','payment','inviterConfirmLogin']
 // router
 router.beforeEach((to, from, next) => {
   NProgress.start()
@@ -134,7 +141,9 @@ router.beforeEach((to, from, next) => {
       });
   })
   }
-  if(isBoundWechat) {
+  console.log(global.isBoundWechat)
+
+  if(global.isBoundWechat) {
     // 已经登陆但是要前往登陆页,拦截
     if(path === '/login') {
       next({path:'/'})

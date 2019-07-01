@@ -20,7 +20,7 @@ export function validAccount (account) {
 }
 
 export function validPhone(phone) {
-    let reg = /^1[345789][0-9]{9}$/
+    let reg = /^1[3456789][0-9]{9}$/
     if(!phone) {
       Vue.$vux.toast.show({
         text: '请输入手机号码',

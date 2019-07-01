@@ -4,9 +4,9 @@
                 <search :checkType="checkType" @keywords="handleKeyWords">
                     <div class="list-title">
                         <div>
-                            <span class="gray">已开通：</span>
-                            <span class="green">{{generalInfo.generalAgentUsed}}</span>
-                            <span class="gray">/剩余</span>
+                            <!-- <span class="gray">已开通：</span>
+                            <span class="green">{{generalInfo.generalAgentUsed}}</span> -->
+                            <span class="gray">剩余</span>
                             <span class="red">{{generalInfo.generalAgentLeft}}</span>
                             <span class="gray">人</span>
                         </div>
@@ -29,6 +29,7 @@
     import Search from '@/components/search/index'
     import UserList from '@/components/userList/index'
     import {friendsListMixin} from '@/common/js/mixin'
+    import { mapMutations } from 'vuex';
     export default {
         mixins:[friendsListMixin],
         data(){
@@ -45,11 +46,7 @@
             UserList
         },
         created(){
-            this.generalInfo = {
-                generalAgentUsed:this.userInfo.generalAgentUsed,
-                generalAgentLeft:this.userInfo.generalAgentLeft,
-                generalAgentEndedAt:this.userInfo.generalAgentEndedAt
-            }
+                                 
             if(process.env.NODE_ENV == 'production') {
                 // 禁止分享
                 this.$wechat.ready(() => {
@@ -58,6 +55,35 @@
                     });
                 })
             }
+        },
+        mounted() {
+            if(!this.userInfo.mobile) {
+                this.getUserInfo()
+            } else {
+                this.generalInfo = {
+                    generalAgentUsed:this.userInfo.generalAgentUsed,
+                    generalAgentLeft:this.userInfo.generalAgentLeft,
+                    generalAgentEndedAt:this.userInfo.generalAgentEndedAt
+                }                       
+            }
+        },
+        methods:{
+            getUserInfo() {
+                this.$axios.post('/customer/service/get-customer-info').then((res)=>{
+                    if(res.data.code === 200) {
+                        let data = res.data.data
+                        this.savaUserInfo(data.customerInfo)
+                        this.generalInfo = {
+                            generalAgentUsed:this.userInfo.generalAgentUsed,
+                            generalAgentLeft:this.userInfo.generalAgentLeft,
+                            generalAgentEndedAt:this.userInfo.generalAgentEndedAt
+                        }               
+                    }
+                })
+            },
+            ...mapMutations({
+                savaUserInfo:'SAVE_USERINFO'
+            })  
         }
     }
 </script>

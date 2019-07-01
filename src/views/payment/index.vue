@@ -100,7 +100,7 @@ export default {
             return str
         },
         getOrder(){
-            this.$axios.get('/checkout/onepage/index ').then((res)=>{
+            this.$axios.get('/checkout/onepage/index').then((res)=>{
                 if(res.data.code===200){
                     let data = res.data.data
                     this.addr = data.addr
@@ -162,6 +162,15 @@ export default {
           this.$axios.post('/checkout/onepage/submitorder',params).then((res)=>{
               if(res.data.code === 200) {
                   this.payment(res.data.data)
+              } else if (res.data.code === 1100190) {
+                  this.$vux.toast.show({
+                    text: res.data.message,
+                    type:'warn',
+                    time:1000
+                })
+                let timer = setTimeout(() => {
+                    this.$router.push('/inviterList')
+                }, 1000);
               } else {
                 this.$vux.toast.show({
                     text: '支付失败请重新添加购物车',

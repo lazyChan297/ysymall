@@ -1,5 +1,5 @@
 <template>
-    <div class="goodsDetail-wrapper">
+    <div class="goodsDetail-wrapper" v-if="ready">
 
         <div ref="goodsDetailScroll" class="goodsDetail-scroll">
             
@@ -46,9 +46,11 @@
                     <span class="cartLen" v-if="cartLen">{{cartLen}}</span>
                 </router-link>
             </div>
-            <div class="yellow bold" @click="showSlide(true)" v-if="goodsDetail.is_in_stock!=2">加入购物车</div>
-            <div class="red bold" @click="showSlide(false)" v-if="goodsDetail.is_in_stock!=2">购买</div>
-            <div class="gray bold" v-else>已售罄</div>
+            <div v-if="goodsDetail.type==2" class="gray bold">即将开售</div>
+            <div v-if="goodsDetail.is_in_stock!=2&&goodsDetail.type!=2" class="yellow bold" @click="showSlide(true)">加入购物车</div>
+            <div v-if="goodsDetail.is_in_stock!=2&&goodsDetail.type!=2" class="red bold" @click="showSlide(false)">购买</div>
+            
+            <div class="gray bold" v-if="goodsDetail.is_in_stock==2&&goodsDetail.type!=2">已售罄</div>
         </div>
         <transition name="slide">
             <div class="slide-wrapper" v-show="isShow">
@@ -108,6 +110,7 @@ var fullPath = ''
 export default {
     data() {
         return {
+            ready:false,
             slider_height:SCREEN_WIDTH+"px",
             textarr:[1,2],
             product_id:null,
@@ -190,6 +193,7 @@ export default {
                     this.default_img = this.goodsDetail.thumbnail_img[0]
                     // this.getCustomOptionAttr()
                     this._getCustomOptionAttr()
+                    this.ready = true
                     // this.$refs.goodsDetailScroll.refresh()
                     // 分享
                     if(env == 'production') {
@@ -550,11 +554,6 @@ export default {
                 })
                 return false;
             }
-            // console.log(this.userInfo)
-            // if(!this.userInfo.avatar){
-            //     this.$router.push('/login')
-            //     return false
-            // }
             
             let custom_option = JSON.stringify(this.custom_option_selected_attr)
             let params = Qs.stringify({
@@ -582,7 +581,20 @@ export default {
                             this.$router.push({path:`/login?redirect=/payment`})
                             return false
                         }
-                        window.location.href = global.serverHost + '/checkout/onepage/pay/#/checkout/onepage/pay/'
+                        if(!this.userInfo.hasInviter) {
+                            this.$vux.toast.show({
+                                text:'绑定邀请人',
+                                type:'warn',
+                                time:1500
+                            })
+                            let timer = setTimeout(()=>{
+                                this.$router.push('/inviterList')
+                            },1500)
+                            
+                            return false
+                        } else {
+                            window.location.href = global.serverHost + '/checkout/onepage/pay/#/checkout/onepage/pay/'
+                        }
                     }
                 } else {
                     this.$vux.toast.show({

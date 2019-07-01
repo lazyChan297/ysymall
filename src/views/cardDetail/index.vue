@@ -65,6 +65,7 @@
             }
         },
         mounted(){
+            this.scrolltoTop()
             let params = Qs.stringify({
                 name:this.userInfo.nickname,
                 mobile:this.userInfo.mobile
@@ -80,6 +81,9 @@
             }
         },
         methods:{
+            scrolltoTop(){
+                window.scrollTo(0, 0);
+            },                      
             getCard(params){
                 this.$axios.post('/customer/service/generate-biz-card',params).then((res)=>{
                     if(res.data.code === 200) {

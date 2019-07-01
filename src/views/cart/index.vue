@@ -210,13 +210,35 @@ export default {
         submit(){
             let goodslist = this.goodslist
             let ret = []
-            goodslist.forEach((item)=>{
-                if(!item.checked) {
-                    this.updateCart(item,"remove")
-                }
-            })
+            if(this.total <= 0) {
+                console.log(this.total)
+                this.$vux.toast.show({
+                    text:'请至少选择一款商品',
+                    type: 'warn'
+                })
+                return false
+            } else {
+                goodslist.forEach((item)=>{
+                    if(!item.checked) {
+                        this.updateCart(item,"remove")
+                    }
+                })
+            }
+            
             if(!this.userInfo.nickname) {
                 this.$router.push({path:`/login?redirect=/payment`})
+                return false
+            }
+            if(!this.userInfo.hasInviter) {
+                this.$vux.toast.show({
+                    text:'绑定邀请人',
+                    type:'warn',
+                    time:1500
+                })
+                let timer = setTimeout(()=>{
+                    this.$router.push('/inviterList')
+                },1500)
+                
                 return false
             }
             let turnPage = setTimeout(()=>{

@@ -3,7 +3,7 @@
         <ul class="tab">
             <li @click="switchTab('friends')" :class="current=='friends'?'active':''">一度人脉</li>
             <li @click="switchTab('customer')" :class="current=='customer'?'active':''">扫码客</li>
-            <li @click="switchTab('inviter')" :class="current=='inviter'?'active':''">访客</li>
+            <!-- <li @click="switchTab('inviter')" :class="current=='inviter'?'active':''">访客</li> -->
         </ul>
         <user-list :vistors="vistors" :list="friendsInfo" :category="current"></user-list>
         <!-- <p style="padding-top:100px">该页面正在开发中～敬请期待！</p> -->

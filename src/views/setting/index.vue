@@ -17,10 +17,11 @@
                     <!-- <div class="icon icon-link"></div> -->
                 </div>
             </div>
+            <!-- {{userInfo}} -->
             <router-link tag="div" to="/inviterList" class="cell" v-if="userInfo.level=='registered'&&userInfo.hasInviter">
-                <label>邀请人</label>
+                <label>邀请人</label>              
                 <div>
-                    <span>{{userInfo.inviterNickname || userInfo.inviterMobile ||'设置邀请人'}}</span>
+                    <span>{{userInfo.inviterRealName || userInfo.inviterNickname || userInfo.inviterMobile || '设置邀请人'}}</span>
                     <div class="icon icon-link"></div>
                 </div>
             </router-link>
@@ -33,7 +34,9 @@
             </router-link>
             <div class="cell" v-else-if="userInfo.hasInviter">
                 <label>邀请人</label>
-                <span>{{userInfo.inviterNickname}}</span>
+                <span v-if="userInfo.inviterRealName">{{userInfo.inviterRealName}}</span>
+                <span v-else-if="userInfo.inviterNickname">{{userInfo.inviterNickname}}</span>
+                <span v-else-if="userInfo.inviterMobile">{{userInfo.inviterMobile}}</span>
             </div>
             <div class="cell" @click="chooseAddr">
                 <label>收货地址</label>
@@ -44,17 +47,35 @@
                 <label>级别</label>
                 <span>{{getLevel(userInfo.level)}}</span>
             </div>
-            <div class="cell">
+            <div class="cell" v-if="userInfo.agentDistrict">
                 <label>地区</label>
                 <span>{{userInfo.agentDistrict}}</span>
             </div>
         </section>
+        <div class="logout" @click="isShowDialog = true">重新登录</div>
+        <x-dialog v-model="isShowDialog">
+            <div class="confirm-container">
+                <div class="content">是否退出登录</div>
+                <div class="submit" @click="dialogConfrim">确定</div>
+                <div class="cancel" @click="dialogCancel">取消</div>
+            </div>
+        </x-dialog>
     </div>
 </template>
 <script>
 import {mapGetters,mapMutations} from 'vuex'
+import {XDialog} from 'vux'
+import webStorageCache from 'web-storage-cache'
 import Qs from 'qs'
+import { setTimeout } from 'timers';
+import {getOpenid} from '@/common/js/util'
 export default {
+    inject:['reload'],
+    data() {
+        return {
+            isShowDialog:false
+        }
+    },
     created(){
        if(process.env.NODE_ENV == 'production') {
             // 禁止分享
@@ -73,7 +94,40 @@ export default {
     mounted() {
         this.getUserInfo()
     },
+    components:{
+        XDialog
+    },
     methods:{
+        dialogConfrim() {
+            this.isShowDialog = false             
+            this.$axios.post('/customer/service/delwechat').then((res)=>{
+                if (res.data.code === 200) {
+                    let wscache = new webStorageCache()
+                    wscache.delete('token')
+                    wscache.delete('uuid')
+                    global.token = ''
+                    global.uuid = ''
+                    global.isBoundWechat = false
+                    // getOpenid(window.location.href)
+                    this.$vux.loading.show({
+                        text:'退出登录中…'
+                    })
+                    // this.reload()
+                    let timer = setTimeout(()=>{
+                        this.$vux.loading.hide()
+                        window.location.href = global.serverHost + '#/login?redirect=/setting'
+                    },3000)
+                } else {
+                    this.$vux.toast.show({
+                        text:res.data.message,
+                        type:'warn'
+                    })
+                }
+            })
+        },
+        dialogCancel() {
+            this.isShowDialog = false
+        },
         getLevel(level){
             switch(level){
                 case('registered'):
@@ -130,13 +184,21 @@ export default {
             })
         },
         ...mapMutations({
-            savaUserInfo:'SAVE_USERINFO'
+            savaUserInfo:'SAVE_USERINFO',
+            clearUserInfo: 'CLEAR_USERINFO'
         })
     }
 }
 </script>
 <style lang="stylus" scoped>
     @import "../../common/stylus/variable.styl"
+    @import "../../common/stylus/dialog.styl"
+    .logout
+        height 50px
+        line-height 50px
+        color $text-l
+        background #ffffff
+        margin 10px 0 0
     .title
         line-height 50px
         color $text-lll

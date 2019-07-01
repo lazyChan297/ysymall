@@ -9,7 +9,7 @@
                         <span class="num bold">{{balance}}</span>
                     </div>
                     <div class="desc"><span>原网站未到账总额:￥{{earnInfo.withdrawFailed}}</span>
-                    <span>核对无误后并入可提现余额</span>
+                    <span>已并入可提现余额</span>
                     </div>
                 </div>
                 
@@ -167,6 +167,7 @@ export default {
                     if(res.data.data.incomeList.length<this.listParams.number) {
                         this.listParams.nomore = true
                     }
+                    console.log(this.earnInfo.incomeList)
                     this.earnInfo.incomeList = this.earnInfo.incomeList.concat(res.data.data.incomeList)
                 }
             })

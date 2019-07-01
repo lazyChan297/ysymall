@@ -4,6 +4,7 @@ const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
 const vuxLoader = require('vux-loader')
+const HappyPack = require('happypack')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -42,8 +43,11 @@ let webpackConfig = {
       },
       {
         test: /\.js$/,
-        loader: 'babel-loader',
-        include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]
+        // loader: 'babel-loader',
+        // loader: 'babel-loader?cacheDirectory=true', //将编译过的js缓存起来
+        loader: 'happypack/loader?id=happybabel',
+        include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')],
+        exclude: /node_modules/
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -87,6 +91,12 @@ let webpackConfig = {
 
 module.exports = vuxLoader.merge(webpackConfig, {
   plugins: [
+    new HappyPack({
+      id: 'happybabel',
+      loaders: ['babel-loader?cacheDirectory'],
+      // 开启 4 个线程
+      threads: 4
+    }),
     'vux-ui',
     'progress-bar',
     {

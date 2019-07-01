@@ -34,7 +34,7 @@
         </section>
         <section class="goods-container">
             <div>
-                <div class="goods" v-for="(item,index) in details.products">
+                <div class="goods" v-for="(item,index) in details.products" :key="index">
                     <img :src="item.image" class="img" alt="">
                     <div class="text">
                         <p>
@@ -58,7 +58,7 @@
             </div> -->
             <div class="cell">
                 <label for="">实付款</label>
-                <span>¥39.80</span>
+                <span>¥{{details.subtotal}}</span>
             </div>
         </section>
         <section class="orderinfo">

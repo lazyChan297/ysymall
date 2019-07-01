@@ -45,7 +45,7 @@
                         <span>{{item.orderAmount}}</span>
                     </div>
                 </div>
-                <div class="friendQua">二度人脉:{{item.friendsQuantity}}</div>
+                <div class="friendQua">人脉:{{item.friendsQuantity}}</div>
                 <div class="icon icon-link"></div>
             </router-link>
         </ul>

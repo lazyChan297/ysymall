@@ -69,6 +69,7 @@ import Qs from 'qs'
 import {mapGetters} from 'vuex'
 import {validNum} from '@/common/js/validated'
 import { TransferDomDirective as TransferDom } from 'vux'
+import { setTimeout } from 'timers';
 export default {
     data(){
         return {
@@ -114,15 +115,30 @@ export default {
         ])
     },
     mounted(){
-        this.current_customer = JSON.parse(sessionStorage.getItem('customer'))
-        console.log(this.current_customer)
-    },
+        this.current_customer = JSON.parse(decodeURI(this.getCookie('customer')))
+        if(!this.current_customer || !this.current_customer.sn) {
+            this.$vux.toast.show({
+                text:'用户信息获取失败，请重新获取!',
+                type:'warn'
+            })
+            let timer = setTimeout(()=>{
+                this.$router.go(-1)
+            },1000)
+        }
+},
     methods:{
         scrolltoTop(){
              window.scrollTo(0, 0);
         },
         hideUpGradeOne() {
             this.upGradeOne = false
+        },
+        getCookie(name){
+            var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+            if(arr=document.cookie.match(reg))
+                return arr[2];
+            else
+            return null;
         },
         // 使用余额支付
         showPaymentDialog(){
@@ -186,9 +202,10 @@ export default {
             let customer = this.current_customer
             let params = Qs.stringify({
                 sn:customer.sn,
-                toLevel:toLevel,
+                toLevel:customer.level,
                 captcha: this.code
             })
+            
             this.$axios.post('/customer/level/upgrade-step-one',params).then((res)=>{
                 if(res.data.code === 200) {
                     // 如果需要支付的费用为0 升级到此结束

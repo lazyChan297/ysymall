@@ -51,11 +51,12 @@
                         <router-link :to="{path:`/goodsDetail/${g.product_id}`}" class="goodsItem" tag="div" v-for="(g,index) in productList" :key="index">
                             <img :src="g.image" alt="">
                             <p class="name bold">{{g.name}}</p>
-                            <div v-if="g.is_in_stock==1">
+                            <div v-if="g.is_in_stock==1&&g.type!=2">
                                 <span class="price bold">¥{{g.special_price.value?g.special_price.value:g.price.value}}</span>
                                 <span class="oldprice" v-if="g.special_price.value">¥{{g.price.value}}</span>
                                 <span class="oldprice" v-else></span>
                             </div>
+                            <div v-else-if="g.type==2" class="soldout"><span>即将开售</span></div>
                             <div v-else class="soldout"><span>已售罄</span></div>
                         </router-link>
                         </div>
@@ -86,9 +87,13 @@ const env = process.env.NODE_ENV
 import TabBar from '@/components/tabBar/index'
 import {mapGetters,mapMutations} from 'vuex'
 import {XDialog} from 'vux'
+// import {GetRequest} from '@/common/js/util'
 import Qs from 'qs'
 import Scroll from '@/base/scroll/index'
 import webStorageCache from 'web-storage-cache'
+let Base64 = require('js-base64').Base64;
+
+
 const ICON_SRC = [
     'quanbu',
     'jiankang',
@@ -161,34 +166,30 @@ export default {
         Scroll
     },
     created() {
+        // alert(window.location.href)
         this.hasInviter()
+        let value = decodeURIComponent((new RegExp('[?|&]encodeUrl='+'([^&;]+?)(&|#|;|$)').exec(window.location.href)||[,""])[1].replace(/\+/g,'%20')) || null
+        // alert(value)
+        if (value) {
+            // return false
+            let redirect = Base64.decode(value)
+            redirect = redirect.substr(2)
+            this.$router.push(redirect)
+        } 
     },
     mounted() {
         this.getExpressInfo()
         if(this.userInfo.avatar) {
             this.headerInfo = this.userInfo
         }
-            if(env == 'production') {
-                console.log('production')
-                // 分享
-                this.$wechat.ready(() => {
-                    this.$wechat.showMenuItems({
-                        menuList: ['menuItem:share:appMessage','menuItem:share:timeline']
-                    })
-                    this.$wechat.onMenuShareTimeline({
-                        title: this.shareTimeline.title,
-                        link:this.shareTimeline.link,
-                        imgUrl: this.shareTimeline.imgUrl
-                    })
-
-                    this.$wechat.onMenuShareAppMessage({
-                        title: this.shareAppMessage.title,
-                        link:this.shareAppMessage.link,
-                        imgUrl: this.shareAppMessage.imgUrl,
-                        desc:this.shareAppMessage.desc
-                    })
+        if(env == 'production') {
+            // 分享
+            this.$wechat.ready(() => {
+                this.$wechat.showMenuItems({
+                    menuList: ['menuItem:share:appMessage','menuItem:share:timeline']
                 })
-            }
+            })
+        }
         
     },
     computed:{
@@ -242,10 +243,7 @@ export default {
             this.isShowDialog = true
         },
         hasInviter(){
-            // let userSn = decodeURIComponent((new RegExp('[?|&]inviter='+'([^&;]+?)(&|#|;|$)').exec(location.href)||[,""])[1].replace(/\+/g,'%20'))||null;
             let userSn = sessionStorage.getItem('inviter')
-            // alert('userSn',userSn)
-            // console.log('zuixin')
             if(userSn){
                 this.userSn = userSn
                 this.getIndex(this.userSn)
@@ -330,9 +328,11 @@ export default {
                                 link:res.data.wechat.shareTimeline.link,
                                 imgUrl: res.data.wechat.shareTimeline.imgUrl
                             })
+                            console.log(res.data.wechat.shareTimeline.link)
                             that.$wechat.onMenuShareAppMessage({
                                 title: res.data.wechat.shareAppMessage.title,
                                 link:res.data.wechat.shareAppMessage.link,
+                                // link: "http://fappserver.caomeng.me?encodeUrl=LyMvaW52aXRlQ29uZmlybT9pbnZpdGVyPTRhY1RXWA==",
                                 imgUrl: res.data.wechat.shareAppMessage.imgUrl,
                                 desc:res.data.wechat.shareAppMessage.desc
                             })
@@ -376,11 +376,26 @@ export default {
             this.$axios.get('/customer/service/get-notice').then((res)=>{
                 if(res.data.code === 200) {
                     // this.expressInfo = res.data.data.info.replace(/\n/g,"<br/>");
-                    this.expressInfo = res.data.data.info.replace(/\\n/gm,"</br>")
-                    this.isShowDialog = res.data.data.hasRead === false?true:false
-                    if(!res.data.data.hasRead){
-                        this.showExpress()
+                    if (!res.data.data.info) {
+                        this.expressInfo = '暂无公告'
+                    } else {
+                        this.expressInfo = res.data.data.info.replace(/\\n/gm,"</br>")
                     }
+                    // this.isShowDialog = res.data.data.hasRead === false&&res.data.data.info?true:false
+                    
+                    if (!res.data.data.info) {
+                        this.isShowDialog = false
+                        console.log(res.data.data.info)
+                    } else {
+                        if (res.data.data.hasRead) {
+                            this.isShowDialog = false
+                        } else {
+                            this.isShowDialog = true
+                        }
+                    }
+                    // if(!res.data.data.hasRead){
+                    //     this.showExpress()
+                    // }
                 }
             })
         },

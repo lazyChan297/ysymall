@@ -65,7 +65,8 @@ export const friendsListMixin = {
                         // 本次请求的
                         let _list = res.data.data.friendsInfo
                         // 合并数组
-                        this.friendsList = friendsList.concat(_list)
+                        // this.friendsList = friendsList.concat(_list)
+                        this.friendsList = _list
                         // 如果本次请求到的为空则禁止滚动加载
                         if(!_list.length){
                             this.listParams.loading = false

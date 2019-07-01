@@ -5,7 +5,7 @@
             <span class="bold">¥</span>
             <input type='tel' v-model="amount">
         </div>
-        <div class="desc">当前余额 ￥{{balance}}</div>
+        <div class="desc">当前余额 ￥{{balance || 0}}</div>
         <div class="large-green-button" @click="submit" :class="cansubmit?'':'disabled'">提现</div>
         <span class="tip">提现请注意： </span>
         <span class="tip">每日最多提现10次； </span>

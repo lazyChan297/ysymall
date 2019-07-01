@@ -363,14 +363,14 @@ export default new Router({
       }
     },
     //接受邀请
-    {
-      path: '/inviteConfirm',
-      name: 'inviteConfirm',
-      component:()=>import('@/views/inviteConfirm/index'),
-      meta:{
-        title: '缘生源'
-      }
-    },
+    // {
+    //   path: '/inviteConfirm',
+    //   name: 'inviteConfirm',
+    //   component:()=>import('@/views/inviteConfirm/index'),
+    //   meta:{
+    //     title: '缘生源'
+    //   }
+    // },
     {
       path:'/rank',
       name:'rank',
@@ -401,6 +401,19 @@ export default new Router({
       component:()=>import('@/views/checkAgent/index'),
       meta:{
         title:'未开通合伙人地区查询'
+      }
+    },
+    {
+      path: '/empty',
+      name:'empty',
+      component: () => import('@/views/empty/index')
+    },
+    {
+      path:'/inviteConfirm',
+      name:'inviterConfirmLogin',
+      component: () => import('@/views/inviterConfirmLogin/index'),
+      meta:{
+        title: '确认邀请'
       }
     }
   ]

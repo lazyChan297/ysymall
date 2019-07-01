@@ -6,8 +6,11 @@
                 <p class="name bold">{{userInfo.nickname}}</p>
                 <p class="mobile">{{userInfo.mobile}}</p>
             </div>
-            <router-link class="icon icon-setting" to="/setting"></router-link>
-        </div>
+            <router-link tag="div" to="/setting" class="setting_box">
+                <div class="icon icon-setting"></div>
+                <div class="setting_text">设置</div>
+            </router-link>
+        </div> 
         <ul class="order-tab">
             <router-link to="/order/all" tag="li">
                 <div class="icon icon-qbdd"></div>
@@ -180,13 +183,22 @@ export default {
             border 2px solid #fff
             height 70px
             width 70px
+        .setting_box
+            .icon-setting
+                margin auto
+            .setting_text
+                font-size 14px
+                line-height 21px
+                text-align left
+                color #fff
+                margin 5px auto 0            
         .text
             flex 1
             color #fff
             margin-left 10px
             .name
                 font-size 24px
-                line-height 33px
+                line-height 24px
                 margin-bottom 5px
                 text-align left
             .mobile

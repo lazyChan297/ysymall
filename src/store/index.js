@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 // 状态每次改变都会在控制台打印
 import createLogger from 'vuex/dist/logger'
+import { stat } from 'fs';
 
 const debug = process.env.NODE_ENV !== 'production'
 Vue.use(Vuex)
@@ -19,6 +20,7 @@ const SAVE_CARTINFO = 'SAVE_CARTINFO'
 const SAVE_CARTLEN = 'SAVE_CARTLEN'
 const SAVE_CURRENT_CUSTOMER = 'SAVE_CURRENT_CUSTOMER'
 const SAVE_INVITEINFO = 'SAVE_INVITEINFO'
+const CLEAR_USERINFO = 'CLEAR_USERINFO'
 
 const mutations = {
     [SAVE_USERINFO](state,userInfo) {
@@ -32,6 +34,9 @@ const mutations = {
     },
     [SAVE_INVITEINFO](state,inviteInfo) {
         state.inviteInfo = inviteInfo
+    },
+    [CLEAR_USERINFO](state) {
+        state.userInfo = null
     }
 }
 
