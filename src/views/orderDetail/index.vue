@@ -5,7 +5,7 @@
             <span>{{details.order_status_name}}</span>
         </div>
         <section class="update">
-            <router-link to="/express" tag="div" class="express">
+            <router-link :to="{path:`/express/${details.order_id}`}" tag="div" class="express">
                 <div class="icon icon-car"></div>
                 <div class="text">
                     <p class="expressTxt">

@@ -34,9 +34,9 @@
             </router-link>
             <div class="cell" v-else-if="userInfo.hasInviter">
                 <label>邀请人</label>
-                <span v-if="userInfo.inviterRealName">{{userInfo.inviterRealName}}</span>
-                <span v-else-if="userInfo.inviterNickname">{{userInfo.inviterNickname}}</span>
-                <span v-else-if="userInfo.inviterMobile">{{userInfo.inviterMobile}}</span>
+                <span>{{userInfo.inviterRealName || userInfo.inviterNickname}}{{userInfo.inviterMobile}}</span>
+                <!-- <span v-else-if="userInfo.inviterNickname">{{userInfo.inviterNickname}}</span>
+                <span v-else-if="userInfo.inviterMobile">{{userInfo.inviterMobile}}</span> -->
             </div>
             <div class="cell" @click="chooseAddr">
                 <label>收货地址</label>

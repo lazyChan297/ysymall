@@ -5,13 +5,18 @@
                 <img :src="item.avatar" alt="" v-if="item.avatar">
                 <img src="../../common/images/avatar_default.png" alt="" v-else>
                 <div>
-                    <div>
+                    <!-- <div>
                         <div class="name">{{item.nickname}}</div>
                         <div class="acccount">开通金额:¥{{item.amount}}</div>
                     </div>
                     <div class="date">
                         开通时间：{{item.time}}
-                    </div>
+                    </div> -->
+                    <div class="name bold">{{item.nickname}}</div>
+                    <div class="mobile" v-if="type=='level'">{{item.mobile}}</div>
+                    <div class="date">操作时间：{{item.time}}</div>
+                    <div class="agent" v-if="type=='level'">开通区域：{{item.district}}</div>
+                    <div class="account">{{type=='level'?'实收':'开通'}}金额：¥{{item.amount}}</div>
                 </div>
             </li>
         </ul>
@@ -31,7 +36,8 @@ export default {
                 page:1, //初始搜索页码
                 number:10 //每页返回数据
             },
-            isEmpty:false
+            isEmpty:false,
+            type:''
         }
     },
     created() {
@@ -61,8 +67,8 @@ export default {
             }   
         },
         getlist(){
-            let type = this.$route.params.type
-            if(type == 'level') {
+            this.type = this.$route.params.type
+            if(this.type == 'level') {
                 this.getRecordManager()   
             } else {
                 this.getRecordUser()
@@ -135,14 +141,24 @@ ul
                 margin-left 10px
             .name
                 color $text-l
-                font-weight bold
                 font-size 18px
+                margin-bottom 7px
+            .mobile
+                color $green
+                font-size 14px
+                margin-bottom 7px
+
             .account
-                color $text-l
+                color $green
+                font-weight bold
+                margin-top 7px
             .date
                 color $text-ll
                 font-size 14px
-                margin-top 10px
+            .agent
+                font-size 14px
+                margin-top 7px
+                text-align left
 .nomore
     font-size 14px
     color $text-ll

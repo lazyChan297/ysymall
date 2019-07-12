@@ -24,14 +24,29 @@
                 <span>级别</span>
                 <span>{{getLevel(userInfo.level)}}</span>
             </div>
-            <router-link :to="{path:`/second_friendship/${userInfo.sn}`}" class="cell" tag="div">
+            <!-- <router-link :to="{path:`/otherFriendShip/${userInfo.sn}`}" class="cell" tag="div">
                     <span>二度人脉</span>
                 <div>
                     <span>{{userInfo.friendsQuantity}}人</span>
                     <div class="icon icon-link"></div>
                 </div>
-                
-            </router-link>
+            </router-link> -->
+            <div class="cell" @click="getFriends(userInfo.friendsQuantity)">
+                <span>人脉</span>
+                <div>
+                    <span>{{userInfo.friendsQuantity}}人</span>
+                    <div class="icon icon-link"></div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <div class="cell" v-for="(item,index) in userInfo.invitersInfo" :key="item.mobile">
+                <span>上{{index+1}}级（{{item.level}}）</span>
+                <div>
+                    <span style="margin-right:10px">{{item.mobile}}</span>
+                    <span class="specialName">{{item.nickname}}</span>
+                </div>
+            </div>
         </section>
         <section>
             <div class="cell">
@@ -75,6 +90,17 @@ export default {
             })
         }
     },
+    filters:{
+        toLevel(level) {
+            if (level === 0) {
+                return '一'
+            }else if (level === 1) {
+                return '二'
+            } else {
+                return '三'
+            }
+        }
+    },
     methods:{
         getDetail(sn) {
             let params = Qs.stringify({sn:sn})
@@ -106,6 +132,10 @@ export default {
                     break;
             }
         },
+        getFriends(num) {
+            if(num <= 0) return false
+            this.$router.push(`/otherFriendShip/${this.userInfo.sn}`)
+        }
     }
     
 }
@@ -158,6 +188,11 @@ section
         border-bottom 1px solid $line
         span
             color $text-l
+        .specialName
+            white-space nowrap
+            overflow hidden
+            text-overflow ellipsis
+            width 90px
         &:last-child
             border none
         &>div

@@ -93,22 +93,22 @@
                 </div>
                 <div class="icon icon-link"></div>
             </router-link>
-            <div class="cell" @click="applyVip" tag="div" v-if="userInfo.level==='member'">
+            <!-- <div class="cell" @click="applyVip" tag="div" v-if="userInfo.level==='member'">
                 <div>
                     <span class="icon icon-UpVip"></span>
                     <span class="bold">申请VIP</span>
                     
                 </div>
                 <div class="icon icon-link"></div>
-            </div>
-            <div class="cell" @click="applyAgent" v-if="userInfo.level==='vip'||userInfo.level==='member'">
+            </div> -->
+            <!-- <div class="cell" @click="applyAgent" v-if="userInfo.level==='vip'||userInfo.level==='member'">
                 <div>
                     <span class="icon icon-UpAgent"></span>
                     <span class="bold">申请总代理</span>
                     
                 </div>
                 <div class="icon icon-link"></div>
-            </div>
+            </div> -->
         </section>
         <tab-bar/>
     </div>

@@ -9,8 +9,15 @@
                     </router-link>
                 </transition>
                 <!-- inviter header -->
-                <div class="header" ref="header">
-                    <div class="userInfo-container" v-if="headerInfo">
+                <div class="header" ref="header" v-if="headerInfo.mobile">
+                    <div class="imgbox">
+                        <img :src="headerInfo.avatar" alt="" v-if="headerInfo.avatar">
+                    </div>
+                    <div class="infobox">
+                        <div>{{headerInfo.nickname}}({{headerInfo.mobile}})</div>
+                        <span>欢迎来到缘生源！</span>
+                    </div>
+                    <!-- <div class="userInfo-container" v-if="headerInfo">
                         <img :src="headerInfo.avatar" alt="" v-if="headerInfo.avatar">
                         <div class="name bold" v-if="headerInfo.mobile">
                             <span>{{headerInfo.nickname}}</span>
@@ -23,7 +30,7 @@
                     <div class="userInfo-container" v-else>
                         <div class="desc">邀请您参与社交电商</div>
                         <router-link class="received-invite" to="/login" tag="div">绑定手机号码</router-link>
-                    </div>
+                    </div> -->
                 </div>
                 <!-- tips -->
                 <div class="tips">
@@ -301,7 +308,7 @@ export default {
                             } else {
                                 this.headerInfo = this.userInfo
                             }
-                            this.isSlide = true
+                            this.isSlide = false
                         }
                     } else {
                         if(this.userSn) {
@@ -442,7 +449,8 @@ export default {
         height 70px
         border-radius 30px
         background #fff
-        top 220px
+        top 12px
+        box-shadow 0px 2px 8px 0px rgba(0,0,0,0.1)
         right 10px
         line-height 20px
         z-index 1
@@ -476,12 +484,32 @@ export default {
             position relative
             background-size 100%
             background-position-y center
-            height 250px
-            background-image url('../../common/images/index_bg.png')
+            background #fff
+            height 94px
+            display flex
+            align-items center
+            // background-image url('../../common/images/index_bg.png')
+            box-shadow:0px 2px 8px -2px rgba(0,0,0,0.1)
+            border-bottom-left-radius 12px
+            border-bottom-right-radius 12px
             text-align center
-            color #fff
-            padding-top 60px
+            // color #fff
+            // padding-top 60px
             box-sizing border-box
+            .imgbox
+                margin-left 15px
+                img
+                    border 2px solid #fff
+                    box-shadow 0px 2px 8px -2px rgba(0,0,0,0.1)
+            .infobox
+                margin-left 18px
+                text-align left
+                &>div
+                    font-weight bold
+                    margin-bottom 5px
+                    font-size 18px
+                span
+                    color $text-lll
             .userInfo-container
                 position relative
                 margin 0 15px
@@ -517,15 +545,15 @@ export default {
                 .mobile
                     color #fff
             img
-                position absolute
+                // position absolute
                 display block
-                top -30px
+                // top -30px
                 border 2px solid #fff
                 border-radius 50%
                 width 60px
                 height 60px
-                left 50%
-                margin-left -30px
+                // left 50%
+                // margin-left -30px
             
             .mobile
                 font-size 18px

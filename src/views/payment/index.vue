@@ -173,7 +173,7 @@ export default {
                 }, 1000);
               } else {
                 this.$vux.toast.show({
-                    text: '支付失败请重新添加购物车',
+                    text: res.data.message,
                     type:'warn',
                     time:1000
                 })

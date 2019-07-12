@@ -6,10 +6,11 @@
                 <div>
                     <div>
                         <span class="symbol bold">¥</span>
-                        <span class="num bold">{{balance}}</span>
+                        <span class="num bold">{{balance || 0}}</span>
                     </div>
-                    <div class="desc"><span>原网站未到账总额:￥{{earnInfo.withdrawFailed}}</span>
-                    <span>已并入可提现余额</span>
+                    <div class="desc">
+                    <!-- <span>原网站未到账总额:￥{{earnInfo.withdrawFailed}}</span> -->
+                    <!-- <span>已并入可提现余额</span> -->
                     </div>
                 </div>
                 
@@ -18,9 +19,20 @@
                     提现
                 </router-link>
             </div>
+            
+        </div>
+        <div class="withdrawal_info">
+            <div>旧网站余额:{{earnInfo.historicalIncome}}</div>
+            <div>提现未到账总额：{{earnInfo.withdrawFailed}}</div>
+            <div>以上收益已全部并入可提现余额</div>
         </div>
         <router-link tag="p" to="/cash" class="title-route" style="margin-top:0;border:none">
-            <span>提现记录</span><div class="icon icon-link"></div>
+            <span>提现记录</span>
+            <div style="display: flex;align-items: center;">
+                <div style="margin-right:10px;font-weight:bold;font-size:14px;color:#DBDADF;">已提现：{{earnInfo.withdraw}}</div>
+                <div class="icon icon-link"></div>
+            </div>
+            
         </router-link>
         <p  class="title-route"><span>我的收益</span></p>
 
@@ -53,6 +65,18 @@
         </div>
         <div class="sheet">
             <div >
+                <!-- <ul>
+                    <li>
+                        <p>
+                            <span>奖励到账提醒</span>
+                            <span>2019-07-04 12:00:00</span>
+                        </p>
+                        <div>
+                            <span class="num bold">￥1000</span>
+                            <span>{{item.info}}</span>
+                        </div>
+                    </li>
+                </ul> -->
                 <ul v-if="earnInfo.incomeList&&earnInfo.incomeList.length>0">
                     <li v-for="(item,index) in earnInfo.incomeList" :key="index">
                         <p>
@@ -61,7 +85,11 @@
                         </p>
                         <div>
                             <span class="num bold">￥{{item.amount}}</span>
-                            <span>{{item.info}}</span>
+                            <div style="text-align:left;">
+                                <router-link tag="span" class="bold green" :to="{path:`/userDetail/${item.buyer.sn}`}">{{item.buyer.nickname}}</router-link>
+                                <span>{{item.info}}</span>
+                            </div>
+                            
                         </div>
                     </li>
                 </ul>
@@ -199,6 +227,15 @@ export default {
 <style lang="stylus" scoped>
 @import "../../common/stylus/variable.styl";
 @import "../../common/css/media.css";
+.withdrawal_info
+    text-align: left;
+    padding: 10px 15px;
+    font-size: 14px;
+    &>div
+        color $text-lll
+        line-height 22px
+.green
+    color $green
 /* datetime */
 .date-container
     width 100px
@@ -362,7 +399,7 @@ export default {
                         flex 1
                         font-size 14px
                         line-height 20px
-                        text-align right
+                        text-align left
             .num
                 color $red
                 font-size 20px

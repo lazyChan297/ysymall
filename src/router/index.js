@@ -268,7 +268,7 @@ export default new Router({
       name:'second_friendship',
       component: () => import('@/views/secondFriendship/index'),
       meta:{
-        title:'二度人脉'
+        title:'人脉'
       }
     },
     {
@@ -414,6 +414,13 @@ export default new Router({
       component: () => import('@/views/inviterConfirmLogin/index'),
       meta:{
         title: '确认邀请'
+      }
+    },{
+      path:'/otherFriendShip/:sn',
+      name:'otherFriendShip',
+      component: () => import('@/views/otherFriendShip/index'),
+      meta:{
+        title: '人脉'
       }
     }
   ]

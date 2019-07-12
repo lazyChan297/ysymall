@@ -170,6 +170,7 @@ export default {
         align-items center
         &:last-child
             border none
+            margin-top 0
         img
             border-radius 50%
             width 54px

@@ -10,10 +10,10 @@
                     <div class="mobile">手机号:{{current_customer.mobile}}</div>
                 </div>
             </div>
-            <div class="relationship" v-if="current_customer.inviterNickname">
+            <div class="relationship" v-if="current_customer.hasInviter">
                 <div>
                     <span>邀请人</span>
-                    <span>{{current_customer.inviterNickname}}</span>
+                    <span>{{current_customer.inviterNickname||current_customer.inviterMobile||current_customer.inviterRealName}}</span>
                 </div>
             </div>
         </div>

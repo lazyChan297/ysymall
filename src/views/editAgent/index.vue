@@ -133,6 +133,7 @@
     import Qs from 'qs'
     import {mapGetters} from 'vuex'
     let addrArray = []
+    const env = process.env
     export default {
         data(){
             return {
@@ -284,7 +285,7 @@
                     sn:this.$route.params.sn.replace(/&/g, '&amp;'),
                     newLevel:this.newAgentInfo&&this.newAgentInfo.level,
                     newDistrictId:this.districtId,
-                    agentEndedAt:this.agentInfo.agentEndedAt,
+                    agentEndedAt:this.agentInfo.endedAt,
                     vipEndedAt:this.agentInfo.vipEndedAt,
                     generalAgentEndedAt:this.agentInfo.generalAgentEndedAt,
                     vipQuota:this.agentInfo.vipQuota,

@@ -12,6 +12,7 @@
 <script>
 import UserList from '@/views/userList/index';
 import Qs from 'qs';
+import {mapGetters} from 'vuex';
 export default {
     data() {
         return {
@@ -42,6 +43,11 @@ export default {
     components:{
         UserList
     },
+    computed:{
+        ...mapGetters([
+            'userInfo'
+        ])
+    },
     methods:{
         switchTab(type) {
             this.current = type
@@ -62,7 +68,8 @@ export default {
             }
             let params = Qs.stringify({
                 page:this.listParams.page,
-                number:this.listParams.number
+                number:this.listParams.number,
+                sn:this.userInfo.sn
             })
             this.$axios.post(url,params).then((res)=>{
                 if(res.data.code === 200) {

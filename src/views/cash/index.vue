@@ -26,20 +26,54 @@ import Qs from 'qs';
 export default {
     data() {
         return {
-            list:[]
+            list:[],
+            listParams:{
+                page:1,
+                number:10,
+                nomore:false
+            }
         }
     },
     mounted() {
         this.getList()
+        addEventListener('scroll',this.handleScroll)
+
     },
     methods:{
         getList(){
-            let params = Qs.stringify({page:1,number:10})
+            let params = Qs.stringify({page:this.listParams.page,number:this.listParams.number})
             this.$axios.post('/finance/expenditure/all',params).then((res)=>{
                 if(res.data.code === 200) {
                     this.list = res.data.data
+                    this.listParams.page++
+                    if(this.list.length < this.listParams.number) {
+                        this.listParams.nomore = true
+                    }
                 }
             })
+        },
+        loadmore() {
+            let params = Qs.stringify({page:this.listParams.page,number:this.listParams.number})
+            this.$axios.post('/finance/expenditure/all',params).then((res)=>{
+                if(res.data.code === 200) {
+                    this.list = this.list.concat(res.data.data)
+                    this.listParams.page++
+                    if(res.data.data.length < this.listParams.number) {
+                        this.listParams.nomore = true
+                    }
+                }
+            })
+        },
+        handleScroll() {
+            let scrollTop =  document.documentElement.scrollTop||document.body.scrollTop
+            let windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+            let scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
+            // 滚动到底部
+            if(scrollTop+windowHeight==scrollHeight){
+                if (!this.listParams.nomore) {
+                    this.loadmore()     
+                }
+            }   
         }
     }
 }

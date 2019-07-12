@@ -77,7 +77,12 @@ export default {
             if(!this.canSendCode) return false 
             if(!validPhone(this.mobile)) return false
             let params = Qs.stringify({mobile:this.mobile,type:TYPE})
-            this.$axios.post('/customer/service/send-sms',params).then((res)=>{
+            this.$axios.post('/customer/service/send-sms',params,{
+                headers:{
+                    'Access-Token':'',
+                    'Fecshop-Uuid':''
+                }
+            }).then((res)=>{
                 if(res.data.code == 200) {
                     let wait_time = 60
                     let timer = setInterval(()=>{
@@ -145,6 +150,8 @@ export default {
                         return false
                     }
                     if(res.headers && res.data.code === 200) {
+                        global.token = ''
+                        global.uuid = ''
                         let wechatBound = res.data.data.wechatBound
                         let redirect = this.redirect?this.redirect:'/'
                         // 没有绑定微信 引导用户微信授权

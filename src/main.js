@@ -32,9 +32,9 @@ if (process.env.NODE_ENV === 'development') {
   global.serverHost = ''
 } else {
   // 生产服务器
-  global.serverHost = "https://appserver.ysyysy.com"
+  // global.serverHost = "https://appserver.ysyysy.com"
   // 测服务器
-    // global.serverHost = "http://fappserver.caomeng.me"
+    global.serverHost = "http://fappserver.caomeng.me"
    
 }
 
