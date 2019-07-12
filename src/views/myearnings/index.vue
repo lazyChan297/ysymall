@@ -21,15 +21,15 @@
             </div>
             
         </div>
-        <!-- <div class="withdrawal_info">
+        <div class="withdrawal_info">
             <div>旧网站余额:{{earnInfo.historicalIncome}}</div>
             <div>提现未到账总额：{{earnInfo.withdrawFailed}}</div>
             <div>以上收益已全部并入可提现余额</div>
-        </div> -->
+        </div>
         <router-link tag="p" to="/cash" class="title-route" style="margin-top:0;border:none">
             <span>提现记录</span>
             <div style="display: flex;align-items: center;">
-                <!-- <div style="margin-right:10px;font-weight:bold;font-size:14px;color:#DBDADF;">已提现：{{earnInfo.withdraw}}</div> -->
+                <div style="margin-right:10px;font-weight:bold;font-size:14px;color:#DBDADF;">已提现：{{earnInfo.withdraw}}</div>
                 <div class="icon icon-link"></div>
             </div>
             
